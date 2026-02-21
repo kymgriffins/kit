@@ -1,0 +1,3051 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nokras — The Art of Kenyan Hospitality</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollToPlugin.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'nokras': {
+                            DEFAULT: '#143836',
+                            light: '#1a4a47',
+                            dark: '#0d2422',
+                            50: '#f0f4f4',
+                            100: '#d9e3e2',
+                        },
+                        'gold': {
+                            DEFAULT: '#c9a962',
+                            light: '#d4b978',
+                            dark: '#a88b4a',
+                        },
+                        'cream': '#fafaf9',
+                        'warm': '#f5f5f0',
+                    },
+                    fontFamily: {
+                        'serif': ['Cormorant Garamond', 'serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * {
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        
+        /* Cinematic Easing */
+        .ease-cinematic {
+            transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .ease-smooth {
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ease-bounce {
+            transition-timing-function: cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        /* Enhanced Loyalty Points Animations */
+        .perk-card {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .perk-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .perk-icon {
+            transform: scale(0.8);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .perk-card:hover .perk-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        /* Animated Text */
+        .animate-text {
+            position: relative;
+            height: 1.5em;
+            overflow: hidden;
+        }
+        
+        .text-anim {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            animation: textCycle 8s infinite;
+        }
+        
+        .text-anim:nth-child(1) { animation-delay: 0s; }
+        .text-anim:nth-child(2) { animation-delay: 2.67s; }
+        .text-anim:nth-child(3) { animation-delay: 5.33s; }
+        
+        @keyframes textCycle {
+            0%, 25% { opacity: 0; transform: translateY(-100%); }
+            33%, 58% { opacity: 1; transform: translateY(0); }
+            66%, 100% { opacity: 0; transform: translateY(100%); }
+        }
+        
+        /* Film Grain */
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        
+        /* Smooth Scroll Container */
+        .smooth-scroll {
+            overflow: hidden;
+        }
+        
+        /* Magnetic Element */
+        .magnetic {
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Text Split Animation */
+        .split-line {
+            overflow: hidden;
+            display: block;
+        }
+        .split-line-inner {
+            display: block;
+            transform: translateY(100%);
+        }
+        
+        /* FIXED Branch Transition System - 4 Scenes */
+        .branch-container {
+            position: relative;
+            height: 400vh; /* 4 scenes × 100vh */
+        }
+        
+        .branch-sticky {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            width: 100%;
+            overflow: hidden;
+        }
+        
+        .branch-scene {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+            z-index: 1;
+        }
+        
+        .branch-scene.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+        
+        /* Letter Navigation - N O K R A S */
+        .letter-nav {
+            font-size: clamp(40px, 10vw, 140px);
+            font-weight: 300;
+            line-height: 0.9;
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0.08;
+            cursor: pointer;
+            font-family: 'Cormorant Garamond', serif;
+        }
+        
+        .letter-nav:hover, .letter-nav.active {
+            opacity: 1;
+            transform: scale(1.1);
+            text-shadow: 0 0 60px rgba(20, 56, 54, 0.3);
+        }
+        
+        .letter-nav.active {
+            color: #143836;
+        }
+        
+        /* Glass Morphism */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .glass-dark {
+            background: rgba(20, 56, 54, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(201, 169, 98, 0.2);
+        }
+        
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 1px solid #143836;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            transition: transform 0.15s ease, width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+        
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            background-color: rgba(20, 56, 54, 0.1);
+            border-color: #c9a962;
+        }
+        
+        /* Gallery Lightbox */
+        #galleryLightbox.visible {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
+        #virtualTour.visible {
+            opacity: 1 !important;
+            visibility: visible !important;
+        }
+        
+        /* Chatbot */
+        #chatWindow {
+            animation: slideUp 0.3s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Chat responsive adjustments */
+        @media (max-width: 640px) {
+            #chatWindow {
+                max-height: calc(100vh - 120px);
+            }
+            #chatMessages {
+                min-height: 150px;
+            }
+        }
+        
+        @media (min-width: 640px) and (max-width: 768px) {
+            #chatWindow {
+                max-height: calc(100vh - 140px);
+            }
+        }
+        
+        #chatMessages::-webkit-scrollbar {
+            width: 4px;
+        }
+        
+        #chatMessages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #chatMessages::-webkit-scrollbar-thumb {
+            background: rgba(20, 56, 54, 0.2);
+            border-radius: 4px;
+        }
+        
+        /* User message styling */
+        #chatMessages .user-message {
+            margin-left: auto;
+        }
+        
+        .cursor-dot {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background-color: #c9a962;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10001;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* Loading Screen */
+        .loader {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 100000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loader-content {
+            text-align: center;
+        }
+        
+        .loader-logo {
+            width: 180px;
+            height: auto;
+            margin-bottom: 40px;
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        
+        .loader-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 14px;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: #ffffff;
+            opacity: 0;
+            margin-bottom: 20px;
+        }
+        
+        .loader-line {
+            width: 200px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loader-progress {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0%;
+            background: #c9a962;
+            transition: width 0.3s ease;
+        }
+        
+        .loader-percent {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: #ffffff;
+            margin-top: 15px;
+            opacity: 0;
+        }
+        
+        /* Scroll Indicator */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0;
+        }
+        
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(to bottom, #143836, transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes scrollPulse {
+            0%, 100% { transform: scaleY(0); transform-origin: top; }
+            50% { transform: scaleY(1); transform-origin: top; }
+            51% { transform-origin: bottom; }
+            100% { transform: scaleY(0); transform-origin: bottom; }
+        }
+        
+        /* Perk Cards */
+        .perk-card {
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .perk-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .perk-card:hover .perk-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .perk-icon {
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        /* Image Reveal */
+        .img-reveal {
+            overflow: hidden;
+        }
+        
+        .img-reveal img {
+            transform: scale(1.2);
+            transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .img-reveal.revealed img {
+            transform: scale(1);
+        }
+        
+        /* Scene Image */
+        .scene-image {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            transform: scale(1.1);
+            transition: transform 1.5s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.8s ease;
+        }
+        
+        .branch-scene.active .scene-image {
+            transform: scale(1);
+        }
+        
+        /* Content Reveal */
+        .content-reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .branch-scene.active .content-reveal {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .branch-scene.active .content-reveal:nth-child(1) { transition-delay: 0.2s; }
+        .branch-scene.active .content-reveal:nth-child(2) { transition-delay: 0.35s; }
+        .branch-scene.active .content-reveal:nth-child(3) { transition-delay: 0.5s; }
+        .branch-scene.active .content-reveal:nth-child(4) { transition-delay: 0.65s; }
+        
+        /* Navigation Dots */
+        .nav-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .nav-dot.active {
+            background: #c9a962;
+            border-color: #fff;
+            transform: scale(1.3);
+        }
+        
+        /* Ambient Float */
+        @keyframes ambientFloat {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-15px) rotate(2deg); }
+            66% { transform: translateY(10px) rotate(-1deg); }
+        }
+        
+        .ambient-float {
+            animation: ambientFloat 8s ease-in-out infinite;
+        }
+        
+        /* Promo Badge */
+        .promo-badge {
+            background: linear-gradient(135deg, #c9a962 0%, #a88b4a 100%);
+            color: #143836;
+            font-weight: 600;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(201, 169, 98, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(201, 169, 98, 0); }
+        }
+        
+        /* Price Display */
+        .price-display {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.5rem;
+            font-weight: 600;
+            color: #143836;
+        }
+        
+        /* Child Age Input */
+        .child-age-row {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Hide scrollbar but keep functionality */
+        body {
+            overflow-x: hidden;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #143836;
+            border-radius: 4px;
+        }
+        
+        /* Mobile Responsive Fixes */
+        @media (max-width: 768px) {
+            .letter-nav {
+                font-size: clamp(30px, 8vw, 80px);
+            }
+            
+            .branch-scene .max-w-xl {
+                max-width: 100%;
+                padding: 0 1rem;
+            }
+            
+            .branch-scene h2 {
+                font-size: 2.5rem;
+            }
+        }
+        
+        /* Advertisement Banner */
+        .ad-banner {
+            background: linear-gradient(90deg, #143836 0%, #1a4a47 50%, #143836 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .ad-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Discount Badge */
+        .discount-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: #dc2626;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+            transform: rotate(12deg);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        }
+        
+        /* Task List Checkbox */
+        .task-checkbox:checked + label {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+        
+        /* Menu Category */
+        .menu-category {
+            position: relative;
+            padding-left: 1.5rem;
+        }
+        
+        .menu-category::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            background: #c9a962;
+            border-radius: 50%;
+        }
+        
+        /* Smooth page transitions */
+        .page-transition {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body class="bg-cream text-nokras font-sans antialiased selection:bg-nokras selection:text-white">
+
+    <!-- Film Grain -->
+    <div class="grain"></div>
+    
+    <!-- Custom Cursor -->
+    <div class="cursor hidden md:block"></div>
+    <div class="cursor-dot hidden md:block"></div>
+
+    <!-- Loading Screen -->
+    <div class="loader" id="loader">
+        <div class="loader-content"> 
+                        <img src="https://www.nokrashotels.co.ke/assets/images/logo_Nokras Hotels_Upload-VS-0050-Dec-09-2022.png" alt="NOKRAS Logo" class="w-32 h-32 mx-auto mb-4 opacity-100" id="logoImage">
+
+            <div class="loader-text">Timeless Hospitality</div>
+            <div class="loader-line">
+                <div class="loader-progress" id="loaderProgress"></div>
+            </div>
+            <div class="loader-percent" id="loaderPercent">0%</div>
+        </div>
+    </div>
+    <!-- Loading Screen -->
+  
+
+    <!-- Advertisement Banner - Fixed at top -->
+    <div class="ad-banner text-white py-3 px-6 text-center fixed top-0 left-0 right-0 z-50 transition-all duration-500" id="adBanner">
+        <div class="max-w-7xl mx-auto flex items-center justify-center gap-4 flex-wrap">
+            <span class="promo-badge">NEW</span>
+            <div class="text-sm font-medium animate-text">
+                <span class="text-anim">Opening 2027: Nokras Diani Beach Resort — Early bird 40% off until Dec 31st</span>
+                <span class="text-anim">Book now and get exclusive access to our private beach club</span>
+                <span class="text-anim">Limited time offer - only 50 rooms available</span>
+            </div>
+            <button onclick="openBooking('diani')" class="text-xs underline hover:text-gold transition-colors ml-2">Pre-book Now →</button>
+        </div>
+    </div>
+
+    <!-- Navigation - Smart Sticky Header -->
+    <nav class="fixed top-12 left-0 right-0 z-40 px-6 md:px-12 py-4 transition-all duration-500 opacity-0 -translate-y-full bg-cream/0" id="navbar">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <a href="#" class="text-2xl font-serif font-medium text-nokras magnetic hover-target">Nokras</a>
+            
+            <div class="hidden md:flex items-center gap-8">
+                <!-- <a href="./pages/properties.html" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Our Properties</a> -->
+                <!-- <a href="./pages/dining.html" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Dining</a> -->
+                <a href="#destinations" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Destinations</a>
+                <a href="#gallery" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Gallery</a>
+                <a href="#perks" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Loyalty Points</a>
+                <a href="./pages/menu.html" onclick="showMenuModal()" class="link-animated text-sm tracking-wide text-nokras/70 hover:text-nokras transition-colors hover-target">Menu</a>
+                <button onclick="openBooking()" class="magnetic px-6 py-3 bg-nokras text-white rounded-full text-sm tracking-wide hover:bg-gold transition-colors duration-300 hover-target flex items-center gap-2">
+                    <span>Book Now</span>
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                </button>
+            </div>
+            
+            <button class="md:hidden hover-target" id="menuBtn">
+                <svg class="w-6 h-6 text-nokras" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="fixed inset-0 bg-cream z-40 transform translate-x-full transition-transform duration-700 ease-cinematic md:hidden" id="mobileMenu">
+        <div class="flex flex-col items-center justify-center h-full gap-8">
+            <a href="#experience" class="text-4xl font-serif text-nokras mobile-link">Experience</a>
+            <a href="#destinations" class="text-4xl font-serif text-nokras mobile-link">Destinations</a>
+            <a href="#gallery" class="text-4xl font-serif text-nokras mobile-link">Gallery</a>
+            <a href="#perks" class="text-4xl font-serif text-nokras mobile-link">Loyalty</a>
+            <a href="#menu" onclick="showMenuModal()" class="text-4xl font-serif text-nokras mobile-link">Dining</a>
+            <button onclick="openBooking()" class="mt-8 px-8 py-4 bg-nokras text-white rounded-full text-sm tracking-wide">Book Your Stay</button>
+        </div>
+        <button class="absolute top-6 right-6 text-nokras" id="closeMenu">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Enhanced Booking Modal with Dynamic Pricing -->
+    <div class="booking-modal fixed inset-0 z-[9998] opacity-0 invisible transition-all duration-500" id="bookingModal">
+        <div class="booking-overlay absolute inset-0 bg-nokras/95 backdrop-blur-xl" onclick="closeBooking()"></div>
+        <div class="absolute inset-0 flex items-start justify-center p-4 overflow-y-auto pt-4 md:pt-12">
+            <div class="glass-panel w-full max-w-4xl rounded-3xl p-4 md:p-8 transform scale-95 opacity-0 transition-all duration-500 relative" id="bookingContent">
+                <!-- Close Button -->
+                <button onclick="closeBooking()" class="absolute -top-2 -right-2 md:top-4 md:right-4 w-10 h-10 rounded-full bg-nokras/10 flex items-center justify-center hover:bg-nokras/20 transition-colors hover-target z-10">
+                    <svg class="w-5 h-5 text-nokras" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+                <!-- Discount Badge -->
+                <div class="discount-badge" id="discountBadge" style="display: none;">-30%</div>
+                
+                <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-4 md:mb-6 gap-4">
+                    <div>
+                        <h3 class="font-serif text-2xl md:text-3xl text-nokras mb-1">Reserve Your Experience</h3>
+                        <p class="text-sm text-nokras/60">Begin your journey with Nokras</p>
+                    </div>
+                </div>
+                
+                <!-- Live Price Calculator -->
+                <div class="bg-gradient-to-r from-gold/10 to-gold/5 rounded-2xl p-4 mb-6 border border-gold/20">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-nokras/60 uppercase tracking-wider mb-1">Estimated Total</div>
+                            <div class="price-display" id="totalPrice">KES 0</div>
+                            <div class="text-xs text-nokras/50 mt-1" id="priceBreakdown">Select dates to see pricing</div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs text-gold font-medium" id="savingsText" style="display: none;">You save KES 12,000</div>
+                            <div class="text-xs text-nokras/40">Taxes included</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="space-y-4 md:space-y-5" id="bookingForm" onsubmit="handleBooking(event)">
+                    <!-- Property Selection with Promos -->
+                    <div class="space-y-2">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Select Property</label>
+                        <div class="grid grid-cols-2 gap-2 md:gap-3">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="property" value="Riverine" data-base-price="25000" class="peer sr-only" checked onchange="calculatePrice()">
+                                <div class="p-2 md:p-4 rounded-xl border-2 border-nokras/10 peer-checked:border-nokras peer-checked:bg-nokras/5 transition-all text-center hover-target relative">
+                                    <div class="font-serif text-nokras font-medium text-sm md:text-base">Riverine</div>
+                                    <div class="text-xs text-nokras/50 mt-1 hidden md:block">From KES 25k</div>
+                                    <div class="promo-badge absolute -top-2 left-1/2 transform -translate-x-1/2 text-[10px]">POPULAR</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="property" value="enkare" data-base-price="18000" class="peer sr-only" onchange="calculatePrice()">
+                                <div class="p-2 md:p-4 rounded-xl border-2 border-nokras/10 peer-checked:border-nokras peer-checked:bg-nokras/5 transition-all text-center hover-target">
+                                    <div class="font-serif text-nokras font-medium text-sm md:text-base">Enkare</div>
+                                    <div class="text-xs text-nokras/50 mt-1 hidden md:block">From KES 18k</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="property" value="sagana" data-base-price="15000" class="peer sr-only" onchange="calculatePrice()">
+                                <div class="p-2 md:p-4 rounded-xl border-2 border-nokras/10 peer-checked:border-nokras peer-checked:bg-nokras/5 transition-all text-center hover-target">
+                                    <div class="font-serif text-nokras font-medium text-sm md:text-base">Sagana</div>
+                                    <div class="text-xs text-nokras/50 mt-1 hidden md:block">From KES 15k</div>
+                                    <div class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full hidden md:block">-20%</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="property" value="Murang'a" data-base-price="20000" class="peer sr-only" onchange="calculatePrice()">
+                                <div class="p-2 md:p-4 rounded-xl border-2 border-nokras/10 peer-checked:border-nokras peer-checked:bg-nokras/5 transition-all text-center hover-target">
+                                    <div class="font-serif text-nokras font-medium text-sm md:text-base">Murang'a</div>
+                                    <div class="text-xs text-nokras/50 mt-1 hidden md:block">From KES 20k</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Dates -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Check In</label>
+                            <input type="date" id="checkIn" class="w-full px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras" required onchange="calculatePrice()">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Check Out</label>
+                            <input type="date" id="checkOut" class="w-full px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras" required onchange="calculatePrice()">
+                        </div>
+                    </div>
+                    
+                    <!-- Guests with Children -->
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Adults</label>
+                            <select id="adults" class="w-full px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras" onchange="calculatePrice()">
+                                <option value="1">1 Adult</option>
+                                <option value="2" selected>2 Adults</option>
+                                <option value="3">3 Adults</option>
+                                <option value="4">4 Adults</option>
+                            </select>
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Children (0-12 years)</label>
+                            <select id="children" class="w-full px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras" onchange="updateChildrenFields()">
+                                <option value="0" selected>No Children</option>
+                                <option value="1">1 Child</option>
+                                <option value="2">2 Children</option>
+                                <option value="3">3 Children</option>
+                                <option value="4">4 Children</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Children Ages -->
+                    <div id="childrenAgesContainer" class="space-y-2 hidden">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Children Ages</label>
+                        <div id="childrenAges" class="space-y-2">
+                            <!-- Dynamically populated -->
+                        </div>
+                        <p class="text-xs text-nokras/50 italic">Children under 3 stay free. Ages 3-12 charged at 50%.</p>
+                    </div>
+                    
+                    <!-- Room Type -->
+                    <div class="space-y-2">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Room Type</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="room" value="deluxe" data-multiplier="1" class="peer sr-only" checked onchange="calculatePrice()">
+                                <div class="p-3 rounded-xl border border-nokras/10 peer-checked:border-gold peer-checked:bg-gold/5 transition-all text-center hover-target">
+                                    <div class="text-xs font-medium text-nokras">Deluxe</div>
+                                    <div class="text-[10px] text-nokras/50">Base rate</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="room" value="suite" data-multiplier="1.5" class="peer sr-only" onchange="calculatePrice()">
+                                <div class="p-3 rounded-xl border border-nokras/10 peer-checked:border-gold peer-checked:bg-gold/5 transition-all text-center hover-target relative">
+                                    <div class="text-xs font-medium text-nokras">Executive Suite</div>
+                                    <div class="text-[10px] text-nokras/50">+50%</div>
+                                    <div class="promo-badge absolute -top-2 right-0 text-[8px]">UPGRADE</div>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="room" value="villa" data-multiplier="2.5" class="peer sr-only" onchange="calculatePrice()">
+                                <div class="p-3 rounded-xl border border-nokras/10 peer-checked:border-gold peer-checked:bg-gold/5 transition-all text-center hover-target">
+                                    <div class="text-xs font-medium text-nokras">Presidential Villa</div>
+                                    <div class="text-[10px] text-nokras/50">+150%</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Promo Code -->
+                    <div class="space-y-2">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Promo Code</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="promoCode" placeholder="Enter code (try: NOKRAS30)" class="flex-1 px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras uppercase" onblur="validatePromo()">
+                            <button type="button" onclick="validatePromo()" class="px-4 py-3 bg-nokras text-white rounded-xl text-sm hover:bg-gold transition-colors">Apply</button>
+                        </div>
+                        <p id="promoMessage" class="text-xs hidden"></p>
+                    </div>
+                    
+                    <!-- Special Requests -->
+                    <div class="space-y-2">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Special Requests</label>
+                        <textarea rows="2" class="w-full px-4 py-3 bg-white/50 border border-nokras/10 rounded-xl focus:border-gold focus:outline-none transition-colors text-nokras resize-none" placeholder="Dietary requirements, celebrations, preferences..."></textarea>
+                    </div>
+                    
+                    <!-- Payment Method Preview -->
+                    <div class="space-y-2">
+                        <label class="text-xs uppercase tracking-wider text-nokras/60 font-medium">Payment Method</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button type="button" class="p-3 rounded-xl border border-nokras/10 hover:border-gold transition-all text-center hover-target flex flex-col items-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                                <span class="text-xs">Card</span>
+                            </button>
+                            <button type="button" onclick="showMpesaModal()" class="p-3 rounded-xl border border-nokras/10 hover:border-gold transition-all text-center hover-target flex flex-col items-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                <span class="text-xs">M-Pesa</span>
+                            </button>
+                            <button type="button" class="p-3 rounded-xl border border-nokras/10 hover:border-gold transition-all text-center hover-target flex flex-col items-center gap-2">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                                <span class="text-xs">Bank</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="w-full py-4 bg-nokras text-white rounded-xl text-sm tracking-wide hover:bg-gold transition-colors duration-300 magnetic hover-target flex items-center justify-center gap-2 group shadow-lg shadow-nokras/20">
+                        <span>Confirm Reservation</span>
+                        <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                        </svg>
+                    </button>
+                    
+                    <p class="text-center text-nokras/40 text-xs">
+                        Best Rate Guaranteed • Free Cancellation up to 48hrs • No Hidden Fees
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Menu Modal - 5 Star Cuisine -->
+    <div class="fixed inset-0 z-[9997] opacity-0 invisible transition-all duration-500" id="menuModal">
+        <div class="absolute inset-0 bg-nokras/98 backdrop-blur-xl" onclick="closeMenuModal()"></div>
+        <div class="absolute inset-0 overflow-y-auto">
+            <div class="min-h-screen flex items-center justify-center p-4">
+                <div class="glass-panel w-full max-w-5xl rounded-3xl p-8 md:p-12 transform scale-95 opacity-0 transition-all duration-500 relative" id="menuContent">
+                    <button onclick="closeMenuModal()" class="absolute top-6 right-6 w-10 h-10 rounded-full bg-nokras/5 flex items-center justify-center hover:bg-nokras/10 transition-colors hover-target z-10">
+                        <svg class="w-5 h-5 text-nokras" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                    
+                    <div class="text-center mb-12">
+                        <span class="text-gold text-xs tracking-[0.4em] uppercase">Culinary Excellence</span>
+                        <h2 class="font-serif text-5xl md:text-6xl text-nokras mt-4 mb-4">The Nokras Dining Experience</h2>
+                        <p class="text-nokras/60 max-w-2xl mx-auto">Farm-to-table cuisine celebrating Kenya's bounty, crafted by award-winning chefs</p>
+                    </div>
+
+                    <!-- Menu Categories -->
+                    <div class="grid md:grid-cols-3 gap-8 mb-12">
+                        <!-- Breakfast -->
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="menu-category font-serif text-2xl text-nokras">Sunrise Breakfast</div>
+                                <div class="flex-1 h-px bg-nokras/10"></div>
+                            </div>
+                            
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Full Kenyan Breakfast</h4>
+                                    <span class="font-serif text-gold text-lg">KES 2,500</span>
+                                </div>
+                                <p class="text-sm text-nokras/60 mb-2">Eggs, sausages, bacon, baked beans, grilled tomato, mushrooms, toast</p>
+                                <div class="flex gap-2">
+                                    <span class="text-[10px] px-2 py-1 bg-gold/10 text-gold rounded-full">Signature</span>
+                                    <span class="text-[10px] px-2 py-1 bg-nokras/5 text-nokras/60 rounded-full">Vegetarian available</span>
+                                </div>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Riverine Smoothie Bowl</h4>
+                                    <span class="font-serif text-gold text-lg">KES 1,800</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Acai, seasonal fruits, granola, coconut flakes, honey drizzle</p>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Eggs Benedict</h4>
+                                    <span class="font-serif text-gold text-lg">KES 2,200</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Poached eggs, hollandaise, smoked salmon or ham, English muffin</p>
+                            </div>
+                        </div>
+
+                        <!-- Lunch -->
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="menu-category font-serif text-2xl text-nokras">Garden Lunch</div>
+                                <div class="flex-1 h-px bg-nokras/10"></div>
+                            </div>
+                            
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer relative">
+                                <div class="discount-badge" style="font-size: 10px; padding: 4px 8px;">HOT</div>
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Nyama Choma Platter</h4>
+                                    <span class="font-serif text-gold text-lg">KES 4,500</span>
+                                </div>
+                                <p class="text-sm text-nokras/60 mb-2">Grilled goat, beef, and chicken, ugali, kachumbari, greens</p>
+                                <div class="flex gap-2">
+                                    <span class="text-[10px] px-2 py-1 bg-red-100 text-red-600 rounded-full">Chef's Choice</span>
+                                </div>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Catch of the Day</h4>
+                                    <span class="font-serif text-gold text-lg">KES 3,800</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Fresh Lake Victoria tilapia, coconut rice, sautéed vegetables</p>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Nokras Burger</h4>
+                                    <span class="font-serif text-gold text-lg">KES 2,800</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Wagyu beef, brioche bun, caramelized onions, truffle mayo</p>
+                            </div>
+                        </div>
+
+                        <!-- Dinner -->
+                        <div class="space-y-6">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div class="menu-category font-serif text-2xl text-nokras">Sunset Dinner</div>
+                                <div class="flex-1 h-px bg-nokras/10"></div>
+                            </div>
+                            
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Tasting Menu</h4>
+                                    <span class="font-serif text-gold text-lg">KES 12,000</span>
+                                </div>
+                                <p class="text-sm text-nokras/60 mb-2">7 courses with wine pairing. Reservations required.</p>
+                                <div class="flex gap-2">
+                                    <span class="text-[10px] px-2 py-1 bg-gold/20 text-gold rounded-full">Premium</span>
+                                    <span class="text-[10px] px-2 py-1 bg-nokras/5 text-nokras/60 rounded-full">2 hours</span>
+                                </div>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Lamb Shank</h4>
+                                    <span class="font-serif text-gold text-lg">KES 5,500</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Slow-braised New Zealand lamb, rosemary jus, garlic mash</p>
+                            </div>
+
+                            <div class="group hover:bg-white/50 p-4 rounded-xl transition-all cursor-pointer">
+                                <div class="flex justify-between items-baseline mb-2">
+                                    <h4 class="font-medium text-nokras">Plant-Based Feast</h4>
+                                    <span class="font-serif text-gold text-lg">KES 3,200</span>
+                                </div>
+                                <p class="text-sm text-nokras/60">Seasonal vegetables, quinoa, tahini dressing, nut crumble</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wine & Cocktails -->
+                    <div class="bg-gradient-to-r from-gold/10 to-gold/5 rounded-2xl p-8 border border-gold/20">
+                        <div class="flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="font-serif text-3xl text-nokras">Cellar & Bar</h3>
+                                <p class="text-nokras/60 text-sm">Curated selection of 200+ wines and signature cocktails</p>
+                            </div>
+                            <button onclick="alert('Full wine list available at reception')" class="px-6 py-3 bg-nokras text-white rounded-full text-sm hover:bg-gold transition-colors">
+                                View Wine List
+                            </button>
+                        </div>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div class="flex items-center gap-4 p-4 bg-white/50 rounded-xl">
+                                <div class="w-12 h-12 bg-nokras/10 rounded-full flex items-center justify-center text-2xl">🍷</div>
+                                <div>
+                                    <div class="font-medium text-nokras">Nokras Signature Cocktail</div>
+                                    <div class="text-sm text-nokras/60">Dawa with a twist — KES 1,200</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 p-4 bg-white/50 rounded-xl">
+                                <div class="w-12 h-12 bg-nokras/10 rounded-full flex items-center justify-center text-2xl">🥃</div>
+                                <div>
+                                    <div class="font-medium text-nokras">Whiskey Flight</div>
+                                    <div class="text-sm text-nokras/60">Taste of Kenya — KES 3,500</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <p class="text-nokras/40 text-sm">All prices inclusive of taxes and service charge • Dietary restrictions accommodated with advance notice</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Development Tasklist Modal -->
+    <div class="fixed inset-0 z-[9996] opacity-0 invisible transition-all duration-500" id="tasklistModal">
+        <div class="absolute inset-0 bg-nokras/95 backdrop-blur-xl" onclick="closeTasklist()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4 overflow-y-auto">
+            <div class="glass-panel w-full max-w-4xl rounded-3xl p-8 transform scale-95 opacity-0 transition-all duration-500" id="tasklistContent">
+                <div class="flex items-center justify-between mb-8">
+                    <div>
+                        <h3 class="font-serif text-3xl text-nokras">Nokras Development Roadmap</h3>
+                        <p class="text-sm text-nokras/60">Technical implementation checklist</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs" id="completedCount">0/12 Done</span>
+                        <button onclick="closeTasklist()" class="w-10 h-10 rounded-full bg-nokras/5 flex items-center justify-center hover:bg-nokras/10 transition-colors">
+                            <svg class="w-5 h-5 text-nokras" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-4 max-h-[60vh] overflow-y-auto pr-2">
+                    <!-- Phase 1: Core -->
+                    <div class="border-l-4 border-gold pl-4">
+                        <h4 class="font-serif text-xl text-nokras mb-3">Phase 1: Core Platform</h4>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">PMS Integration</div>
+                                <div class="text-sm text-nokras/60">Real-time room inventory, bookings, check-in/out</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">KRA eTIMS API</div>
+                                <div class="text-sm text-nokras/60">Real-time invoice submission, CU number generation</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" checked onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras line-through opacity-50">Dynamic Pricing Engine</div>
+                                <div class="text-sm text-nokras/60 line-through opacity-50">Seasonal rates, promotions, child pricing</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Phase 2: Payments -->
+                    <div class="border-l-4 border-nokras pl-4">
+                        <h4 class="font-serif text-xl text-nokras mb-3">Phase 2: Payment Systems</h4>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">M-Pesa Integration</div>
+                                <div class="text-sm text-nokras/60">STK push, C2B, reconciliation</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Card Payments</div>
+                                <div class="text-sm text-nokras/60">Visa/Mastercard, 3D Secure, tokenization</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Bank Transfer (RTGS)</div>
+                                <div class="text-sm text-nokras/60">Corporate bookings, invoice matching</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Phase 3: Advanced -->
+                    <div class="border-l-4 border-blue-400 pl-4">
+                        <h4 class="font-serif text-xl text-nokras mb-3">Phase 3: Advanced Features</h4>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Channel Manager</div>
+                                <div class="text-sm text-nokras/60">Booking.com, Expedia, Airbnb sync</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">CRM & Loyalty</div>
+                                <div class="text-sm text-nokras/60">Guest profiles, points, personalized offers</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Mobile App (iOS/Android)</div>
+                                <div class="text-sm text-nokras/60">Guest services, mobile check-in, digital key</div>
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- Phase 4: Compliance -->
+                    <div class="border-l-4 border-purple-400 pl-4">
+                        <h4 class="font-serif text-xl text-nokras mb-3">Phase 4: Compliance & Reporting</h4>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">iTax Auto-Filing</div>
+                                <div class="text-sm text-nokras/60">VAT, PAYE, Income tax returns</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Tourism Fund Integration</div>
+                                <div class="text-sm text-nokras/60">Monthly levy calculation & e-Citizen submission</div>
+                            </div>
+                        </label>
+                        
+                        <label class="flex items-start gap-3 p-3 hover:bg-nokras/5 rounded-lg cursor-pointer transition-colors">
+                            <input type="checkbox" class="task-checkbox mt-1 w-5 h-5 rounded border-nokras/20 text-gold focus:ring-gold" onchange="updateTaskCount()">
+                            <div>
+                                <div class="font-medium text-nokras">Management Dashboard</div>
+                                <div class="text-sm text-nokras/60">RevPAR, ADR, occupancy analytics</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-nokras/10 flex justify-between items-center">
+                    <div class="text-sm text-nokras/60">Last updated: <span id="lastUpdated"></span></div>
+                    <button onclick="exportTasks()" class="px-6 py-3 bg-nokras text-white rounded-xl text-sm hover:bg-gold transition-colors flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Export Roadmap
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen overflow-hidden flex items-center justify-center" id="experience">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')] bg-cover bg-center scale-110" id="heroBg"></div>
+            <div class="absolute inset-0 bg-gradient-to-b from-nokras/40 via-nokras/20 to-nokras/60"></div>
+        </div>
+        
+        <div class="absolute top-1/4 right-20 w-64 h-64 rounded-full bg-gold/10 blur-3xl ambient-float hidden lg:block"></div>
+        <div class="absolute bottom-1/3 left-20 w-48 h-48 rounded-full bg-nokras/10 blur-3xl ambient-float hidden lg:block" style="animation-delay: -4s;"></div>
+
+        <div class="relative z-10 max-w-7xl mx-auto px-6 md:px-12 w-full text-center">
+            <div class="mb-6 overflow-hidden">
+                <p class="text-gold text-xs tracking-[0.4em] uppercase hero-elem opacity-0">Est. 2008 — Kenya</p>
+            </div>
+            
+            <h1 class="text-6xl md:text-8xl lg:text-9xl font-serif text-white leading-[0.9] mb-8">
+                <span class="split-line"><span class="split-line-inner hero-text">The Nokras</span></span>
+                <span class="split-line"><span class="split-line-inner hero-text italic text-gold">Experience</span></span>
+            </h1>
+            
+            <p class="text-white/80 text-lg md:text-xl max-w-2xl mx-auto mb-12 hero-elem opacity-0 font-light leading-relaxed">
+                Where the soul of Kenya meets world-class luxury. Four destinations, one unforgettable journey.
+            </p>
+            
+            <div class="flex flex-col sm:flex-row gap-4 justify-center hero-elem opacity-0">
+                <button onclick="scrollToSection('destinations')" class="magnetic px-8 py-4 bg-white text-nokras rounded-full text-sm tracking-wide hover:bg-gold hover:text-white transition-all duration-300 hover-target inline-flex items-center justify-center gap-2 group">
+                    <span>Explore Destinations</span>
+                    <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </button>
+                
+            </div>
+
+            <!-- Promo Banner in Hero -->
+            <div class="mt-12 inline-flex items-center gap-3 px-6 py-3 bg-white/10 backdrop-blur-md rounded-full border border-white/20 hero-elem opacity-0">
+                <span class="promo-badge text-[10px]">WEEKEND</span>
+                <span class="text-white/80 text-sm">Stay 2 nights, get 3rd night 50% off</span>
+                <button onclick="openBooking()" class="text-gold text-sm hover:underline ml-2">Book Now →</button>
+            </div>
+        </div>
+
+        <div class="scroll-hint" id="scrollHint">
+            <span class="text-white/60 text-xs tracking-widest uppercase">Scroll to Explore</span>
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- FIXED: 4-Branch Seamless Experience -->
+    <section class="branch-container" id="destinations">
+        <div class="branch-sticky bg-cream">
+            <!-- Letter Navigation -->
+            <div class="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                <div class="flex items-center gap-1 md:gap-3 select-none pointer-events-auto">
+                    <span class="letter-nav text-white" data-index="0" onclick="scrollToBranch(0)">N</span>
+                    <span class="letter-nav text-white" data-index="1" onclick="scrollToBranch(1)">O</span>
+                    <span class="letter-nav text-white" data-index="2" onclick="scrollToBranch(2)">K</span>
+                    <span class="letter-nav text-white" data-index="3" onclick="scrollToBranch(3)">R</span>
+                </div>
+            </div>
+
+            <!-- Progress Dots -->
+            <div class="absolute left-8 top-1/2 transform -translate-y-1/2 z-30 hidden lg:flex flex-col gap-4">
+                <div class="nav-dot active" data-index="0" onclick="scrollToBranch(0)"></div>
+                <div class="nav-dot" data-index="1" onclick="scrollToBranch(1)"></div>
+                <div class="nav-dot" data-index="2" onclick="scrollToBranch(2)"></div>
+                <div class="nav-dot" data-index="3" onclick="scrollToBranch(3)"></div>
+            </div>
+
+            <!-- Scene 1: N - Riverine -->
+            <div class="branch-scene active" data-index="0">
+                <div class="scene-image" style="background-image: url('https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-nokras/90 via-nokras/50 to-transparent"></div>
+                
+                <div class="absolute inset-0 flex items-center">
+                    <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+                        <div class="max-w-xl">
+                            <div class="content-reveal">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="inline-block px-4 py-2 bg-gold/20 border border-gold/30 rounded-full text-gold text-xs tracking-widest uppercase">Flagship Property</span>
+                                    <span class="promo-badge">BEST SELLER</span>
+                                </div>
+                            </div>
+                            <h2 class="content-reveal font-serif text-5xl md:text-7xl text-white mb-6">Nokras Riverine</h2>
+                            <p class="content-reveal text-white/80 text-lg leading-relaxed mb-8">
+                                Nestled along the Sagana River, our flagship sanctuary blends contemporary luxury with the untamed beauty of Kenyan nature. Wake to the sound of flowing water and birdsong.
+                            </p>
+                            <div class="content-reveal flex flex-wrap gap-8 mb-8">
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">48</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Suites</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">5★</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Luxury</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">12</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Acres</div>
+                                </div>
+                            </div>
+                            <div class="content-reveal flex flex-wrap gap-4">
+                                <button onclick="openBooking('Riverine')" class="magnetic px-6 py-3 bg-white text-nokras rounded-full text-sm tracking-wide hover:bg-gold hover:text-white transition-colors hover-target">
+                                    From KES 25,000/night
+                                </button>
+                                <button onclick="showMenuModal()" class="magnetic px-6 py-3 border border-white/30 text-white rounded-full text-sm tracking-wide hover:bg-white/10 transition-colors hover-target flex items-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                    </svg>
+                                    Virtual Tour
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 2: O - Enkare -->
+            <div class="branch-scene" data-index="1">
+                <div class="scene-image" style="background-image: url('https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-nokras/90 via-nokras/50 to-transparent"></div>
+                
+                <div class="absolute inset-0 flex items-center">
+                    <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+                        <div class="max-w-xl">
+                            <div class="content-reveal">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="inline-block px-4 py-2 bg-gold/20 border border-gold/30 rounded-full text-gold text-xs tracking-widest uppercase">Urban Sanctuary</span>
+                                    <span class="promo-badge" style="background: #22c55e;">NEW</span>
+                                </div>
+                            </div>
+                            <h2 class="content-reveal font-serif text-5xl md:text-7xl text-white mb-6">Nokras Enkare</h2>
+                            <p class="content-reveal text-white/80 text-lg leading-relaxed mb-8">
+                                A tranquil oasis in the heart of Nairobi. Where contemporary design meets traditional Kenyan warmth, offering the perfect escape from the urban rhythm.
+                            </p>
+                            <div class="content-reveal flex flex-wrap gap-8 mb-8">
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">32</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Rooms</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">4.9</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Rating</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">3</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Restaurants</div>
+                                </div>
+                            </div>
+                            <div class="content-reveal flex flex-wrap gap-4">
+                                <button onclick="openBooking('enkare')" class="magnetic px-6 py-3 bg-white text-nokras rounded-full text-sm tracking-wide hover:bg-gold hover:text-white transition-colors hover-target">
+                                    From KES 18,000/night
+                                </button>
+                                <button class="magnetic px-6 py-3 border border-white/30 text-white rounded-full text-sm tracking-wide hover:bg-white/10 transition-colors hover-target">
+                                    City Guide
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 3: K - Sagana -->
+            <div class="branch-scene" data-index="2">
+                <div class="scene-image" style="background-image: url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-nokras/90 via-nokras/50 to-transparent"></div>
+                
+                <div class="absolute inset-0 flex items-center">
+                    <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+                        <div class="max-w-xl">
+                            <div class="content-reveal">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="inline-block px-4 py-2 bg-gold/20 border border-gold/30 rounded-full text-gold text-xs tracking-widest uppercase">Adventure Base</span>
+                                    <span class="bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">-20%</span>
+                                </div>
+                            </div>
+                            <h2 class="content-reveal font-serif text-5xl md:text-7xl text-white mb-6">Nokras Sagana</h2>
+                            <p class="content-reveal text-white/80 text-lg leading-relaxed mb-8">
+                                Kenya's premier adventure destination. White-water rafting by day, luxury camping by night. Experience the thrill of the Tana River in uncompromising comfort.
+                            </p>
+                            <div class="content-reveal flex flex-wrap gap-8 mb-8">
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">24</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Cabins</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">15+</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Activities</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">4.8</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Rating</div>
+                                </div>
+                            </div>
+                            <div class="content-reveal flex flex-wrap gap-4">
+                                <button onclick="openBooking('sagana')" class="magnetic px-6 py-3 bg-white text-nokras rounded-full text-sm tracking-wide hover:bg-gold hover:text-white transition-colors hover-target">
+                                    From KES 12,000/night
+                                </button>
+                                <button class="magnetic px-6 py-3 border border-white/30 text-white rounded-full text-sm tracking-wide hover:bg-white/10 transition-colors hover-target">
+                                    View Activities
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scene 4: R - Murang'a -->
+            <div class="branch-scene" data-index="3">
+                <div class="scene-image" style="background-image: url('https://images.unsplash.com/photo-1518733057094-95b53143d2a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="absolute inset-0 bg-gradient-to-r from-nokras/90 via-nokras/50 to-transparent"></div>
+                
+                <div class="absolute inset-0 flex items-center">
+                    <div class="max-w-7xl mx-auto px-6 md:px-12 w-full">
+                        <div class="max-w-xl">
+                            <div class="content-reveal">
+                                <div class="flex items-center gap-3 mb-4">
+                                    <span class="inline-block px-4 py-2 bg-gold/20 border border-gold/30 rounded-full text-gold text-xs tracking-widest uppercase">Mountain Escape</span>
+                                    <span class="promo-badge">EXCLUSIVE</span>
+                                </div>
+                            </div>
+                            <h2 class="content-reveal font-serif text-5xl md:text-7xl text-white mb-6">Nokras Murang'a</h2>
+                            <p class="content-reveal text-white/80 text-lg leading-relaxed mb-8">
+                                Set against the majestic backdrop of Mount Kenya. Breathe the purest air, witness unforgettable sunrises, and find tranquility at 7,000 feet above ordinary.
+                            </p>
+                            <div class="content-reveal flex flex-wrap gap-8 mb-8">
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">36</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Chalets</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">7k</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Feet Alt</div>
+                                </div>
+                                <div>
+                                    <div class="text-3xl font-serif text-gold">5★</div>
+                                    <div class="text-white/60 text-xs uppercase tracking-wider">Luxury</div>
+                                </div>
+                            </div>
+                            <div class="content-reveal flex flex-wrap gap-4">
+                                <button onclick="openBooking('Murang\'a')" class="magnetic px-6 py-3 bg-white text-nokras rounded-full text-sm tracking-wide hover:bg-gold hover:text-white transition-colors hover-target">
+                                    From KES 20,000/night
+                                </button>
+                                <button class="magnetic px-6 py-3 border border-white/30 text-white rounded-full text-sm tracking-wide hover:bg-white/10 transition-colors hover-target">
+                                    Gallery
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loyalty Points Section -->
+    <section class="py-32 bg-cream relative overflow-hidden" id="perks">
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-nokras/5 to-transparent pointer-events-none"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="text-center mb-20">
+                <span class="inline-block px-4 py-2 bg-gold/10 border border-gold/20 rounded-full text-gold text-xs tracking-widest uppercase mb-6 reveal-up">Nokras Rewards</span>
+                <h2 class="font-serif text-5xl md:text-6xl text-nokras mb-6 reveal-up">Loyalty Points</h2>
+                <p class="text-nokras/60 text-lg max-w-2xl mx-auto reveal-up">Earn points with every stay, dine, and experience. Unlock exclusive benefits and rewards that elevate your Nokras journey.</p>
+            </div>
+
+            <!-- Points Earning Tiers -->
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="perk-card bg-white rounded-3xl p-8 shadow-sm border border-nokras/5 hover:shadow-xl transition-all reveal-up" id="perk1">
+                    <div class="perk-icon w-16 h-16 rounded-2xl bg-gold/10 flex items-center justify-center mb-6 text-gold">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-nokras mb-3">Earn Points</h3>
+                    <p class="text-nokras/60 text-sm leading-relaxed">Earn 10 points for every KES 1,000 spent on rooms, dining, and experiences. Bonus points on weekends and holidays.</p>
+                    <div class="mt-4 pt-4 border-t border-nokras/5">
+                        <span class="text-gold font-medium text-sm">10 pts / KES 1,000</span>
+                    </div>
+                </div>
+
+                <div class="perk-card bg-white rounded-3xl p-8 shadow-sm border border-nokras/5 hover:shadow-xl transition-all reveal-up" id="perk2" style="transition-delay: 0.1s;">
+                    <div class="perk-icon w-16 h-16 rounded-2xl bg-nokras/5 flex items-center justify-center mb-6 text-nokras">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-nokras mb-3">Exclusive Rewards</h3>
+                    <p class="text-nokras/60 text-sm leading-relaxed">Redeem points for room upgrades, spa treatments, private dining, and unforgettable experiences across all properties.</p>
+                    <div class="mt-4 pt-4 border-t border-nokras/5">
+                        <span class="text-gold font-medium text-sm">From 5,000 pts</span>
+                    </div>
+                </div>
+
+                <div class="perk-card bg-white rounded-3xl p-8 shadow-sm border border-nokras/5 hover:shadow-xl transition-all reveal-up" id="perk3" style="transition-delay: 0.2s;">
+                    <div class="perk-icon w-16 h-16 rounded-2xl bg-gold/10 flex items-center justify-center mb-6 text-gold">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-nokras mb-3">Member Tiers</h3>
+                    <p class="text-nokras/60 text-sm leading-relaxed">Rise through Silver, Gold, and Platinum tiers. Each level unlocks more points, exclusive benefits, and personalized service.</p>
+                    <div class="mt-4 pt-4 border-t border-nokras/5">
+                        <span class="text-gold font-medium text-sm">3 Tiers Available</span>
+                    </div>
+                </div>
+
+                <div class="perk-card bg-white rounded-3xl p-8 shadow-sm border border-nokras/5 hover:shadow-xl transition-all reveal-up" id="perk4" style="transition-delay: 0.3s;">
+                    <div class="perk-icon w-16 h-16 rounded-2xl bg-nokras/5 flex items-center justify-center mb-6 text-nokras">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-serif text-xl text-nokras mb-3">Instant Benefits</h3>
+                    <p class="text-nokras/60 text-sm leading-relaxed">Free breakfast, late checkout, welcome amenities, and priority reservations. Benefits start from your first stay.</p>
+                    <div class="mt-4 pt-4 border-t border-nokras/5">
+                        <span class="text-gold font-medium text-sm">Starting Tier: Silver</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Experience with Discount -->
+            <div class="mt-20 grid lg:grid-cols-2 gap-12 items-center">
+                <div class="img-reveal rounded-3xl overflow-hidden reveal-up relative">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80" alt="Dining Experience" class="w-full h-[500px] object-cover">
+                    <div class="absolute top-4 left-4">
+                        <span class="promo-badge">CHEF'S TABLE</span>
+                    </div>
+                </div>
+                <div class="reveal-up">
+                    <span class="text-gold text-xs tracking-widest uppercase mb-4 block">Culinary Excellence</span>
+                    <h3 class="font-serif text-4xl md:text-5xl text-nokras mb-6">Farm to Table,<br>River to Plate</h3>
+                    <p class="text-nokras/70 text-lg leading-relaxed mb-8">
+                        Our executive chefs work with local farmers and fishermen to create menus that celebrate Kenya's bounty. Dine under the stars, beside the river, or in the intimacy of your suite. Earn double points on all dining experiences.
+                    </p>
+                    <div class="flex items-center gap-4 mb-6">
+                        <button onclick="showMenuModal()" class="magnetic px-6 py-3 bg-nokras text-white rounded-full text-sm tracking-wide hover:bg-gold transition-colors hover-target">
+                            View Full Menu
+                        </button>
+                        <span class="text-nokras/40 text-sm">or</span>
+                        <button onclick="openBooking()" class="link-animated text-nokras text-sm hover-target">Reserve Dining</button>
+                    </div>
+                    <div class="flex items-center gap-4 p-4 bg-gold/10 rounded-xl border border-gold/20">
+                        <div class="text-3xl">🍷</div>
+                        <div>
+                            <div class="font-medium text-nokras">Wine Pairing Experience</div>
+                            <div class="text-sm text-nokras/60">Complimentary with dinner reservations this week + Double Points</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-32 bg-nokras text-white relative overflow-hidden">
+        <div class="absolute inset-0 opacity-10">
+            <div class="absolute top-0 left-0 w-full h-full bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        </div>
+        
+        <div class="max-w-5xl mx-auto px-6 md:px-12 relative z-10 text-center">
+            <svg class="w-16 h-16 text-gold/30 mx-auto mb-8 reveal-up" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
+            </svg>
+            
+            <blockquote class="font-serif text-3xl md:text-5xl leading-tight mb-8 reveal-up">
+                "Nokras doesn't just offer accommodation—it offers a <span class="italic text-gold">transformation</span>. Every detail whispers luxury while shouting authenticity."
+            </blockquote>
+            
+            <div class="reveal-up">
+                <div class="text-gold font-medium mb-1">Kimutai Griffins </div>
+                <div class="text-white/60 text-sm">Software Craftsman</div>
+            </div>
+
+            <!-- Trust Badges -->
+        
+        </div>
+    </section>
+
+    <!-- CTA Section with Offers -->
+    <section class="py-32 bg-cream relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-nokras/5 to-transparent"></div>
+        
+        <div class="max-w-6xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h2 class="font-serif text-5xl md:text-6xl text-nokras mb-6 reveal-up">Begin Your Journey</h2>
+                    <p class="text-nokras/60 text-lg mb-8 reveal-up">
+                        Whether you seek adventure, tranquility, or urban sophistication, Nokras awaits. Your experience begins with a single click.
+                    </p>
+                    
+                    <!-- Current Offers -->
+                    <div class="space-y-4 mb-8 reveal-up">
+                        <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-nokras/5">
+                            <div class="promo-badge text-[10px]">WEEKEND</div>
+                            <div class="flex-1">
+                                <div class="font-medium text-nokras text-sm">Stay 2 nights, get 3rd night 50% off</div>
+                                <div class="text-xs text-nokras/50">Valid until Dec 31, 2026</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4 p-4 bg-white rounded-xl shadow-sm border border-nokras/5">
+                            <div class="bg-blue-500 text-white text-[10px] px-2 py-1 rounded-full font-bold">FAMILY</div>
+                            <div class="flex-1">
+                                <div class="font-medium text-nokras text-sm">Kids under 12 stay & eat free</div>
+                                <div class="text-xs text-nokras/50">All properties, all year round</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 reveal-up">
+                        <button onclick="openBooking()" class="magnetic px-10 py-5 bg-nokras text-white rounded-full text-sm tracking-wide hover:bg-gold transition-all duration-300 hover-target inline-flex items-center justify-center gap-2 group shadow-lg shadow-nokras/20">
+                            <span>Book Your Stay</span>
+                            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                            </svg>
+                        </button>
+                        <button onclick="showTasklist()" class="magnetic px-10 py-5 border border-nokras/20 text-nokras rounded-full text-sm tracking-wide hover:bg-nokras hover:text-white transition-all duration-300 hover-target inline-flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"/>
+                            </svg>
+                            <span>View Roadmap</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Visual Side -->
+                <div class="relative reveal-up">
+                    <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-nokras/10">
+                        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Nokras Experience" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <!-- Floating Stats Card -->
+                    <div class="absolute -bottom-6 -left-6 bg-white rounded-2xl p-6 shadow-xl border border-nokras/5">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gold/20 rounded-full flex items-center justify-center text-gold text-xl">📞</div>
+                            <div>
+                                <div class="font-serif text-nokras text-lg">24/7 Reservations</div>
+                                <div class="text-nokras/60 text-sm">+254 712 345 678</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Moving Advert Section -->
+    <section class="py-16 bg-gradient-to-r from-gold/10 to-gold/5 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-nokras/20 to-transparent"></div>
+        <div class="max-w-7xl mx-auto px-6 md:px-12 relative z-10">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal-up">
+                    <h3 class="font-serif text-4xl md:text-5xl text-nokras mb-6">Exclusive Offer</h3>
+                    <p class="text-nokras/70 text-lg mb-8">Book any suite for 3 nights and get the 4th night completely free!</p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <button onclick="openBooking()" class="magnetic px-8 py-4 bg-nokras text-white rounded-full text-sm tracking-wide hover:bg-gold transition-colors hover-target">
+                            Book Now
+                        </button>
+                        <span class="text-nokras/40 text-sm">Offer valid until March 31st</span>
+                    </div>
+                </div>
+                <div class="relative reveal-up">
+                    <div class="aspect-[4/5] rounded-3xl overflow-hidden bg-nokras/10">
+                        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="Suite" class="w-full h-full object-cover hover:scale-105 transition-transform duration-700">
+                    </div>
+                    <div class="absolute top-4 left-4">
+                        <span class="promo-badge">SUITE DEAL</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+<!-- PROPERTY GALLERY SECTION -->
+<section id="gallery" class="py-24 bg-cream">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <span class="text-gold text-sm tracking-[0.3em] uppercase">Discover</span>
+            <h2 class="font-serif text-5xl text-nokras mt-4">Our Properties</h2>
+            <p class="text-nokras/60 mt-4 max-w-2xl mx-auto">Experience luxury across four stunning locations</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="gallery-item group cursor-pointer" onclick="openGallery(0)">
+                <div class="relative h-80 rounded-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600" alt="Riverine" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-nokras/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <h3 class="font-serif text-2xl">Riverine</h3>
+                        <p class="text-sm text-white/80">Luxury Safari Lodge</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-item group cursor-pointer" onclick="openGallery(1)">
+                <div class="relative h-80 rounded-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?w=600" alt="Enkare" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-nokras/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <h3 class="font-serif text-2xl">Enkare</h3>
+                        <p class="text-sm text-white/80">Mountain Retreat</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-item group cursor-pointer" onclick="openGallery(2)">
+                <div class="relative h-80 rounded-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=600" alt="Sagana" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-nokras/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <h3 class="font-serif text-2xl">Sagana</h3>
+                        <p class="text-sm text-white/80">Country Estate</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gallery-item group cursor-pointer" onclick="openGallery(3)">
+                <div class="relative h-80 rounded-2xl overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=600" alt="Murang'a" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-gradient-to-t from-nokras/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div class="absolute bottom-4 left-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                        <h3 class="font-serif text-2xl">Murang'a</h3>
+                        <p class="text-sm text-white/80">Highland Haven</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="text-center mt-12">
+            <button onclick="openVirtualTour()" class="px-8 py-4 bg-nokras text-white rounded-full hover:bg-gold transition-colors duration-300 flex items-center gap-3 mx-auto">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                Start Virtual Tour
+            </button>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer class="py-16 bg-nokras text-white">
+    <div class="max-w-7xl mx-auto px-6 md:px-12">
+        <div class="grid md:grid-cols-4 gap-12 mb-12">
+            <div class="md:col-span-2">
+                <div class="text-3xl font-serif italic text-gold mb-4">Nokras</div>
+                <p class="text-white/60 text-sm max-w-sm leading-relaxed mb-6">
+                    Kenya's premier hospitality collection. Four properties, one philosophy: authentic luxury rooted in place.
+                </p>
+                <div class="flex gap-4">
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors hover-target">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                    </a>
+                    <a href="#" class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:bg-gold transition-colors hover-target">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div>
+                <div class="text-xs tracking-widest uppercase text-white/40 mb-4">Properties</div>
+                <ul class="space-y-3 text-sm text-white/80">
+                    <li><a href="#" onclick="scrollToBranch(0)" class="hover:text-gold transition-colors hover-target">Nokras Riverine</a></li>
+                    <li><a href="#" onclick="scrollToBranch(1)" class="hover:text-gold transition-colors hover-target">Nokras Enkare</a></li>
+                    <li><a href="#" onclick="scrollToBranch(2)" class="hover:text-gold transition-colors hover-target">Nokras Sagana</a></li>
+                    <li><a href="#" onclick="scrollToBranch(3)" class="hover:text-gold transition-colors hover-target">Nokras Murang'a</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="text-xs tracking-widest uppercase text-white/40 mb-4">Contact</div>
+                <ul class="space-y-3 text-sm text-white/80">
+                    <li>reservations@nokras.co.ke</li>
+                    <li>+254 712 345 678</li>
+                    <li>Sagana, Kenya</li>
+                </ul>
+            </div>
+        </div>
+        <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
+            <div>© 2026 Nokras Hotels. All rights reserved.</div>
+            <div class="flex gap-6">
+                <a href="#" class="hover:text-white transition-colors">Privacy</a>
+                <a href="#" class="hover:text-white transition-colors">Terms</a>
+                <a href="#" onclick="showTasklist()" class="hover:text-gold transition-colors">Developer Roadmap</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+    <script>
+        // Register GSAP Plugins
+        gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+
+        // Check for reduced motion
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Loading Animation
+        window.addEventListener('load', () => {
+            const loader = document.getElementById('loader');
+            const loaderLogo = document.getElementById('loaderLogo');
+            const loaderProgress = document.getElementById('loaderProgress');
+            const loaderPercent = document.getElementById('loaderPercent');
+            
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    setTimeout(() => {
+                        gsap.to(loader, {
+                            yPercent: -100,
+                            duration: 1,
+                            ease: 'power3.inOut',
+                            onComplete: initExperience
+                        });
+                    }, 300);
+                }
+                loaderProgress.style.width = progress + '%';
+                loaderPercent.textContent = Math.floor(progress) + '%';
+            }, 100);
+            
+            gsap.to(loaderLogo, { opacity: 1, scale: 1, duration: 0.8, ease: 'power3.out' });
+            gsap.to('.loader-text', { opacity: 1, duration: 0.6, delay: 0.3 });
+            gsap.to(loaderPercent, { opacity: 1, duration: 0.6, delay: 0.3 });
+        });
+
+        function initExperience() {
+            if (prefersReducedMotion) {
+                gsap.set('.hero-text, .hero-elem', { opacity: 1, y: 0 });
+                document.getElementById('navbar').classList.remove('opacity-0', '-translate-y-full');
+                return;
+            }
+
+            const heroTl = gsap.timeline();
+            
+            heroTl.to('.split-line-inner', {
+                y: 0,
+                duration: 1.2,
+                stagger: 0.15,
+                ease: 'power3.out'
+            })
+            .to('.hero-elem', {
+                opacity: 1,
+                y: 0,
+                duration: 0.8,
+                stagger: 0.1,
+                ease: 'power3.out'
+            }, '-=0.8')
+            .to('#navbar', {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                ease: 'power3.out'
+            }, '-=0.6')
+            .to('#scrollHint', {
+                opacity: 1,
+                duration: 0.6
+            }, '-=0.4');
+
+            gsap.set('.split-line-inner', { y: '100%' });
+            gsap.set('.hero-elem', { opacity: 0, y: 30 });
+
+            gsap.to('#heroBg', {
+                yPercent: 30,
+                ease: 'none',
+                scrollTrigger: {
+                    trigger: '#experience',
+                    start: 'top top',
+                    end: 'bottom top',
+                    scrub: true
+                }
+            });
+
+            ScrollTrigger.create({
+                trigger: '#experience',
+                start: 'top top',
+                end: '+=500',
+                onUpdate: (self) => {
+                    gsap.to('#scrollHint', { opacity: 1 - self.progress, duration: 0.3 });
+                }
+            });
+
+            initBranchSystem();
+
+            gsap.utils.toArray('.reveal-up').forEach(elem => {
+                gsap.fromTo(elem, 
+                    { y: 40, opacity: 0 },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        duration: 0.8,
+                        ease: 'power3.out',
+                        scrollTrigger: {
+                            trigger: elem,
+                            start: 'top 85%',
+                            once: true
+                        }
+                    }
+                );
+            });
+
+            gsap.utils.toArray('.img-reveal').forEach(img => {
+                ScrollTrigger.create({
+                    trigger: img,
+                    start: 'top 80%',
+                    onEnter: () => img.classList.add('revealed')
+                });
+            });
+        }
+
+        // FIXED: 4-Branch System with Proper Scroll Calculations
+        function initBranchSystem() {
+            const scenes = document.querySelectorAll('.branch-scene');
+            const letters = document.querySelectorAll('.letter-nav');
+            const dots = document.querySelectorAll('.nav-dot');
+            const container = document.querySelector('.branch-container');
+            
+            // Create ScrollTrigger for each of the 4 scenes
+            scenes.forEach((scene, index) => {
+                ScrollTrigger.create({
+                    trigger: container,
+                    start: () => `top+=${index * 25}% top`,
+                    end: () => `top+=${(index + 1) * 25}% top`,
+                    onEnter: () => activateScene(index),
+                    onEnterBack: () => activateScene(index),
+                    onUpdate: (self) => {
+                        if (self.progress > 0.1 && self.progress < 0.9) {
+                            letters[index]?.classList.add('active');
+                            dots[index]?.classList.add('active');
+                        }
+                    }
+                });
+            });
+
+            function activateScene(index) {
+                scenes.forEach((scene, i) => {
+                    if (i === index) {
+                        scene.classList.add('active');
+                    } else {
+                        scene.classList.remove('active');
+                    }
+                });
+
+                letters.forEach((letter, i) => {
+                    if (i === index) {
+                        gsap.to(letter, { opacity: 1, scale: 1.1, duration: 0.6, ease: 'power3.out' });
+                        letter.classList.add('active');
+                    } else {
+                        gsap.to(letter, { opacity: 0.08, scale: 1, duration: 0.6, ease: 'power3.out' });
+                        letter.classList.remove('active');
+                    }
+                });
+
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+            }
+        }
+
+        function scrollToBranch(index) {
+            const container = document.querySelector('.branch-container');
+            const targetY = container.offsetTop + (index * (container.offsetHeight / 4));
+            
+            gsap.to(window, {
+                duration: 1.5,
+                scrollTo: { y: targetY, autoKill: false },
+                ease: 'power3.inOut'
+            });
+        }
+
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                gsap.to(window, {
+                    duration: 1.2,
+                    scrollTo: element,
+                    ease: 'power3.inOut'
+                });
+            }
+        }
+
+        // Close Ad Banner Function
+        function closeAdBanner() {
+            const banner = document.getElementById('adBanner');
+            const navbar = document.getElementById('navbar');
+            
+            // Fade out the banner smoothly
+            banner.style.opacity = '0';
+            banner.style.transform = 'translateY(-100%)';
+            
+            // After fade animation, adjust navbar position
+            setTimeout(() => {
+                banner.style.display = 'none';
+                // Change navbar from top-12 to top-0 for smooth transition
+                navbar.classList.remove('top-12');
+                navbar.classList.add('top-0');
+                // Also update the padding/margin to ensure smooth movement
+                navbar.style.transition = 'top 0.5s ease';
+            }, 500);
+        }
+
+        // Animated Text for Ad Banner
+        function animateAdText() {
+            const textElements = document.querySelectorAll('.text-anim');
+            textElements.forEach((text, index) => {
+                gsap.to(text, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 1,
+                    ease: 'power3.out',
+                    delay: index * 2.67
+                });
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateAdText();
+        });
+
+        // Enhanced Booking Functions
+        function openBooking(property = '') {
+            const modal = document.getElementById('bookingModal');
+            const content = document.getElementById('bookingContent');
+            
+            if (property) {
+                const radio = document.querySelector(`input[name="property"][value="${property}"]`);
+                if (radio) radio.checked = true;
+            }
+            
+            modal.classList.remove('invisible', 'opacity-0');
+            modal.classList.add('visible', 'opacity-100');
+            document.body.style.overflow = 'hidden';
+            
+            gsap.to(content, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power3.out',
+                delay: 0.1
+            });
+            
+            calculatePrice();
+        }
+
+        function closeBooking() {
+            const modal = document.getElementById('bookingModal');
+            const content = document.getElementById('bookingContent');
+            
+            gsap.to(content, {
+                scale: 0.95,
+                opacity: 0,
+                duration: 0.3,
+                ease: 'power3.in',
+                onComplete: () => {
+                    modal.classList.add('invisible', 'opacity-0');
+                    modal.classList.remove('visible', 'opacity-100');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // Dynamic Children Fields
+        function updateChildrenFields() {
+            const count = parseInt(document.getElementById('children').value);
+            const container = document.getElementById('childrenAgesContainer');
+            const agesDiv = document.getElementById('childrenAges');
+            
+            if (count === 0) {
+                container.classList.add('hidden');
+                return;
+            }
+            
+            container.classList.remove('hidden');
+            agesDiv.innerHTML = '';
+            
+            for (let i = 0; i < count; i++) {
+                const row = document.createElement('div');
+                row.className = 'child-age-row';
+                row.innerHTML = `
+                    <span class="text-sm text-nokras/60 w-20">Child ${i + 1}:</span>
+                    <select class="child-age-select flex-1 px-3 py-2 bg-white/50 border border-nokras/10 rounded-lg text-sm focus:border-gold focus:outline-none" onchange="calculatePrice()">
+                        <option value="0">Under 3 (Free)</option>
+                        <option value="3">3-5 years</option>
+                        <option value="6">6-8 years</option>
+                        <option value="9">9-12 years</option>
+                    </select>
+                `;
+                agesDiv.appendChild(row);
+            }
+            
+            calculatePrice();
+        }
+
+        // Price Calculator
+        function calculatePrice() {
+            const property = document.querySelector('input[name="property"]:checked');
+            const checkIn = document.getElementById('checkIn').value;
+            const checkOut = document.getElementById('checkOut').value;
+            const adults = parseInt(document.getElementById('adults').value);
+            const children = parseInt(document.getElementById('children').value);
+            const room = document.querySelector('input[name="room"]:checked');
+            
+            if (!property || !checkIn || !checkOut) {
+                document.getElementById('totalPrice').textContent = 'KES 0';
+                document.getElementById('priceBreakdown').textContent = 'Select dates to see pricing';
+                return;
+            }
+            
+            const basePrice = parseInt(property.dataset.basePrice);
+            const roomMultiplier = parseFloat(room.dataset.multiplier);
+            const nights = Math.max(1, (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24));
+            
+            // Calculate child costs
+            let childCost = 0;
+            document.querySelectorAll('.child-age-select').forEach(select => {
+                const age = parseInt(select.value);
+                if (age >= 3 && age <= 12) {
+                    childCost += (basePrice * roomMultiplier) * 0.5; // 50% for kids 3-12
+                }
+                // Under 3 is free
+            });
+            
+            let total = ((basePrice * roomMultiplier * adults) + childCost) * nights;
+            
+            // Apply promo
+            const promoCode = document.getElementById('promoCode').value.toUpperCase();
+            let discount = 0;
+            if (promoCode === 'NOKRAS30') {
+                discount = total * 0.3;
+                total *= 0.7;
+                document.getElementById('discountBadge').style.display = 'block';
+                document.getElementById('savingsText').style.display = 'block';
+                document.getElementById('savingsText').textContent = `You save KES ${Math.floor(discount).toLocaleString()}`;
+            } else {
+                document.getElementById('discountBadge').style.display = 'none';
+                document.getElementById('savingsText').style.display = 'none';
+            }
+            
+            document.getElementById('totalPrice').textContent = `KES ${Math.floor(total).toLocaleString()}`;
+            document.getElementById('priceBreakdown').textContent = `${nights} night${nights > 1 ? 's' : ''} • ${adults} adult${adults > 1 ? 's' : ''}${children > 0 ? ` • ${children} child${children > 1 ? 'ren' : ''}` : ''}`;
+        }
+
+        function validatePromo() {
+            const code = document.getElementById('promoCode').value.toUpperCase();
+            const message = document.getElementById('promoMessage');
+            
+            if (code === 'NOKRAS30') {
+                message.textContent = '✓ 30% discount applied!';
+                message.className = 'text-xs text-green-600 mt-1';
+                message.classList.remove('hidden');
+            } else if (code === '') {
+                message.classList.add('hidden');
+            } else {
+                message.textContent = '✗ Invalid code. Try NOKRAS30';
+                message.className = 'text-xs text-red-500 mt-1';
+                message.classList.remove('hidden');
+            }
+            
+            calculatePrice();
+        }
+
+        function handleBooking(e) {
+            e.preventDefault();
+            alert('Thank you for your reservation! Our concierge will contact you shortly to confirm.');
+            closeBooking();
+        }
+
+        // Menu Modal
+        function showMenuModal() {
+            const modal = document.getElementById('menuModal');
+            const content = document.getElementById('menuContent');
+            
+            modal.classList.remove('invisible', 'opacity-0');
+            modal.classList.add('visible', 'opacity-100');
+            document.body.style.overflow = 'hidden';
+            
+            gsap.to(content, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power3.out',
+                delay: 0.1
+            });
+        }
+
+        function closeMenuModal() {
+            const modal = document.getElementById('menuModal');
+            const content = document.getElementById('menuContent');
+            
+            gsap.to(content, {
+                scale: 0.95,
+                opacity: 0,
+                duration: 0.3,
+                ease: 'power3.in',
+                onComplete: () => {
+                    modal.classList.add('invisible', 'opacity-0');
+                    modal.classList.remove('visible', 'opacity-100');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        // Tasklist Modal
+        function showTasklist() {
+            const modal = document.getElementById('tasklistModal');
+            const content = document.getElementById('tasklistContent');
+            
+            document.getElementById('lastUpdated').textContent = new Date().toLocaleDateString();
+            updateTaskCount();
+            
+            modal.classList.remove('invisible', 'opacity-0');
+            modal.classList.add('visible', 'opacity-100');
+            document.body.style.overflow = 'hidden';
+            
+            gsap.to(content, {
+                scale: 1,
+                opacity: 1,
+                duration: 0.5,
+                ease: 'power3.out',
+                delay: 0.1
+            });
+        }
+
+        function closeTasklist() {
+            const modal = document.getElementById('tasklistModal');
+            const content = document.getElementById('tasklistContent');
+            
+            gsap.to(content, {
+                scale: 0.95,
+                opacity: 0,
+                duration: 0.3,
+                ease: 'power3.in',
+                onComplete: () => {
+                    modal.classList.add('invisible', 'opacity-0');
+                    modal.classList.remove('visible', 'opacity-100');
+                    document.body.style.overflow = '';
+                }
+            });
+        }
+
+        function updateTaskCount() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const checked = document.querySelectorAll('.task-checkbox:checked');
+            document.getElementById('completedCount').textContent = `${checked.length}/${checkboxes.length} Done`;
+        }
+
+        function exportTasks() {
+            const tasks = [];
+            document.querySelectorAll('.task-checkbox').forEach((cb, i) => {
+                const text = cb.nextElementSibling.querySelector('.font-medium').textContent;
+                tasks.push(`${cb.checked ? '[x]' : '[ ]'} ${text}`);
+            });
+            
+            const blob = new Blob([tasks.join('\n')], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'nokras-roadmap.txt';
+            a.click();
+        }
+
+        // Custom Cursor
+        const cursor = document.querySelector('.cursor');
+        const cursorDot = document.querySelector('.cursor-dot');
+        const hoverTargets = document.querySelectorAll('.hover-target');
+
+        if (window.matchMedia('(pointer: fine)').matches && !prefersReducedMotion) {
+            let mouseX = 0, mouseY = 0;
+            let cursorX = 0, cursorY = 0;
+            
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+            });
+
+            function animateCursor() {
+                cursorX += (mouseX - cursorX) * 0.1;
+                cursorY += (mouseY - cursorY) * 0.1;
+                
+                cursor.style.left = cursorX + 'px';
+                cursor.style.top = cursorY + 'px';
+                
+                requestAnimationFrame(animateCursor);
+            }
+            animateCursor();
+
+            hoverTargets.forEach(target => {
+                target.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+                target.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+            });
+        }
+
+        // Magnetic Effect
+        const magneticElements = document.querySelectorAll('.magnetic');
+        magneticElements.forEach(elem => {
+            elem.addEventListener('mousemove', (e) => {
+                const rect = elem.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+                
+                gsap.to(elem, {
+                    x: x * 0.3,
+                    y: y * 0.3,
+                    duration: 0.3,
+                    ease: 'power3.out'
+                });
+            });
+            
+            elem.addEventListener('mouseleave', () => {
+                gsap.to(elem, {
+                    x: 0,
+                    y: 0,
+                    duration: 0.3,
+                    ease: 'power3.out'
+                });
+            });
+        });
+
+        // Mobile Menu
+        const menuBtn = document.getElementById('menuBtn');
+        const closeMenuBtn = document.getElementById('closeMenu');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        menuBtn?.addEventListener('click', () => {
+            mobileMenu.classList.remove('translate-x-full');
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeMenuBtn?.addEventListener('click', () => {
+            mobileMenu.classList.add('translate-x-full');
+            document.body.style.overflow = '';
+        });
+
+        document.querySelectorAll('.mobile-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                document.body.style.overflow = '';
+            });
+        });
+
+        // Navbar background with smart ad detection - STICKY HEADER
+        const navbar = document.getElementById('navbar');
+        const adBanner = document.getElementById('adBanner');
+        const body = document.body;
+        let lastScroll = 0;
+
+        function updateNavbarPosition() {
+            if (adBanner && adBanner.style.display !== 'none') {
+                // Ad is visible - navbar goes below it
+                navbar.style.top = '48px';
+                body.style.paddingTop = '0';
+            } else {
+                // Ad is closed - navbar goes to top
+                navbar.style.top = '0px';
+                body.style.paddingTop = '0';
+            }
+        }
+
+        // Initialize on load
+        window.addEventListener('load', () => {
+            updateNavbarPosition();
+            // Add scrolled class initially if page is scrolled
+            if (window.pageYOffset > 50) {
+                navbar.classList.add('bg-cream/90', 'backdrop-blur-md', 'shadow-sm');
+            }
+        });
+
+        // Listen for ad banner close - update navbar position
+        const closeAdBtn = adBanner?.querySelector('button');
+        if (closeAdBtn) {
+            closeAdBtn.addEventListener('click', () => {
+                setTimeout(() => {
+                    updateNavbarPosition();
+                }, 100);
+            });
+        }
+
+        window.addEventListener('scroll', () => {
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 50) {
+                navbar.classList.add('bg-cream/90', 'backdrop-blur-md', 'shadow-sm');
+            } else {
+                // Always show navbar when at top
+                navbar.classList.remove('bg-cream/90', 'backdrop-blur-md', 'shadow-sm');
+            }
+            
+            lastScroll = currentScroll;
+        }, { passive: true });
+
+        // Smooth scroll for anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    gsap.to(window, {
+                        duration: 1,
+                        scrollTo: target,
+                        ease: 'power3.inOut'
+                    });
+                }
+            });
+        });
+
+        // Close modals on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeBooking();
+                closeMenuModal();
+                closeTasklist();
+                closeGallery();
+                closeVirtualTour();
+                closeMpesaModal();
+                closeFAQ();
+            }
+        });
+
+        // Enhanced Loyalty Points Animations
+        function initLoyaltyAnimations() {
+            const perks = document.querySelectorAll('.perk-card');
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('revealed');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+            
+            perks.forEach(perk => {
+                observer.observe(perk);
+            });
+        }
+
+        // Initialize animations
+        window.addEventListener('load', () => {
+            animateAdText();
+            initLoyaltyAnimations();
+        });
+
+        // ========== GALLERY FUNCTIONALITY ==========
+        const galleryData = [
+            { title: 'Riverine Resort', desc: 'Luxury Safari Lodge along the Mara River', src: 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200' },
+            { title: 'Enkare Camp', desc: 'Mountain Retreat in the heart of nature', src: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1200' },
+            { title: 'Sagana Palace', desc: 'Historic Country Estate with modern amenities', src: 'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=1200' },
+            { title: "Murang'a Heights", desc: 'Highland Haven with panoramic views', src: 'https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1200' }
+        ];
+        let currentImage = 0;
+
+        function openGallery(index) {
+            currentImage = index;
+            updateGalleryImage();
+            const lightbox = document.getElementById('galleryLightbox');
+            lightbox.classList.remove('opacity-0', 'invisible');
+            lightbox.classList.add('opacity-100', 'visible');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGallery() {
+            const lightbox = document.getElementById('galleryLightbox');
+            lightbox.classList.add('opacity-0', 'invisible');
+            lightbox.classList.remove('opacity-100', 'visible');
+            document.body.style.overflow = '';
+        }
+
+        function updateGalleryImage() {
+            const data = galleryData[currentImage];
+            document.getElementById('lightboxImage').src = data.src;
+            document.getElementById('lightboxTitle').textContent = data.title;
+            document.getElementById('lightboxDesc').textContent = data.desc;
+            document.getElementById('lightboxCounter').textContent = `${currentImage + 1} / ${galleryData.length}`;
+        }
+
+        function nextImage() {
+            currentImage = (currentImage + 1) % galleryData.length;
+            updateGalleryImage();
+        }
+
+        function prevImage() {
+            currentImage = (currentImage - 1 + galleryData.length) % galleryData.length;
+            updateGalleryImage();
+        }
+
+        // Keyboard navigation for gallery
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('galleryLightbox').classList.contains('visible')) {
+                if (e.key === 'ArrowRight') nextImage();
+                if (e.key === 'ArrowLeft') prevImage();
+            }
+        });
+
+        // ========== VIRTUAL TOUR FUNCTIONALITY ==========
+        let panoramaViewer = null;
+        const tourImages = [
+            'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1600',
+            'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=1600',
+            'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=1600',
+            'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1600'
+        ];
+
+        function openVirtualTour() {
+            const tour = document.getElementById('virtualTour');
+            tour.classList.remove('opacity-0', 'invisible');
+            tour.classList.add('opacity-100', 'visible');
+            document.body.style.overflow = 'hidden';
+            initPanorama();
+        }
+
+        function closeVirtualTour() {
+            const tour = document.getElementById('virtualTour');
+            tour.classList.add('opacity-0', 'invisible');
+            tour.classList.remove('opacity-100', 'visible');
+            document.body.style.overflow = '';
+        }
+
+        function initPanorama() {
+            const container = document.getElementById('panorama');
+            container.innerHTML = '';
+            
+            // Create a simple panorama viewer using CSS 3D
+            const viewer = document.createElement('div');
+            viewer.className = 'panorama-viewer';
+            viewer.style.cssText = 'width: 100%; height: 100%; background-size: cover; background-position: center; background-image: url(' + tourImages[0] + '); cursor: grab;';
+            
+            let isDragging = false;
+            let startX = 0;
+            let bgPos = 50;
+            
+            viewer.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+            });
+            
+            viewer.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const delta = e.clientX - startX;
+                bgPos = Math.max(0, Math.min(100, bgPos + delta * 0.1));
+                viewer.style.backgroundPosition = bgPos + '% 50%';
+                startX = e.clientX;
+            });
+            
+            viewer.addEventListener('mouseup', () => isDragging = false);
+            viewer.addEventListener('mouseleave', () => isDragging = false);
+            
+            // Touch support
+            viewer.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                startX = e.touches[0].clientX;
+            });
+            
+            viewer.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const delta = e.touches[0].clientX - startX;
+                bgPos = Math.max(0, Math.min(100, bgPos + delta * 0.1));
+                viewer.style.backgroundPosition = bgPos + '% 50%';
+                startX = e.touches[0].clientX;
+            });
+            
+            viewer.addEventListener('touchend', () => isDragging = false);
+            
+            container.appendChild(viewer);
+            
+            // Auto-rotate
+            let autoRotate = setInterval(() => {
+                if (document.getElementById('virtualTour').classList.contains('visible')) {
+                    bgPos = (bgPos + 0.1) % 100;
+                    viewer.style.backgroundPosition = bgPos + '% 50%';
+                }
+            }, 50);
+        }
+
+        function changeRoom(index) {
+            const container = document.getElementById('panorama');
+            const viewer = container.querySelector('.panorama-viewer');
+            if (viewer) {
+                viewer.style.backgroundImage = `url(${tourImages[index]})`;
+            }
+        }
+
+        function resetView() {
+            const viewer = document.querySelector('.panorama-viewer');
+            if (viewer) {
+                viewer.style.backgroundPosition = '50% 50%';
+            }
+        }
+
+        function toggleFullscreen() {
+            const tour = document.getElementById('virtualTour');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                tour.requestFullscreen();
+            }
+        }
+
+        // ========== CHATBOT FUNCTIONALITY ==========
+        function toggleChat() {
+            const chatWindow = document.getElementById('chatWindow');
+            chatWindow.classList.toggle('hidden');
+            if (!chatWindow.classList.contains('hidden')) {
+                document.getElementById('chatInput').focus();
+            }
+        }
+
+        function quickReply(message) {
+            document.getElementById('chatInput').value = message;
+            sendMessage();
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            const messages = document.getElementById('chatMessages');
+            
+            // Add user message
+            const userMsg = document.createElement('div');
+            userMsg.className = 'flex justify-end';
+            userMsg.innerHTML = `
+                <div class="bg-nokras text-white rounded-2xl rounded-tr-none p-3 max-w-[85%] sm:max-w-[80%]">
+                    <p class="text-sm leading-relaxed">${message}</p>
+                </div>
+            `;
+            messages.appendChild(userMsg);
+            
+            input.value = '';
+            messages.scrollTop = messages.scrollHeight;
+
+            // Simulate AI response
+            setTimeout(() => {
+                const response = getBotResponse(message);
+                const botMsg = document.createElement('div');
+                botMsg.className = 'flex gap-2 items-start';
+                botMsg.innerHTML = `
+                    <div class="w-8 h-8 bg-nokras rounded-full flex-shrink-0 flex items-center justify-center mt-0.5">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="bg-nokras/10 rounded-2xl rounded-tl-none p-3 max-w-[85%] sm:max-w-[80%]">
+                        <p class="text-sm text-nokras leading-relaxed">${response}</p>
+                    </div>
+                `;
+                messages.appendChild(botMsg);
+                messages.scrollTop = messages.scrollHeight;
+            }, 1000);
+        }
+
+        function getBotResponse(message) {
+            const lower = message.toLowerCase();
+            if (lower.includes('book')) {
+                return "I'd be happy to help you book a stay! We have rooms starting from KSh 15,000 per night. Would you like me to check availability for your preferred dates?";
+            } else if (lower.includes('rate') || lower.includes('price') || lower.includes('cost')) {
+                return "Our room rates start from KSh 15,000 for standard rooms, KSh 25,000 for deluxe, and KSh 45,000 for suites. All rates include breakfast!";
+            } else if (lower.includes('dining') || lower.includes('food') || lower.includes('restaurant')) {
+                return "We offer fine dining at our restaurants across all properties. Our menus feature both local Kenyan cuisine and international dishes. Would you like to see our menu options?";
+            } else if (lower.includes('location') || lower.includes('where')) {
+                return "Nokras has 4 properties: Riverine (Masai Mara), Enkare (Naivasha), Sagana (Kirinyaga), and Murang'a (Central Kenya). Which location interests you?";
+            } else if (lower.includes('pool') || lower.includes('spa') || lower.includes('gym')) {
+                return "All our properties feature swimming pools, and many have spas and fitness centers. The Riverine resort has our award-winning spa!";
+            } else if (lower.includes('faq') || lower.includes('question')) {
+                return "Click the FAQ button to see common questions and answers!";
+            } else {
+                return "Thank you for your interest in Nokras! I can help you with bookings, rates, dining options, or property information. What would you like to know?";
+            }
+        }
+
+        // FAQ Functions
+        function showFAQ() {
+            const modal = document.getElementById('faqModal');
+            const content = document.getElementById('faqContent');
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 100);
+        }
+
+        function closeFAQ() {
+            const modal = document.getElementById('faqModal');
+            const content = document.getElementById('faqContent');
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'invisible');
+                modal.classList.remove('opacity-100', 'visible');
+            }, 300);
+        }
+
+        function toggleFAQ(button) {
+            const answer = button.nextElementSibling;
+            const arrow = button.querySelector('svg');
+            answer.classList.toggle('hidden');
+            arrow.classList.toggle('rotate-180');
+        }
+
+        // Enter key to send message
+        document.getElementById('chatInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        // ========== M-PESA PAYMENT MODAL ==========
+        function showMpesaModal() {
+            const modal = document.getElementById('mpesaModal');
+            const content = document.getElementById('mpesaContent');
+            
+            // Generate random transaction details
+            const txnId = 'QHK' + Math.random().toString(36).substring(2, 8).toUpperCase();
+            const receipt = 'MPX' + Math.floor(Math.random() * 10000000);
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) + ' ' + now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+            
+            document.getElementById('txnId').textContent = txnId;
+            document.getElementById('mpesaReceipt').textContent = receipt;
+            document.getElementById('txnTime').textContent = dateStr;
+            
+            modal.classList.remove('opacity-0', 'invisible');
+            modal.classList.add('opacity-100', 'visible');
+            
+            setTimeout(() => {
+                content.classList.remove('scale-95', 'opacity-0');
+                content.classList.add('scale-100', 'opacity-100');
+            }, 100);
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMpesaModal() {
+            const modal = document.getElementById('mpesaModal');
+            const content = document.getElementById('mpesaContent');
+            
+            content.classList.add('scale-95', 'opacity-0');
+            content.classList.remove('scale-100', 'opacity-100');
+            
+            setTimeout(() => {
+                modal.classList.add('opacity-0', 'invisible');
+                modal.classList.remove('opacity-100', 'visible');
+            }, 300);
+            
+            document.body.style.overflow = '';
+        }
+
+        function downloadInvoice() {
+            alert('Invoice download functionality - would generate PDF in production');
+        }
+
+        function emailReceipt() {
+            alert('Receipt would be emailed in production');
+        }
+    </script>
+
+    <!-- GALLERY LIGHTBOX -->
+    <div id="galleryLightbox" class="fixed inset-0 z-[9999] bg-nokras/98 backdrop-blur-xl opacity-0 invisible transition-all duration-500">
+        <button onclick="closeGallery()" class="absolute top-6 right-6 text-white/60 hover:text-white z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        
+        <button onclick="prevImage()" class="absolute left-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white p-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        </button>
+        
+        <button onclick="nextImage()" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/60 hover:text-white p-4">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+        </button>
+        
+        <div class="flex items-center justify-center h-full p-20">
+            <div class="text-center">
+                <img id="lightboxImage" src="" alt="Property" class="max-h-[60vh] rounded-2xl mx-auto">
+                <h3 id="lightboxTitle" class="font-serif text-3xl text-white mt-6"></h3>
+                <p id="lightboxDesc" class="text-white/60 mt-2"></p>
+                <div id="lightboxCounter" class="text-white/40 mt-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 360° VIRTUAL TOUR -->
+    <div id="virtualTour" class="fixed inset-0 z-[9998] bg-nokras opacity-0 invisible transition-all duration-500">
+        <button onclick="closeVirtualTour()" class="absolute top-6 right-6 text-white/60 hover:text-white z-10">
+            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        
+        <div class="absolute top-6 left-6 z-10">
+            <h3 class="font-serif text-2xl text-white">360° Virtual Tour</h3>
+            <p class="text-white/60 text-sm">Explore our luxury spaces</p>
+        </div>
+        
+        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10">
+            <select id="roomSelector" onchange="changeRoom(this.value)" class="px-6 py-3 bg-white/10 backdrop-blur-md text-white rounded-full border border-white/20 focus:outline-none">
+                <option value="0">Grand Lobby</option>
+                <option value="1">Luxury Suite</option>
+                <option value="2">Pool Area</option>
+                <option value="3">Restaurant</option>
+            </select>
+        </div>
+        
+        <div id="panorama" class="w-full h-full"></div>
+        
+        <div class="absolute bottom-6 right-6 z-10 flex gap-3">
+            <button onclick="resetView()" class="p-3 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-white/20">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </button>
+            <button onclick="toggleFullscreen()" class="p-3 bg-white/10 backdrop-blur-md text-white rounded-full hover:bg-white/20">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- AI CHATBOT WIDGET "NIA" -->
+    <div id="chatbot" class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[9997]">
+        <div id="chatToggle" onclick="toggleChat()" class="w-12 h-12 sm:w-14 sm:h-14 bg-nokras rounded-full flex items-center justify-center cursor-pointer shadow-lg hover:bg-gold transition-colors duration-300 relative">
+            <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+            <span class="absolute -top-1 -right-1 w-5 h-5 bg-gold text-white text-xs rounded-full flex items-center justify-center">1</span>
+        </div>
+        
+        <div id="chatWindow" class="hidden w-[calc(100vw-2rem)] sm:w-72 md:w-80 lg:w-96 h-[70vh] sm:h-96 bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden absolute bottom-16 sm:bottom-20 right-0">
+            <div class="bg-nokras p-4 sm:p-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-gold rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="min-w-0">
+                        <h4 class="text-white font-serif text-base sm:text-lg truncate">Nokras Chat Agent</h4>
+                        <p class="text-white/60 text-xs">Support Assistant</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="chatMessages" class="h-[calc(70vh-8rem)] sm:h-48 md:h-56 overflow-y-auto p-3 sm:p-4 space-y-3">
+                <div class="flex gap-2 items-start">
+                    <div class="w-8 h-8 bg-nokras rounded-full flex-shrink-0 flex items-center justify-center mt-0.5">
+                        <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                    </div>
+                    <div class="bg-nokras/10 rounded-2xl rounded-tl-none p-3 max-w-[85%] sm:max-w-[80%]">
+                        <p class="text-sm text-nokras leading-relaxed">Hello! I'm the Nokras Chat Agent, your dedicated support assistant. How can I help you today?</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-3 sm:p-3 border-t border-gray-100">
+                <div class="flex flex-wrap gap-1.5 sm:gap-2 mb-2">
+                    <button onclick="quickReply('Book a room')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 bg-nokras/10 text-nokras text-xs rounded-full hover:bg-nokras/20 transition-colors whitespace-nowrap">Book a room</button>
+                    <button onclick="quickReply('Room rates')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 bg-nokras/10 text-nokras text-xs rounded-full hover:bg-nokras/20 transition-colors whitespace-nowrap">Rates</button>
+                    <button onclick="quickReply('Dining options')" class="px-2.5 sm:px-3 py-1.5 sm:py-1 bg-nokras/10 text-nokras text-xs rounded-full hover:bg-nokras/20 transition-colors whitespace-nowrap">Dining</button>
+                    <button onclick="showFAQ()" class="px-2.5 sm:px-3 py-1.5 sm:py-1 bg-gold/20 text-gold text-xs rounded-full hover:bg-gold/30 transition-colors flex items-center gap-1 whitespace-nowrap">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        FAQ
+                    </button>
+                </div>
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" placeholder="Type a message..." class="flex-1 px-3 sm:px-4 py-2 bg-nokras/10 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-nokras">
+                    <button onclick="sendMessage()" class="w-9 h-9 sm:w-10 sm:h-10 bg-nokras text-white rounded-full flex items-center justify-center hover:bg-gold transition-colors flex-shrink-0">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Modal -->
+    <div id="faqModal" class="fixed inset-0 z-[9999] bg-nokras/95 backdrop-blur-xl opacity-0 invisible transition-all duration-500">
+        <div class="flex items-center justify-center h-full p-4">
+            <div class="bg-white rounded-3xl max-w-lg w-full max-h-[80vh] overflow-hidden transform scale-95 opacity-0 transition-all duration-500" id="faqContent">
+                <div class="bg-nokras p-4 flex items-center justify-between">
+                    <h3 class="font-serif text-xl text-white">Frequently Asked Questions</h3>
+                    <button onclick="closeFAQ()" class="text-white/60 hover:text-white">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                    </button>
+                </div>
+                <div class="p-4 overflow-y-auto max-h-[60vh]">
+                    <div class="space-y-3">
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">What are the check-in/check-out times?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Check-in is from 2:00 PM and check-out is until 11:00 AM. Early check-in and late check-out can be arranged upon request.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">What is your cancellation policy?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Free cancellation up to 48 hours before check-in. For bookings with special offers, please refer to the specific terms.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">Do you offer airport transfers?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Yes! We offer airport transfers at additional cost. Please contact us with your flight details before your arrival.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">Is breakfast included?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Yes, complimentary breakfast is included with all room bookings. We offer both buffet and à la carte options.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">What payment methods do you accept?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">We accept M-Pesa, Visa, Mastercard, American Express, and bank transfers. Corporate billing available for approved companies.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">Do you have a swimming pool?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Yes! All our properties feature swimming pools. The Riverine resort also has a heated pool and kids' pool.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">Can I bring pets?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">We love pets! Dogs and cats are welcome at select properties. A pet fee of KSh 2,000 per stay applies.</div>
+                        </div>
+                        <div class="faq-item border border-nokras/10 rounded-xl overflow-hidden">
+                            <button onclick="toggleFAQ(this)" class="w-full p-4 text-left flex justify-between items-center">
+                                <span class="font-medium text-nokras text-sm">Do you have conference facilities?</span>
+                                <svg class="w-5 h-5 text-nokras/40 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            </button>
+                            <div class="hidden p-4 pt-0 text-sm text-nokras/70">Yes! All properties have conference rooms and event spaces. Contact our events team for custom quotes.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- M-PESA PAYMENT MODAL -->
+    <div id="mpesaModal" class="fixed inset-0 z-[9998] bg-nokras/95 backdrop-blur-xl opacity-0 invisible transition-all duration-500">
+        <div class="flex items-center justify-center min-h-full p-4 py-12 md:py-4">
+            <div class="bg-white rounded-3xl max-w-lg w-full overflow-hidden transform scale-95 opacity-0 transition-all duration-500 relative" id="mpesaContent">
+                <!-- Close Button - More visible on mobile -->
+                <button onclick="closeMpesaModal()" class="absolute top-3 right-3 md:top-4 md:right-4 w-10 h-10 rounded-full bg-nokras/10 flex items-center justify-center hover:bg-nokras/20 transition-colors z-10">
+                    <svg class="w-5 h-5 text-nokras" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+                
+                <div class="bg-nokras p-4 md:p-6 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 bg-gradient-to-br from-gold/20 to-transparent"></div>
+                    <div class="relative">
+                        <div class="w-12 h-12 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-3 md:mb-4">
+                            <svg class="w-6 h-6 md:w-8 md:h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                        </div>
+                        <h3 class="font-serif text-xl md:text-2xl text-white">Payment Successful!</h3>
+                        <p class="text-white/60 text-xs md:text-sm mt-1">M-Pesa Transaction Confirmed</p>
+                    </div>
+                </div>
+                
+                <div class="p-3 md:p-6 max-h-[70vh] overflow-y-auto">
+                    <div class="bg-cream rounded-2xl p-3 md:p-4 mb-4 md:mb-6">
+                        <div class="flex justify-between items-center py-2 border-b border-nokras/10">
+                            <span class="text-nokras/60 text-xs md:text-sm">Transaction ID</span>
+                            <span class="text-nokras font-medium text-xs md:text-sm" id="txnId">QHK2874MXN</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-nokras/10">
+                            <span class="text-nokras/60 text-xs md:text-sm">M-Pesa Receipt</span>
+                            <span class="text-nokras font-medium text-xs md:text-sm" id="mpesaReceipt">MPX8293741</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-nokras/10">
+                            <span class="text-nokras/60 text-xs md:text-sm">Date & Time</span>
+                            <span class="text-nokras font-medium text-xs md:text-sm" id="txnTime">Feb 20, 2026 12:14 PM</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2 border-b border-nokras/10">
+                            <span class="text-nokras/60 text-xs md:text-sm">Phone Number</span>
+                            <span class="text-nokras font-medium text-xs md:text-sm">+254 *** *** 891</span>
+                        </div>
+                        <div class="flex justify-between items-center py-2">
+                            <span class="text-nokras/60 text-xs md:text-sm">KRA eTIMS Status</span>
+                            <span class="text-green-600 font-medium flex items-center gap-1 text-xs md:text-sm">
+                                <svg class="w-3 h-3 md:w-4 md:h-4" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+                                Submitted
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4 md:mb-6">
+                        <h4 class="text-nokras font-medium mb-2 md:mb-3 text-sm md:text-base">Tax Breakdown</h4>
+                        <div class="space-y-1 md:space-y-2">
+                            <div class="flex justify-between text-xs md:text-sm">
+                                <span class="text-nokras/60">Accommodation (Subtotal)</span>
+                                <span class="text-nokras">KSh 45,000.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs md:text-sm">
+                                <span class="text-nokras/60">Tourism Levy (2%)</span>
+                                <span class="text-nokras">KSh 900.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs md:text-sm">
+                                <span class="text-nokras/60">VAT (16%)</span>
+                                <span class="text-nokras">KSh 7,344.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs md:text-sm">
+                                <span class="text-nokras/60">Training Levy (0.5%)</span>
+                                <span class="text-nokras">KSh 225.00</span>
+                            </div>
+                            <div class="flex justify-between text-xs md:text-sm pt-2 border-t border-nokras/10">
+                                <span class="text-nokras font-medium">Total Due</span>
+                                <span class="text-nokras font-bold text-sm md:text-lg">KSh 53,469.00</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-nokras/5 rounded-xl p-2 md:p-3 mb-4 md:mb-6">
+                        <div class="flex items-center gap-2 text-xs md:text-sm text-nokras">
+                            <svg class="w-3 h-3 md:w-4 md:h-4 text-gold flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/></svg>
+                            <span class="truncate">KRA Control Unit (CU): NOKRAS-2026-001</span>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row gap-2 md:gap-3">
+                        <button onclick="downloadInvoice()" class="flex-1 px-4 md:px-6 py-2 md:py-3 bg-nokras text-white rounded-full text-xs md:text-sm hover:bg-nokras-light transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                            Download Invoice
+                        </button>
+                        <button onclick="emailReceipt()" class="flex-1 px-4 md:px-6 py-2 md:py-3 bg-gold text-white rounded-full text-xs md:text-sm hover:bg-gold-dark transition-colors flex items-center justify-center gap-2">
+                            <svg class="w-3 h-3 md:w-4 md:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                            Email Receipt
+                        </button>
+                    </div>
+                    
+                    <button onclick="closeMpesaModal()" class="w-full mt-3 md:mt-4 text-nokras/60 text-xs md:text-sm hover:text-nokras py-2">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

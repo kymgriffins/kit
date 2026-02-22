@@ -1,3 +1,15 @@
 asgiref==3.11.1
 Django==6.0.2
 sqlparse==0.5.5
+
+# REST Framework & API
+djangorestframework>=3.14.0
+django-cors-headers>=4.3.0
+django-filter>=23.5
+
+# Database
+psycopg2-binary>=2.9.9
+
+# Utilities
+Pillow>=10.1.0
+pytz>=2023.3

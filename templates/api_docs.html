@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Ndio Story API Documentation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+        }
+        .header {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            opacity: 0.8;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .nav {
+            background: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .nav a {
+            text-decoration: none;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background: #f0f0f0;
+        }
+        .nav a.active {
+            background: #0066CC;
+            color: white;
+        }
+        .section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .section h2 {
+            color: #1a1a2e;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #0066CC;
+        }
+        .endpoint {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border-left: 4px solid #0066CC;
+        }
+        .method {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.875rem;
+            margin-right: 0.5rem;
+        }
+        .method.get { background: #61affe; color: white; }
+        .method.post { background: #49cc90; color: white; }
+        .method.put { background: #fca130; color: white; }
+        .method.delete { background: #f93e3e; color: white; }
+        .method.patch { background: #50e3c2; color: white; }
+        .path {
+            font-family: monospace;
+            font-size: 1rem;
+            color: #333;
+        }
+        .description {
+            margin-top: 0.5rem;
+            color: #666;
+        }
+        .params {
+            margin-top: 1rem;
+        }
+        .params h4 {
+            font-size: 0.875rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+        th, td {
+            padding: 0.5rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+        }
+        .response {
+            margin-top: 1rem;
+        }
+        .response h4 {
+            font-size: 0.875rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        pre {
+            background: #1a1a2e;
+            color: #fff;
+            padding: 1rem;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 0.875rem;
+        }
+        .model {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f0f7ff;
+            border-radius: 4px;
+        }
+        .model h4 {
+            font-size: 0.875rem;
+            color: #0066CC;
+            margin-bottom: 0.5rem;
+        }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Budget Ndio Story API</h1>
+        <p>Civic Education Platform - REST API Documentation</p>
+    </div>
+    
+    <div class="container">
+        <div class="nav">
+            <a href="#accounts">Accounts</a>
+            <a href="#content">Content</a>
+            <a href="#newsletter">Newsletter</a>
+            <a href="#sponsors">Sponsors</a>
+            <a href="#analytics">Analytics</a>
+        </div>
+        
+        <!-- ACCOUNTS API -->
+        <div class="section" id="accounts">
+            <h2>Accounts API</h2>
+            <p>User management, donors, sponsors, and consortium partners.</p>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/accounts/users/</span>
+                <p class="description">List all users. Supports pagination, filtering, and search.</p>
+                <div class="params">
+                    <h4>Query Parameters:</h4>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                        <tr><td>role</td><td>string</td><td>Filter by role (admin, editor, viewer, donor, sponsor, partner)</td></tr>
+                        <tr><td>search</td><td>string</td><td>Search by email, username, or name</td></tr>
+                        <tr><td>ordering</td><td>string</td><td>Order by field (created_at, email, username)</td></tr>
+                    </table>
+                </div>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "count": 100,
+  "next": "http://api.example.com/api/v1/accounts/users/?page=2",
+  "previous": null,
+  "results": [
+    {
+      "id": "uuid",
+      "email": "user@example.com",
+      "username": "johndoe",
+      "first_name": "John",
+      "last_name": "Doe",
+      "role": "viewer",
+      "phone": "+254712345678",
+      "organization": "Organization Name",
+      "bio": "User bio...",
+      "avatar": "/media/avatars/image.jpg",
+      "is_verified": false,
+      "newsletter_subscribed": true,
+      "created_at": "2024-01-01T00:00:00Z"
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/accounts/users/</span>
+                <p class="description">Register a new user account.</p>
+                <div class="params">
+                    <h4>Request Body:</h4>
+                    <pre>{
+  "email": "user@example.com",
+  "username": "johndoe",
+  "first_name": "John",
+  "last_name": "Doe",
+  "password": "securepassword123",
+  "password_confirm": "securepassword123"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/accounts/users/me/</span>
+                <p class="description">Get current authenticated user's profile.</p>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "id": "uuid",
+  "email": "user@example.com",
+  "username": "johndoe",
+  "first_name": "John",
+  "last_name": "Doe",
+  "role": "viewer",
+  "is_verified": true,
+  "created_at": "2024-01-01T00:00:00Z"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/accounts/donors/</span>
+                <p class="description">List all donor profiles with their donation statistics.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/accounts/sponsors/</span>
+                <p class="description">List all sponsor profiles with sponsorship details.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/accounts/partners/</span>
+                <p class="description">List all consortium partners.</p>
+            </div>
+            
+            <div class="model">
+                <h4>User Model Fields</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>id</td><td>UUID</td><td>Unique identifier</td></tr>
+                    <tr><td>email</td><td>string</td><td>User's email address (unique)</td></tr>
+                    <tr><td>username</td><td>string</td><td>Unique username</td></tr>
+                    <tr><td>first_name</td><td>string</td><td>First name</td></tr>
+                    <tr><td>last_name</td><td>string</td><td>Last name</td></tr>
+                    <tr><td>role</td><td>string</td><td>User role (admin, editor, viewer, donor, sponsor, partner)</td></tr>
+                    <tr><td>phone</td><td>string</td><td>Phone number</td></tr>
+                    <tr><td>organization</td><td>string</td><td>Organization name</td></tr>
+                    <tr><td>bio</td><td>text</td><td>User biography</td></tr>
+                    <tr><td>avatar</td><td>image</td><td>Profile picture</td></tr>
+                    <tr><td>is_verified</td><td>boolean</td><td>Email verification status</td></tr>
+                    <tr><td>newsletter_subscribed</td><td>boolean</td><td>Newsletter subscription status</td></tr>
+                    <tr><td>created_at</td><td>datetime</td><td>Account creation timestamp</td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- CONTENT API -->
+        <div class="section" id="content">
+            <h2>Content API</h2>
+            <p>Videos, blogs, playlists, and news management.</p>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/videos/</span>
+                <p class="description">List all published videos. Supports filtering by platform, content type, and category.</p>
+                <div class="params">
+                    <h4>Query Parameters:</h4>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                        <tr><td>platform</td><td>string</td><td>Filter by platform (youtube, tiktok, x, facebook, instagram)</td></tr>
+                        <tr><td>content_type</td><td>string</td><td>Filter by content type</td></tr>
+                        <tr><td>is_featured</td><td>boolean</td><td>Filter featured videos</td></tr>
+                        <tr><td>search</td><td>string</td><td>Search videos</td></tr>
+                    </table>
+                </div>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "count": 50,
+  "results": [
+    {
+      "id": "uuid",
+      "title": "Understanding Kenya's Budget",
+      "slug": "understanding-kenya-budget",
+      "platform": "youtube",
+      "platform_display": "YouTube",
+      "content_type": "budget_basics",
+      "content_type_display": "Budget Basics",
+      "thumbnail_url": "https://img.youtube.com/vi/...",
+      "duration_seconds": 300,
+      "view_count": 1000,
+      "is_featured": true,
+      "published_at": "2024-01-01T00:00:00Z"
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/videos/{slug}/</span>
+                <p class="description">Get video details with embed code and engagement metrics.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/videos/featured/</span>
+                <p class="description">Get featured videos.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/posts/</span>
+                <p class="description">List all published blog posts.</p>
+                <div class="params">
+                    <h4>Query Parameters:</h4>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                        <tr><td>post_type</td><td>string</td><td>Filter by type (investigation, explainer, update, etc.)</td></tr>
+                        <tr><td>category</td><td>string</td><td>Filter by category slug</td></tr>
+                        <tr><td>search</td><td>string</td><td>Search posts</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/posts/{slug}/</span>
+                <p class="description">Get blog post details with full content.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/categories/</span>
+                <p class="description">List all active categories.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/playlists/</span>
+                <p class="description">List all video playlists.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/playlists/{slug}/videos/</span>
+                <p class="description">Get videos in a specific playlist.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/content/news/</span>
+                <p class="description">List all news items.</p>
+            </div>
+            
+            <div class="model">
+                <h4>Video Model Fields</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>id</td><td>UUID</td><td>Unique identifier</td></tr>
+                    <tr><td>title</td><td>string</td><td>Video title</td></tr>
+                    <tr><td>slug</td><td>string</td><td>URL-friendly slug</td></tr>
+                    <tr><td>platform</td><td>string</td><td>Platform (youtube, tiktok, x, facebook, instagram)</td></tr>
+                    <tr><td>external_id</td><td>string</td><td>Video ID from platform</td></tr>
+                    <tr><td>external_url</td><td>URL</td><td>Original video URL</td></tr>
+                    <tr><td>content_type</td><td>string</td><td>Content category</td></tr>
+                    <tr><td>view_count</td><td>integer</td><td>Total views</td></tr>
+                    <tr><td>is_featured</td><td>boolean</td><td>Featured status</td></tr>
+                    <tr><td>published_at</td><td>datetime</td><td>Publication date</td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- NEWSLETTER API -->
+        <div class="section" id="newsletter">
+            <h2>Newsletter API</h2>
+            <p>Email subscribers and campaign management.</p>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/newsletter/subscribers/</span>
+                <p class="description">Subscribe to newsletter. Public endpoint.</p>
+                <div class="params">
+                    <h4>Request Body:</h4>
+                    <pre>{
+  "email": "subscriber@example.com",
+  "first_name": "John",
+  "last_name": "Doe",
+  "content_preference": "all"
+}</pre>
+                </div>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "message": "Please check your email to confirm subscription"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/newsletter/subscribers/confirm/</span>
+                <p class="description">Confirm subscription with token.</p>
+                <div class="params">
+                    <h4>Request Body:</h4>
+                    <pre>{
+  "token": "confirmation-token"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/newsletter/subscribers/unsubscribe/</span>
+                <p class="description">Unsubscribe from newsletter.</p>
+                <div class="params">
+                    <h4>Request Body:</h4>
+                    <pre>{
+  "token": "unsubscribe-token",
+  "email": "subscriber@example.com",
+  "reason": "No longer interested"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/newsletter/subscribers/</span>
+                <p class="description">List all subscribers. (Admin only)</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/newsletter/campaigns/</span>
+                <p class="description">List all newsletter campaigns.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method post">POST</span>
+                <span class="path">/api/v1/newsletter/campaigns/{id}/send/</span>
+                <p class="description">Send a campaign. (Admin only)</p>
+            </div>
+            
+            <div class="model">
+                <h4>Subscriber Model Fields</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>id</td><td>UUID</td><td>Unique identifier</td></tr>
+                    <tr><td>email</td><td>string</td><td>Email address (unique)</td></tr>
+                    <tr><td>first_name</td><td>string</td><td>First name</td></tr>
+                    <tr><td>last_name</td><td>string</td><td>Last name</td></tr>
+                    <tr><td>content_preference</td><td>string</td><td>Content preference (all, videos_only, blogs_only, weekly_digest)</td></tr>
+                    <tr><td>status</td><td>string</td><td>Subscription status (pending, active, unsubscribed, bounced)</td></tr>
+                    <tr><td>emails_sent</td><td>integer</td><td>Total emails sent</td></tr>
+                    <tr><td>emails_opened</td><td>integer</td><td>Total emails opened</td></tr>
+                    <tr><td>emails_clicked</td><td>integer</td><td>Total links clicked</td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- SPONSORS API -->
+        <div class="section" id="sponsors">
+            <h2>Sponsors API</h2>
+            <p>Donations and sponsorship management.</p>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/sponsors/donations/</span>
+                <p class="description">List all donations.</p>
+                <div class="params">
+                    <h4>Query Parameters:</h4>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                        <tr><td>status</td><td>string</td><td>Filter by status (pending, completed, failed, refunded)</td></tr>
+                        <tr><td>donor</td><td>UUID</td><td>Filter by donor profile</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/sponsors/donations/statistics/</span>
+                <p class="description">Get donation statistics.</p>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "total_raised": 100000.00,
+  "donation_count": 50,
+  "currency": "KES"
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/sponsors/deliverables/</span>
+                <p class="description">List sponsorship deliverables.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/sponsors/assets/</span>
+                <p class="description">List sponsor assets (logos, brand guidelines).</p>
+            </div>
+            
+            <div class="model">
+                <h4>Donation Model Fields</h4>
+                <table>
+                    <tr><th>Field</th><th>Type</th><th>Description</th></tr>
+                    <tr><td>id</td><td>UUID</td><td>Unique identifier</td></tr>
+                    <tr><td>donor</td><td>UUID</td><td>Donor profile ID</td></tr>
+                    <tr><td>amount</td><td>decimal</td><td>Donation amount</td></tr>
+                    <tr><td>currency</td><td>string</td><td>Currency code (KES, USD)</td></tr>
+                    <tr><td>payment_method</td><td>string</td><td>Payment method (mpesa, bank, card, paypal, crypto)</td></tr>
+                    <tr><td>status</td><td>string</td><td>Donation status</td></tr>
+                    <tr><td>transaction_id</td><td>string</td><td>Payment provider transaction ID</td></tr>
+                    <tr><td>is_recurring</td><td>boolean</td><td>Recurring donation</td></tr>
+                    <tr><td>receipt_number</td><td>string</td><td>Receipt number</td></tr>
+                    <tr><td>created_at</td><td>datetime</td><td>Creation timestamp</td></tr>
+                </table>
+            </div>
+        </div>
+        
+        <!-- ANALYTICS API -->
+        <div class="section" id="analytics">
+            <h2>Analytics API</h2>
+            <p>Page views, video engagement, and donor funnel tracking.</p>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/pageviews/</span>
+                <p class="description">List page views.</p>
+                <div class="params">
+                    <h4>Query Parameters:</h4>
+                    <table>
+                        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                        <tr><td>content_type</td><td>string</td><td>Filter by content type</td></tr>
+                        <tr><td>start_date</td><td>date</td><td>Filter by start date</td></tr>
+                        <tr><td>end_date</td><td>date</td><td>Filter by end date</td></tr>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/pageviews/summary/</span>
+                <p class="description">Get page view summary statistics.</p>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "total_views": 10000,
+  "views_this_week": 500,
+  "top_pages": [
+    {"path": "/videos/", "count": 500},
+    {"path": "/posts/", "count": 300}
+  ]
+}</pre>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/engagement/</span>
+                <p class="description">List video engagement events.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/engagement/by_video/</span>
+                <p class="description">Get engagement summary for a specific video.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/funnel/</span>
+                <p class="description">List donor funnel events.</p>
+            </div>
+            
+            <div class="endpoint">
+                <span class="method get">GET</span>
+                <span class="path">/api/v1/analytics/funnel/funnel_summary/</span>
+                <p class="description">Get donor funnel summary.</p>
+                <div class="response">
+                    <h4>Response:</h4>
+                    <pre>{
+  "funnel_stages": [
+    {"stage": "awareness", "count": 1000, "total_value": null},
+    {"stage": "interest", "count": 500, "total_value": null},
+    {"stage": "donation", "count": 50, "total_value": 100000}
+  ]
+}</pre>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Budget Ndio Story API &copy; 2024</p>
+            <p>Base URL: /api/v1/</p>
+        </div>
+    </div>
+</body>
+</html>

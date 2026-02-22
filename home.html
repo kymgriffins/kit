@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Ndio Story | Understanding Kenya's Budget</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #1a5f3f;
+            --primary-dark: #124a30;
+            --primary-light: #2d8a5e;
+            --accent: #e85d04;
+            --accent-light: #f48c06;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --success: #059669;
+            --warning: #d97706;
+            --max-width: 1400px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background: var(--light);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .navbar.scrolled {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 800;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .nav-cta {
+            background: var(--accent);
+            color: white !important;
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .nav-cta::after {
+            display: none !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(232, 93, 4, 0.3);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 80px;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .hero-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 4rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            color: white;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .hero-badge::before {
+            content: '●';
+            color: #4ade80;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 540px;
+            line-height: 1.7;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            box-shadow: 0 10px 30px -5px rgba(232, 93, 4, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 40px -5px rgba(232, 93, 4, 0.5);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .hero-visual {
+            position: relative;
+        }
+
+        .video-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            transform: rotate(3deg);
+            transition: var(--transition);
+        }
+
+        .video-card:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+
+        .video-thumbnail {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: var(--dark);
+            overflow: hidden;
+        }
+
+        .video-thumbnail img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.8;
+        }
+
+        .play-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80px;
+            height: 80px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .play-button:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+        }
+
+        .video-info {
+            padding: 1.5rem;
+        }
+
+        .video-tag {
+            display: inline-block;
+            background: var(--primary-light);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        .video-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .video-meta {
+            display: flex;
+            gap: 1rem;
+            color: var(--gray);
+            font-size: 0.875rem;
+        }
+
+        /* Impact Bar */
+        .impact-bar {
+            background: var(--dark);
+            color: white;
+            padding: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .impact-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 2rem;
+        }
+
+        .impact-item {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .impact-number {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--accent-light);
+            display: block;
+            line-height: 1;
+        }
+
+        .impact-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 0.5rem;
+        }
+
+        /* Content Sections */
+        .section {
+            padding: 6rem 2rem;
+            max-width: var(--max-width);
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        .section h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--gray);
+            line-height: 1.7;
+        }
+
+        /* Learning Hub */
+        .learning-hub {
+            background: white;
+        }
+
+        .platform-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--gray-light);
+            background: white;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tab-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .tab-btn:hover:not(.active) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: var(--transition);
+            border: 1px solid var(--gray-light);
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-media {
+            position: relative;
+            aspect-ratio: 16/9;
+            background: var(--dark);
+            overflow: hidden;
+        }
+
+        .card-media img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .content-card:hover .card-media img {
+            transform: scale(1.05);
+        }
+
+        .platform-badge {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+        }
+
+        .card-category {
+            color: var(--primary);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+            line-height: 1.4;
+        }
+
+        .card-excerpt {
+            color: var(--gray);
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 1rem;
+            border-top: 1px solid var(--gray-light);
+            font-size: 0.875rem;
+            color: var(--gray);
+        }
+
+        .engagement {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .engagement span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        /* Blog Section */
+        .blog-section {
+            background: linear-gradient(to bottom, #f8fafc, white);
+        }
+
+        .blog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        .blog-card.featured {
+            grid-column: span 2;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .blog-card.featured .card-media {
+            aspect-ratio: auto;
+            height: 100%;
+        }
+
+        .blog-card.featured .card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2.5rem;
+        }
+
+        /* Newsletter Section */
+        .newsletter-section {
+            background: var(--primary);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .newsletter-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 800px;
+            height: 800px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 50%;
+        }
+
+        .newsletter-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 6rem 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .newsletter-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .newsletter-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .newsletter-benefits {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .newsletter-benefits li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 1rem;
+        }
+
+        .newsletter-benefits li::before {
+            content: '✓';
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .newsletter-form {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .preferences {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .preference-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem;
+            border: 2px solid var(--gray-light);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .preference-option:hover {
+            border-color: var(--primary);
+        }
+
+        .preference-option input[type="checkbox"] {
+            width: auto;
+            accent-color: var(--primary);
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-submit:hover {
+            background: var(--accent-light);
+            transform: translateY(-2px);
+        }
+
+        /* Donor/Sponsor Section */
+        .donors-section {
+            background: white;
+        }
+
+        .donor-tiers {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .tier-card {
+            background: white;
+            border: 2px solid var(--gray-light);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .tier-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .tier-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .tier-name {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .tier-price {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .tier-price span {
+            font-size: 1rem;
+            color: var(--gray);
+            font-weight: 400;
+        }
+
+        .tier-description {
+            color: var(--gray);
+            margin-bottom: 2rem;
+        }
+
+        .tier-features {
+            list-style: none;
+            text-align: left;
+            margin-bottom: 2rem;
+        }
+
+        .tier-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tier-features li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 700;
+        }
+
+        .btn-tier {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--primary);
+            background: transparent;
+            color: var(--primary);
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+        }
+
+        .tier-card.featured .btn-tier {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-tier:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Partners/Sponsors Logos */
+        .partners-bar {
+            background: var(--light);
+            padding: 3rem 0;
+            border-top: 1px solid var(--gray-light);
+            border-bottom: 1px solid var(--gray-light);
+        }
+
+        .partners-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+        }
+
+        .partners-title {
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--gray);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        .partners-logos {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4rem;
+            flex-wrap: wrap;
+            opacity: 0.6;
+        }
+
+        .partner-logo {
+            height: 40px;
+            filter: grayscale(100%);
+            transition: var(--transition);
+        }
+
+        .partner-logo:hover {
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+        }
+
+        .footer-container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .footer-description {
+            opacity: 0.8;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .footer-column h4 {
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: var(--transition);
+            font-size: 0.95rem;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.875rem;
+            opacity: 0.7;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .hero-content p {
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .hero-stats {
+                justify-content: center;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .hero-visual {
+                order: -1;
+                max-width: 600px;
+                margin: 0 auto;
+            }
+
+            .blog-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-card.featured {
+                grid-column: span 1;
+                grid-template-columns: 1fr;
+            }
+
+            .newsletter-container {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .preferences {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+
+            .footer-brand {
+                max-width: 100%;
+            }
+
+            .social-links {
+                justify-content: center;
+            }
+
+            .impact-container {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+
+            .tier-card.featured {
+                transform: none;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading States */
+        .skeleton {
+            background: linear-gradient(90deg, var(--gray-light) 25%, #f0f0f0 50%, var(--gray-light) 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 10;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--dark);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: #dc2626;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <div class="logo-icon">BNS</div>
+                <span>Budget Ndio Story</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#learn">Learn</a></li>
+                <li><a href="#blog">Stories</a></li>
+                <li><a href="#news">News</a></li>
+                <li><a href="#donate">Donate</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#donate" class="nav-cta">Support Our Work</a></li>
+            </ul>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content fade-in">
+                <div class="hero-badge">Live Tracker Active</div>
+                <h1>Understanding Kenya's Budget, One Story at a Time</h1>
+                <p>We break down complex budget processes into simple, engaging content. Because knowing where your money goes is your right.</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">50K+</span>
+                        <span class="stat-label">Youth Educated</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">200+</span>
+                        <span class="stat-label">Videos Created</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">47</span>
+                        <span class="stat-label">Counties Covered</span>
+                    </div>
+                </div>
+                <div class="hero-buttons">
+                    <a href="#learn" class="btn btn-primary">Start Learning</a>
+                    <a href="#donate" class="btn btn-secondary">Become a Supporter</a>
+                </div>
+            </div>
+            <div class="hero-visual fade-in">
+                <div class="video-card" onclick="openVideo('youtube', 'dQw4w9WgXcQ')">
+                    <div class="video-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800&q=80" alt="Budget Education">
+                        <div class="play-button">▶</div>
+                    </div>
+                    <div class="video-info">
+                        <span class="video-tag">Featured</span>
+                        <h3 class="video-title">The 2024/25 Budget Explained in 5 Minutes</h3>
+                        <div class="video-meta">
+                            <span>📺 YouTube</span>
+                            <span>👁 12.5K views</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Bar -->
+    <div class="impact-bar">
+        <div class="impact-container">
+            <div class="impact-item">
+                <span class="impact-number">KES 4.2T</span>
+                <div class="impact-label">2024/25 National Budget</div>
+            </div>
+            <div class="impact-item">
+                <span class="impact-number">47</span>
+                <div class="impact-label">County Governments</div>
+            </div>
+            <div class="impact-item">
+                <span class="impact-number">65%</span>
+                <div class="impact-label">Youth Unemployment</div>
+            </div>
+            <div class="impact-item">
+                <span class="impact-number">You</span>
+                <div class="impact-label">The Change Maker</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Learning Hub -->
+    <section class="section learning-hub" id="learn">
+        <div class="section-header fade-in">
+            <span class="section-tag">Learning Hub</span>
+            <h2>Learn Through Video</h2>
+            <p class="section-subtitle">Short-form content that makes budget literacy accessible. From TikTok explainers to deep-dive YouTube documentaries.</p>
+        </div>
+
+        <div class="platform-tabs fade-in">
+            <button class="tab-btn active" onclick="filterContent('all')">All Content</button>
+            <button class="tab-btn" onclick="filterContent('youtube')">📺 YouTube</button>
+            <button class="tab-btn" onclick="filterContent('tiktok')">📱 TikTok</button>
+            <button class="tab-btn" onclick="filterContent('x')">🐦 X (Twitter)</button>
+            <button class="tab-btn" onclick="filterContent('facebook')">📘 Facebook</button>
+        </div>
+
+        <div class="content-grid" id="contentGrid">
+            <!-- Content populated by JS -->
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <a href="#" class="btn btn-primary" style="background: var(--primary);">View All Content</a>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="section blog-section" id="blog">
+        <div class="section-header fade-in">
+            <span class="section-tag" style="background: var(--accent);">Stories & Analysis</span>
+            <h2>In-Depth Stories</h2>
+            <p class="section-subtitle">Investigative journalism and expert analysis on Kenya's budget allocation, county spending, and public finance.</p>
+        </div>
+
+        <div class="blog-grid">
+            <article class="content-card blog-card featured fade-in">
+                <div class="card-media">
+                    <img src="https://images.unsplash.com/photo-1526304640152-d4619684e484?w=800&q=80" alt="County Budget">
+                    <span class="platform-badge">Investigation</span>
+                </div>
+                <div class="card-content">
+                    <div class="card-category">County Tracker</div>
+                    <h3 class="card-title">Where Did Nairobi's Health Budget Go? A 6-Month Investigation</h3>
+                    <p class="card-excerpt">We tracked KES 12.4 billion allocated to health across 5 sub-counties. What we found reveals systemic gaps in procurement and service delivery.</p>
+                    <div class="card-meta">
+                        <span>By Sarah Wanjiku • 12 min read</span>
+                        <span class="engagement">🔥 Trending</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="content-card fade-in">
+                <div class="card-media">
+                    <img src="https://images.unsplash.com/photo-1554224154-26032ffc0d07?w=800&q=80" alt="Finance Bill">
+                </div>
+                <div class="card-content">
+                    <div class="card-category">Explainer</div>
+                    <h3 class="card-title">Finance Bill 2024: What Changes for You?</h3>
+                    <div class="card-meta">
+                        <span>5 min read</span>
+                        <span class="engagement">💬 24 comments</span>
+                    </div>
+                </div>
+            </article>
+
+            <article class="content-card fade-in">
+                <div class="card-media">
+                    <img src="https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=800&q=80" alt="Education Budget">
+                </div>
+                <div class="card-content">
+                    <div class="card-category">Sector Deep Dive</div>
+                    <h3 class="card-title">Education Budget: Are We Investing in the Future?</h3>
+                    <div class="card-meta">
+                        <span>8 min read</span>
+                        <span class="engagement">👁 1.2K views</span>
+                    </div>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section class="newsletter-section" id="news">
+        <div class="newsletter-container">
+            <div class="newsletter-content fade-in">
+                <h2>Stay Informed</h2>
+                <p>Join 15,000+ Kenyans receiving weekly budget updates. No jargon, just facts.</p>
+                <ul class="newsletter-benefits">
+                    <li>Weekly digest of top stories</li>
+                    <li>Breaking news alerts</li>
+                    <li>Exclusive county reports</li>
+                    <li>Event invitations</li>
+                </ul>
+            </div>
+            <div class="newsletter-form fade-in">
+                <form id="newsletterForm" onsubmit="handleSubscribe(event)">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="name">First Name</label>
+                        <input type="text" id="name" placeholder="John">
+                    </div>
+                    <label style="display: block; margin-bottom: 0.75rem; font-weight: 500; color: var(--dark);">Content Preferences</label>
+                    <div class="preferences">
+                        <label class="preference-option">
+                            <input type="checkbox" checked> All Content
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox"> Videos Only
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox"> Blogs Only
+                        </label>
+                        <label class="preference-option">
+                            <input type="checkbox"> Weekly Digest
+                        </label>
+                    </div>
+                    <button type="submit" class="btn-submit">Subscribe Free</button>
+                    <p style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--gray);">
+                        We respect your privacy. Unsubscribe anytime.
+                    </p>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donors Section -->
+    <section class="section donors-section" id="donate">
+        <div class="section-header fade-in">
+            <span class="section-tag" style="background: var(--accent);">Support Independent Journalism</span>
+            <h2>Become a Supporter</h2>
+            <p class="section-subtitle">Budget Ndio Story is funded by readers like you. Your support powers independent budget tracking and civic education.</p>
+        </div>
+
+        <div class="donor-tiers fade-in">
+            <div class="tier-card">
+                <h3 class="tier-name">Community</h3>
+                <div class="tier-price">KES 500<span>/month</span></div>
+                <p class="tier-description">Support our mission</p>
+                <ul class="tier-features">
+                    <li>Monthly newsletter</li>
+                    <li>Donor badge on profile</li>
+                    <li>Early access to reports</li>
+                    <li>Annual impact report</li>
+                </ul>
+                <button class="btn-tier" onclick="handleDonate('community')">Join Community</button>
+            </div>
+
+            <div class="tier-card featured">
+                <span class="tier-badge">Most Popular</span>
+                <h3 class="tier-name">Advocate</h3>
+                <div class="tier-price">KES 2,000<span>/month</span></div>
+                <p class="tier-description">Power deeper investigations</p>
+                <ul class="tier-features">
+                    <li>All Community benefits</li>
+                    <li>Quarterly virtual briefings</li>
+                    <li>Exclusive donor WhatsApp group</li>
+                    <li>Name in annual report</li>
+                    <li>Direct line to editors</li>
+                </ul>
+                <button class="btn-tier" onclick="handleDonate('advocate')">Become an Advocate</button>
+            </div>
+
+            <div class="tier-card">
+                <h3 class="tier-name">Champion</h3>
+                <div class="tier-price">KES 10,000<span>/month</span></div>
+                <p class="tier-description">Fund major investigations</p>
+                <ul class="tier-features">
+                    <li>All Advocate benefits</li>
+                    <li>Monthly strategy calls</li>
+                    <li>Co-create content priorities</li>
+                    <li>Invitation to annual retreat</li>
+                    <li>Custom research requests</li>
+                </ul>
+                <button class="btn-tier" onclick="handleDonate('champion')">Become a Champion</button>
+            </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 3rem;">
+            <p style="color: var(--gray); margin-bottom: 1rem;">Are you a corporation or foundation?</p>
+            <a href="#" class="btn btn-primary" style="background: var(--primary);">Explore Partnership Opportunities</a>
+        </div>
+    </section>
+
+    <!-- Partners -->
+    <div class="partners-bar">
+        <div class="partners-container">
+            <p class="partners-title">Supported by leading organizations</p>
+            <div class="partners-logos">
+                <div class="partner-logo" style="font-weight: 700; font-size: 1.25rem;">The Continental Pot</div>
+                <div class="partner-logo" style="font-weight: 700; font-size: 1.25rem;">Colour Twist Media</div>
+                <div class="partner-logo" style="font-weight: 700; font-size: 1.25rem;">Sen Media</div>
+                <div class="partner-logo" style="font-weight: 700; font-size: 1.25rem;">Hivos</div>
+                <div class="partner-logo" style="font-weight: 700; font-size: 1.25rem;">Code for Africa</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <a href="#" class="footer-logo">
+                    <div class="logo-icon">BNS</div>
+                    <span>Budget Ndio Story</span>
+                </a>
+                <p class="footer-description">Empowering Kenyan youth with budget literacy through accessible, engaging content. A consortium initiative.</p>
+                <div class="social-links">
+                    <a href="#">𝕏</a>
+                    <a href="#">f</a>
+                    <a href="#">▶</a>
+                    <a href="#">📸</a>
+                </div>
+            </div>
+            <div class="footer-column">
+                <h4>Learn</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Video Hub</a></li>
+                    <li><a href="#">Budget Basics</a></li>
+                    <li><a href="#">County Trackers</a></li>
+                    <li><a href="#">Data Tools</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>Get Involved</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Donate</a></li>
+                    <li><a href="#">Volunteer</a></li>
+                    <li><a href="#">Partner With Us</a></li>
+                    <li><a href="#">Careers</a></li>
+                </ul>
+            </div>
+            <div class="footer-column">
+                <h4>About</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Team</a></li>
+                    <li><a href="#">Financials</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Budget Ndio Story. All rights reserved.</p>
+            <div style="display: flex; gap: 2rem;">
+                <a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a>
+                <a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div class="modal" id="videoModal" onclick="closeModal(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeVideoModal()">×</button>
+            <div class="video-container" id="videoContainer">
+                <!-- Video injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Success!</span>
+    </div>
+
+    <script>
+        // Sample content data
+        const contentData = [
+            {
+                id: 1,
+                type: 'youtube',
+                title: 'Understanding the Finance Bill 2024',
+                category: 'Finance Bill',
+                thumbnail: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?w=800&q=80',
+                views: '45K',
+                duration: '8:24',
+                platform: 'YouTube'
+            },
+            {
+                id: 2,
+                type: 'tiktok',
+                title: '3 Things You Didn\'t Know About Your County Budget',
+                category: 'County Budget',
+                thumbnail: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?w=800&q=80',
+                views: '128K',
+                duration: '0:45',
+                platform: 'TikTok'
+            },
+            {
+                id: 3,
+                type: 'x',
+                title: 'Thread: Breaking down the Education Budget',
+                category: 'Sector Deep Dive',
+                thumbnail: 'https://images.unsplash.com/photo-1503676260728-1c00da094a0b?w=800&q=80',
+                views: '23K',
+                duration: 'Thread',
+                platform: 'X'
+            },
+            {
+                id: 4,
+                type: 'facebook',
+                title: 'Live: Budget Reading Session with Experts',
+                category: 'National Budget',
+                thumbnail: 'https://images.unsplash.com/photo-1551836022-d5d88e9218df?w=800&q=80',
+                views: '12K',
+                duration: '1:24:00',
+                platform: 'Facebook'
+            },
+            {
+                id: 5,
+                type: 'youtube',
+                title: 'Youth and the Budget: A Conversation',
+                category: 'Youth Voice',
+                thumbnail: 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
+                views: '8.5K',
+                duration: '24:15',
+                platform: 'YouTube'
+            },
+            {
+                id: 6,
+                type: 'tiktok',
+                title: 'POV: You just understood where your taxes go',
+                category: 'Budget Basics',
+                thumbnail: 'https://images.unsplash.com/photo-1554224154-22dec7ec8818?w=800&q=80',
+                views: '256K',
+                duration: '0:32',
+                platform: 'TikTok'
+            }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            renderContent('all');
+            setupScrollAnimations();
+            setupNavbar();
+        });
+
+        // Render content grid
+        function renderContent(filter) {
+            const grid = document.getElementById('contentGrid');
+            const filtered = filter === 'all' ? contentData : contentData.filter(item => item.type === filter);
+            
+            grid.innerHTML = filtered.map(item => `
+                <div class="content-card" onclick="openVideo('${item.type}', '${item.id}')">
+                    <div class="card-media">
+                        <img src="${item.thumbnail}" alt="${item.title}" loading="lazy">
+                        <span class="platform-badge">${item.platform}</span>
+                        <div style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(0,0,0,0.8); color: white; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.875rem;">
+                            ${item.duration}
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div class="card-category">${item.category}</div>
+                        <h3 class="card-title">${item.title}</h3>
+                        <div class="card-meta">
+                            <span>${item.platform}</span>
+                            <span class="engagement">👁 ${item.views}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Filter content
+        function filterContent(type) {
+            // Update active tab
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.toLowerCase().includes(type) || (type === 'all' && btn.textContent.includes('All'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            // Animate grid out
+            const grid = document.getElementById('contentGrid');
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                renderContent(type);
+                grid.style.transition = 'all 0.3s ease';
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+            }, 300);
+        }
+
+        // Video modal
+        function openVideo(platform, id) {
+            const modal = document.getElementById('videoModal');
+            const container = document.getElementById('videoContainer');
+            
+            let embedUrl = '';
+            if (platform === 'youtube') {
+                embedUrl = `https://www.youtube.com/embed/${id}?autoplay=1`;
+            } else if (platform === 'tiktok') {
+                // TikTok embed would need their specific embed code
+                embedUrl = `https://www.tiktok.com/embed/${id}`;
+            }
+            
+            container.innerHTML = `<iframe src="${embedUrl}" frameborder="0" allowfullscreen allow="autoplay"></iframe>`;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            const container = document.getElementById('videoContainer');
+            modal.classList.remove('active');
+            container.innerHTML = '';
+            document.body.style.overflow = '';
+        }
+
+        function closeModal(event) {
+            if (event.target.id === 'videoModal') {
+                closeVideoModal();
+            }
+        }
+
+        // Newsletter subscription
+        function handleSubscribe(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
+            const name = document.getElementById('name').value;
+            
+            // Simulate API call
+            setTimeout(() => {
+                showToast('Welcome to Budget Ndio Story! Check your email.', 'success');
+                document.getElementById('newsletterForm').reset();
+            }, 1000);
+        }
+
+        // Donation handling
+        function handleDonate(tier) {
+            showToast(`Redirecting to ${tier} donation...`, 'success');
+            // In production: window.location.href = `/donate/${tier}`;
+        }
+
+        // Toast notifications
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+            
+            toast.className = `toast ${type}`;
+            icon.textContent = type === 'success' ? '✓' : '✕';
+            msg.textContent = message;
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // Scroll animations
+        function setupScrollAnimations() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+        }
+
+        // Navbar scroll effect
+        function setupNavbar() {
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 50) {
+                    navbar.classList.add('scrolled');
+                } else {
+                    navbar.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Mobile menu toggle
+        function toggleMobileMenu() {
+            showToast('Mobile menu - implement drawer', 'success');
+        }
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

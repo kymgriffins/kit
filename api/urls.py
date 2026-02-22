@@ -1,22 +1,33 @@
-"""api URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.1/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  path('', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.urls import include, path
-    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
-"""
+"""api URL Configuration"""
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from apps.core.views import api_docs, home, config_page, index
 
 urlpatterns = [
+    # Admin - must come first to avoid conflicts
     path('admin/', admin.site.urls),
-    path('', include('example.urls')),
+    
+    # Main pages - serve from templates/
+    path('', home, name='home'),  # Root serves home.html
+    path('home/', home, name='home_alt'),
+    path('index/', index, name='index'),  # Main app page
+    path('config/', config_page, name='config'),
+    
+    # API Documentation
+    path('api/docs/', api_docs, name='api_docs'),
+    
+    # API endpoints
+    path('api/v1/accounts/', include('apps.accounts.urls')),
+    path('api/v1/content/', include('apps.content.urls')),
+    path('api/v1/newsletter/', include('apps.newsletter.urls')),
+    path('api/v1/sponsors/', include('apps.sponsors.urls')),
+    path('api/v1/analytics/', include('apps.analytics.urls')),
+    path('api/v1/cms/', include('apps.cms.urls')),
 ]
+
+# Serve media files in development
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

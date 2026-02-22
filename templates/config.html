@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UI Configuration - Budget Ndio Story</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bns': {
+                            DEFAULT: '#0066CC',
+                            light: '#1a75ff',
+                            dark: '#004c99',
+                        },
+                        'teal': {
+                            DEFAULT: '#00A6A6',
+                            light: '#00c4c4',
+                            dark: '#008080',
+                        },
+                        'orange': {
+                            DEFAULT: '#FF6B35',
+                            light: '#ff8a5c',
+                            dark: '#e55027',
+                        },
+                        'green': {
+                            DEFAULT: '#2ECC71',
+                            light: '#58d68d',
+                            dark: '#27ae60',
+                        },
+                        'dark': {
+                            DEFAULT: '#1A1A2E',
+                            light: '#2d2d44',
+                            dark: '#0f0f1a',
+                        },
+                        'cream': '#fafaf9',
+                        'warm': '#f5f5f0',
+                    },
+                    fontFamily: {
+                        'serif': ['Inter', 'sans-serif'],
+                        'sans': ['Inter', 'sans-serif'],
+                        'mono': ['Space Mono', 'monospace'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        
+        .ease-cinematic { transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+        .ease-smooth { transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); }
+        
+        .config-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .config-section.revealed { opacity: 1; transform: translateY(0); }
+        
+        .tab-btn {
+            position: relative;
+        }
+        
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #c9a962;
+            transition: width 0.3s ease;
+        }
+        
+        .tab-btn.active::after, .tab-btn:hover::after {
+            width: 100%;
+        }
+        
+        .toggle-switch {
+            width: 48px;
+            height: 24px;
+            background: #e5e7eb;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .toggle-switch.active { background: #143836; }
+        
+        .toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: white;
+            border-radius: 50%;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch.active::after { transform: translateX(24px); }
+        
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .color-swatch:hover, .color-swatch.selected {
+            border-color: #143836;
+            transform: scale(1.1);
+        }
+        
+        input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: none; border-radius: 8px; }
+        
+        .preview-card {
+            transition: all 0.3s ease;
+        }
+        
+        .preview-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body class="bg-warm min-h-screen font-sans text-gray-800">
+    <!-- Header -->
+    <header class="bg-nokras text-white py-4 px-6 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <a href="/" class="font-serif text-2xl font-semibold">Budget Ndio Story</a>
+                <span class="bg-gold/20 text-gold px-3 py-1 rounded-full text-sm">UI Config</span>
+            </div>
+            <div class="flex items-center gap-4">
+                <button onclick="saveConfig()" class="bg-gold hover:bg-gold-light text-nokras-dark px-6 py-2 rounded-lg font-medium transition-all">
+                    Save Changes
+                </button>
+                <a href="/admin/" class="text-white/80 hover:text-white transition-colors">Admin</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-8 px-6">
+        <!-- Tabs -->
+        <div class="flex gap-8 border-b border-gray-200 mb-8">
+            <button onclick="switchTab('general')" class="tab-btn active pb-3 font-medium text-gray-600 hover:text-nokras" data-tab="general">General</button>
+            <button onclick="switchTab('theme')" class="tab-btn pb-3 font-medium text-gray-600 hover:text-nokras" data-tab="theme">Theme</button>
+            <button onclick="switchTab('content')" class="tab-btn pb-3 font-medium text-gray-600 hover:text-nokras" data-tab="content">Content</button>
+            <button onclick="switchTab('header')" class="tab-btn pb-3 font-medium text-gray-600 hover:text-nokras" data-tab="header">Header & Footer</button>
+            <button onclick="switchTab('features')" class="tab-btn pb-3 font-medium text-gray-600 hover:text-nokras" data-tab="features">Features</button>
+        </div>
+
+        <!-- General Settings -->
+        <div id="tab-general" class="config-section space-y-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Site Information</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Site Name</label>
+                        <input type="text" id="siteName" value="Budget Ndio Story" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-bns focus:ring-2 focus:ring-bns/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Tagline</label>
+                        <input type="text" id="siteTagline" value="Civic Education Platform" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Primary Email</label>
+                        <input type="email" id="siteEmail" value="info@budgetndiostory.org" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Contact Phone</label>
+                        <input type="text" id="sitePhone" value="+254 700 000 000" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">SEO Settings</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Meta Title</label>
+                        <input type="text" id="metaTitle" value="Budget Ndio Story - Civic Education Platform" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Meta Description</label>
+                        <textarea id="metaDescription" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">Empowering citizens to understand and engage with Kenya's national and county budgets.</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Keywords (comma separated)</label>
+                        <input type="text" id="metaKeywords" value="budget, civic education, Kenya, transparency, accountability" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Social Media</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Facebook URL</label>
+                        <input type="url" id="socialFacebook" value="https://facebook.com/budgetndiostory" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Twitter/X URL</label>
+                        <input type="url" id="socialTwitter" value="https://twitter.com/budgetndio" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Instagram URL</label>
+                        <input type="url" id="socialInstagram" value="https://instagram.com/budgetndiostory" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">YouTube URL</label>
+                        <input type="url" id="socialYoutube" value="https://youtube.com/@budgetndiostory" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Theme Settings -->
+        <div id="tab-theme" class="config-section hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Color Scheme</h2>
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-3">Primary Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="primaryColor" value="#143836" class="w-12 h-12 rounded-lg cursor-pointer">
+                            <input type="text" id="primaryColorText" value="#143836" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 font-mono text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-3">Accent Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="accentColor" value="#c9a962" class="w-12 h-12 rounded-lg cursor-pointer">
+                            <input type="text" id="accentColorText" value="#c9a962" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 font-mono text-sm">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-3">Background Color</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="bgColor" value="#f5f5f0" class="w-12 h-12 rounded-lg cursor-pointer">
+                            <input type="text" id="bgColorText" value="#f5f5f0" class="flex-1 px-3 py-2 rounded-lg border border-gray-200 font-mono text-sm">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8">
+                    <label class="block text-sm font-medium text-gray-600 mb-4">Preset Themes</label>
+                    <div class="flex gap-4 flex-wrap">
+                        <button onclick="applyTheme('default')" class="px-4 py-2 rounded-lg border-2 border-nokras bg-nokras text-white font-medium hover:opacity-90">Default</button>
+                        <button onclick="applyTheme('ocean')" class="px-4 py-2 rounded-lg border-2 border-blue-600 bg-blue-600 text-white font-medium hover:opacity-90">Ocean</button>
+                        <button onclick="applyTheme('forest')" class="px-4 py-2 rounded-lg border-2 border-green-700 bg-green-700 text-white font-medium hover:opacity-90">Forest</button>
+                        <button onclick="applyTheme('sunset')" class="px-4 py-2 rounded-lg border-2 border-orange-500 bg-orange-500 text-white font-medium hover:opacity-90">Sunset</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Typography</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Heading Font</label>
+                        <select id="headingFont" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none">
+                            <option value="Cormorant Garamond">Cormorant Garamond</option>
+                            <option value="Playfair Display">Playfair Display</option>
+                            <option value="Merriweather">Merriweather</option>
+                            <option value="Lora">Lora</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Body Font</label>
+                        <select id="bodyFont" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none">
+                            <option value="Inter">Inter</option>
+                            <option value="Roboto">Roboto</option>
+                            <option value="Open Sans">Open Sans</option>
+                            <option value="Lato">Lato</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Visual Effects</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Enable Animations</h4>
+                            <p class="text-sm text-gray-500">GSAP scroll animations</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Parallax Effects</h4>
+                            <p class="text-sm text-gray-500">Parallax scrolling on hero sections</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Smooth Scrolling</h4>
+                            <p class="text-sm text-gray-500">CSS smooth scroll behavior</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3">
+                        <div>
+                            <h4 class="font-medium">Card Hover Effects</h4>
+                            <p class="text-sm text-gray-500">Elevation on card hover</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Settings -->
+        <div id="tab-content" class="config-section hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Featured Content</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Featured Video ID</label>
+                        <input type="text" id="featuredVideo" placeholder="YouTube video ID" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Featured Blog Post</label>
+                        <select class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none">
+                            <option value="">Select a blog post...</option>
+                            <option value="1">Understanding the Budget Process</option>
+                            <option value="2">County Budget Explained</option>
+                            <option value="3">Youth Voices in Governance</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Hero Headline</label>
+                        <input type="text" id="heroHeadline" value="Understanding Kenya's Budget" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Hero Subheadline</label>
+                        <textarea id="heroSubheadline" rows="2" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">Empowering citizens to understand and engage with Kenya's national and county budgets through interactive content.</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Categories Visibility</h2>
+                <div class="space-y-3" id="categoryList">
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded bg-[#0066CC]"></div>
+                            <span class="font-medium">Budget Basics</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded bg-[#E53E3E]"></div>
+                            <span class="font-medium">Finance Bill</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded bg-[#38A169]"></div>
+                            <span class="font-medium">National Budget</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded bg-[#805AD5]"></div>
+                            <span class="font-medium">County Budget</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-4 h-4 rounded bg-[#D69E2E]"></div>
+                            <span class="font-medium">Youth Voice</span>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Content Display</h2>
+                <div class="space-y-4">
+                    <div class="grid md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Videos Per Page</label>
+                            <input type="number" id="videosPerPage" value="12" min="6" max="50" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Posts Per Page</label>
+                            <input type="number" id="postsPerPage" value="9" min="3" max="30" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">News Items Per Page</label>
+                            <input type="number" id="newsPerPage" value="10" min="5" max="50" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Auto-play Videos</h4>
+                            <p class="text-sm text-gray-500">Autoplay videos in list views</p>
+                        </div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Show View Counts</h4>
+                            <p class="text-sm text-gray-500">Display video view counts</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Header & Footer Settings -->
+        <div id="tab-header" class="config-section hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Header Configuration</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Navigation Links</label>
+                        <div id="navLinks" class="space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" value="Home" class="flex-1 px-3 py-2 rounded-lg border border-gray-200">
+                                <input type="text" value="/" class="w-24 px-3 py-2 rounded-lg border border-gray-200">
+                                <button class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg">✕</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" value="Videos" class="flex-1 px-3 py-2 rounded-lg border border-gray-200">
+                                <input type="text" value="/videos" class="w-24 px-3 py-2 rounded-lg border border-gray-200">
+                                <button class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg">✕</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" value="Blog" class="flex-1 px-3 py-2 rounded-lg border border-gray-200">
+                                <input type="text" value="/blog" class="w-24 px-3 py-2 rounded-lg border border-gray-200">
+                                <button class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg">✕</button>
+                            </div>
+                            <div class="flex gap-2">
+                                <input type="text" value="About" class="flex-1 px-3 py-2 rounded-lg border border-gray-200">
+                                <input type="text" value="/about" class="w-24 px-3 py-2 rounded-lg border border-gray-200">
+                                <button class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg">✕</button>
+                            </div>
+                        </div>
+                        <button onclick="addNavLink()" class="mt-3 text-nokras hover:text-nokras-light font-medium">+ Add Link</button>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Show Donate Button</h4>
+                            <p class="text-sm text-gray-500">Display donate CTA in header</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Sticky Header</h4>
+                            <p class="text-sm text-gray-500">Header stays fixed on scroll</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Footer Configuration</h2>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Footer Description</label>
+                        <textarea id="footerDescription" rows="3" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">Budget Ndio Story is a civic education platform dedicated to making budget information accessible to all Kenyan citizens.</textarea>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Newsletter Text</label>
+                            <input type="text" id="newsletterText" value="Stay updated with our latest content" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Newsletter Placeholder</label>
+                            <input type="text" id="newsletterPlaceholder" value="Enter your email" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Footer Links (Columns)</label>
+                        <div class="grid md:grid-cols-4 gap-4 mt-2">
+                            <div>
+                                <h4 class="font-medium mb-2">Organization</h4>
+                                <ul class="space-y-1 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-nokras">About Us</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Team</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Careers</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Contact</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-2">Resources</h4>
+                                <ul class="space-y-1 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-nokras">Budget Guide</a></li>
+                                    <li><a href="#" class="hover:text-nokras">FAQ</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Glossary</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-2">Legal</h4>
+                                <ul class="space-y-1 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-nokras">Privacy Policy</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Terms of Service</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Cookie Policy</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-medium mb-2">Support</h4>
+                                <ul class="space-y-1 text-sm text-gray-600">
+                                    <li><a href="#" class="hover:text-nokras">Donate</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Partner With Us</a></li>
+                                    <li><a href="#" class="hover:text-nokras">Press Kit</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-t border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Show Social Icons</h4>
+                            <p class="text-sm text-gray-500">Display social media links</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features Settings -->
+        <div id="tab-features" class="config-section hidden space-y-8">
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Feature Toggles</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Newsletter Signup</h4>
+                            <p class="text-sm text-gray-500">Enable newsletter subscription</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Comments</h4>
+                            <p class="text-sm text-gray-500">Enable blog comments</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Donations</h4>
+                            <p class="text-sm text-gray-500">Enable donation functionality</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">User Accounts</h4>
+                            <p class="text-sm text-gray-500">Enable user registration</p>
+                        </div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Analytics</h4>
+                            <p class="text-sm text-gray-500">Track page views and engagement</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div class="flex items-center justify-between py-3">
+                        <div>
+                            <h4 class="font-medium">API Access</h4>
+                            <p class="text-sm text-gray-500">Enable REST API</p>
+                        </div>
+                        <div class="toggle-switch active" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Third-Party Integrations</h2>
+                <div class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">YouTube API Key</label>
+                            <input type="password" id="youtubeApiKey" placeholder="Enter API key" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">TikTok Embed Code</label>
+                            <input type="text" id="tiktokEmbedId" placeholder="TikTok username" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Mailchimp API Key</label>
+                            <input type="password" id="mailchimpApiKey" placeholder="Enter API key" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-600 mb-2">Google Analytics ID</label>
+                            <input type="text" id="gaId" placeholder="G-XXXXXXXXXX" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 shadow-sm">
+                <h2 class="font-serif text-2xl font-semibold mb-6 text-nokras">Maintenance Mode</h2>
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between py-3 border-b border-gray-100">
+                        <div>
+                            <h4 class="font-medium">Enable Maintenance Mode</h4>
+                            <p class="text-sm text-gray-500">Show maintenance page to visitors</p>
+                        </div>
+                        <div class="toggle-switch" onclick="this.classList.toggle('active')"></div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Maintenance Message</label>
+                        <textarea id="maintenanceMessage" rows="2" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">We are currently performing scheduled maintenance. We will be back shortly.</textarea>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">Allowed IPs (comma separated)</label>
+                        <input type="text" id="allowedIps" placeholder="127.0.0.1, 192.168.1.1" class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-nokras focus:ring-2 focus:ring-nokras/20 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Live Preview -->
+        <div class="mt-12 bg-gradient-to-br from-nokras to-nokras-light rounded-2xl p-8 text-white">
+            <h2 class="font-serif text-2xl font-semibold mb-6">Live Preview</h2>
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="preview-card bg-white/10 backdrop-blur rounded-xl p-6">
+                    <div class="text-gold mb-3 text-3xl">🎨</div>
+                    <h3 class="font-serif text-xl font-semibold mb-2">Theme</h3>
+                    <p class="text-white/70 text-sm">Primary: <span id="previewPrimary">#143836</span></p>
+                    <p class="text-white/70 text-sm">Accent: <span id="previewAccent">#c9a962</span></p>
+                </div>
+                <div class="preview-card bg-white/10 backdrop-blur rounded-xl p-6">
+                    <div class="text-gold mb-3 text-3xl">📄</div>
+                    <h3 class="font-serif text-xl font-semibold mb-2">Content</h3>
+                    <p class="text-white/70 text-sm">Videos: <span id="previewVideos">12</span> per page</p>
+                    <p class="text-white/70 text-sm">Posts: <span id="previewPosts">9</span> per page</p>
+                </div>
+                <div class="preview-card bg-white/10 backdrop-blur rounded-xl p-6">
+                    <div class="text-gold mb-3 text-3xl">⚙️</div>
+                    <h3 class="font-serif text-xl font-semibold mb-2">Features</h3>
+                    <p class="text-white/70 text-sm">Newsletter: <span id="previewNewsletter">On</span></p>
+                    <p class="text-white/70 text-sm">Comments: <span id="previewComments">On</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.config-section').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            // Show selected tab
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
+            
+            // Animate
+            gsap.fromTo(`#tab-${tabName}`, 
+                { opacity: 0, y: 20 },
+                { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+            );
+        }
+
+        // Theme presets
+        const themes = {
+            default: { primary: '#143836', accent: '#c9a962', bg: '#f5f5f0' },
+            ocean: { primary: '#1e40af', accent: '#06b6d4', bg: '#f0f9ff' },
+            forest: { primary: '#166534', accent: '#84cc16', bg: '#f7fee7' },
+            sunset: { primary: '#9a3412', accent: '#f97316', bg: '#fff7ed' }
+        };
+
+        function applyTheme(themeName) {
+            const theme = themes[themeName];
+            document.getElementById('primaryColor').value = theme.primary;
+            document.getElementById('primaryColorText').value = theme.primary;
+            document.getElementById('accentColor').value = theme.accent;
+            document.getElementById('accentColorText').value = theme.accent;
+            document.getElementById('bgColor').value = theme.bg;
+            document.getElementById('bgColorText').value = theme.bg;
+            
+            // Update preview
+            document.getElementById('previewPrimary').textContent = theme.primary;
+            document.getElementById('previewAccent').textContent = theme.accent;
+        }
+
+        // Color sync
+        ['primaryColor', 'accentColor', 'bgColor'].forEach(id => {
+            const colorInput = document.getElementById(id);
+            const textInput = document.getElementById(id + 'Text');
+            
+            colorInput.addEventListener('input', () => {
+                textInput.value = colorInput.value;
+                updatePreview();
+            });
+            
+            textInput.addEventListener('input', () => {
+                if (/^#[0-9A-Fa-f]{6}$/.test(textInput.value)) {
+                    colorInput.value = textInput.value;
+                    updatePreview();
+                }
+            });
+        });
+
+        function updatePreview() {
+            document.getElementById('previewPrimary').textContent = document.getElementById('primaryColor').value;
+            document.getElementById('previewAccent').textContent = document.getElementById('accentColor').value;
+        }
+
+        // Content preview updates
+        document.getElementById('videosPerPage').addEventListener('input', (e) => {
+            document.getElementById('previewVideos').textContent = e.target.value;
+        });
+        
+        document.getElementById('postsPerPage').addEventListener('input', (e) => {
+            document.getElementById('previewPosts').textContent = e.target.value;
+        });
+
+        // Add nav link
+        function addNavLink() {
+            const container = document.getElementById('navLinks');
+            const div = document.createElement('div');
+            div.className = 'flex gap-2';
+            div.innerHTML = `
+                <input type="text" placeholder="Label" class="flex-1 px-3 py-2 rounded-lg border border-gray-200">
+                <input type="text" placeholder="/url" class="w-24 px-3 py-2 rounded-lg border border-gray-200">
+                <button onclick="this.parentElement.remove()" class="px-3 py-2 text-red-500 hover:bg-red-50 rounded-lg">✕</button>
+            `;
+            container.appendChild(div);
+        }
+
+        // Save config
+        function saveConfig() {
+            const config = {
+                site: {
+                    name: document.getElementById('siteName').value,
+                    tagline: document.getElementById('siteTagline').value,
+                    email: document.getElementById('siteEmail').value,
+                    phone: document.getElementById('sitePhone').value
+                },
+                seo: {
+                    title: document.getElementById('metaTitle').value,
+                    description: document.getElementById('metaDescription').value,
+                    keywords: document.getElementById('metaKeywords').value
+                },
+                theme: {
+                    primary: document.getElementById('primaryColor').value,
+                    accent: document.getElementById('accentColor').value,
+                    background: document.getElementById('bgColor').value,
+                    headingFont: document.getElementById('headingFont').value,
+                    bodyFont: document.getElementById('bodyFont').value
+                },
+                content: {
+                    videosPerPage: parseInt(document.getElementById('videosPerPage').value),
+                    postsPerPage: parseInt(document.getElementById('postsPerPage').value)
+                }
+            };
+            
+            console.log('Config saved:', config);
+            
+            // Show success message
+            const btn = document.querySelector('header button');
+            const originalText = btn.textContent;
+            btn.textContent = '✓ Saved!';
+            btn.classList.add('bg-green-600');
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove('bg-green-600');
+            }, 2000);
+        }
+
+        // Initialize animations
+        document.addEventListener('DOMContentLoaded', () => {
+            gsap.to('.config-section', {
+                opacity: 1,
+                y: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power2.out"
+            });
+        });
+    </script>
+</body>
+</html>

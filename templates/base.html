@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Budget Ndio Story - Financial Empowerment Platform{% endblock %}</title>
+    <meta name="description" content="Budget Ndio Story - Your journey to financial freedom. Access financial education, budgeting tools, and community support.">
+    <meta name="keywords" content="budget, finance, money management, financial education, Kenya, Africa">
+    <meta name="author" content="Budget Ndio Story">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Budget Ndio Story - Financial Empowerment Platform">
+    <meta property="og:description" content="Your journey to financial freedom starts here. Access budgeting tools, financial education, and community support.">
+    <meta property="og:image" content="/static/images/og-image.jpg">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    
+    <!-- Preconnect for Performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com">
+    
+    <!-- Fonts - NeueMontreal -->
+    <style>
+        @font-face {
+            font-family: 'NeueMontreal';
+            src: url('NeueMontreal.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['NeueMontreal', 'Inter', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0066CC',
+                            light: '#1a75ff',
+                            dark: '#004c99',
+                            50: '#e6f0ff',
+                            100: '#cce0ff',
+                        },
+                        dark: {
+                            DEFAULT: '#000000',
+                            900: '#000000',
+                            800: '#0a0a0a',
+                            700: '#171717',
+                            600: '#262626',
+                        },
+                        accent: {
+                            blue: '#0066CC',
+                            white: '#ffffff',
+                        }
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-in': 'slideIn 0.3s ease-out',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideIn: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #000000;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #333333;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0066CC;
+        }
+        
+        /* Solid colors - no gradients */
+        .gradient-text {
+            color: #0066CC;
+        }
+        
+        /* Sidebar Link Active State */
+        .sidebar-link {
+            position: relative;
+            overflow: hidden;
+        }
+        .sidebar-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 3px;
+            background: #0066CC;
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+        .sidebar-link:hover::before,
+        .sidebar-link.active::before {
+            transform: scaleY(1);
+        }
+        
+        /* Mobile Menu Transition */
+        .mobile-menu {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #171717 25%, #262626 50%, #171717 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        
+        /* Focus Visible for Accessibility */
+        *:focus-visible {
+            outline: 2px solid #0066CC;
+            outline-offset: 2px;
+        }
+        
+        /* Print Styles */
+        @media print {
+            .no-print { display: none !important; }
+            .sidebar { display: none !important; }
+            .main-content { margin-left: 0 !important; }
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Budget Ndio Story",
+        "url": "https://budgetndiostory.com",
+        "logo": "https://budgetndiostory.com/static/images/logo.png",
+        "description": "Financial empowerment platform for budgeting and money management",
+        "sameAs": [
+            "https://facebook.com/budgetndiostory",
+            "https://twitter.com/budgetndiostory",
+            "https://instagram.com/budgetndiostory"
+        ]
+    }
+    </script>
+</head>
+<body class="bg-black text-white font-body antialiased">
+    
+    {% if user.is_staff %}
+    <!-- Skip to Main Content for Accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-primary-500 text-white px-4 py-2 rounded-lg z-50">
+        Skip to main content
+    </a>
+    
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 h-16 bg-black border-b border-gray-800 z-40 flex items-center justify-between px-4">
+        <button id="mobile-menu-btn" class="p-2 hover:bg-gray-900 rounded-lg transition-colors" aria-label="Toggle menu">
+            <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+        <a href="/" class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center">
+                <span class="text-white font-bold">B</span>
+            </div>
+            <span class="font-bold text-lg hidden sm:block">Budget Ndio</span>
+        </a>
+        <div class="flex items-center gap-2">
+            <button class="p-2 hover:bg-gray-900 rounded-lg transition-colors relative" aria-label="Notifications">
+                <i data-lucide="bell" class="w-5 h-5"></i>
+                <span class="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+            </button>
+            <img src="{{ user.profile_image|default:'/static/images/default-avatar.png' }}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-blue-600">
+        </div>
+    </header>
+    
+    <!-- Sidebar Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden lg:hidden transition-opacity opacity-0"></div>
+    
+    <!-- Sidebar Navigation -->
+    <aside id="sidebar" class="fixed left-0 top-0 h-full w-72 bg-black border-r border-gray-800 z-50 transform -translate-x-full lg:translate-x-0 transition-transform duration-300 overflow-y-auto mobile-menu" role="navigation" aria-label="Main navigation">
+        <!-- Logo Section -->
+        <div class="p-6 border-b border-gray-800 sticky top-0 bg-black z-10">
+            <a href="/" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center group-hover:bg-blue-500 transition-colors">
+                    <span class="text-white font-bold text-xl">B</span>
+                </div>
+                <div>
+                    <span class="font-bold text-lg block leading-tight">Budget Ndio</span>
+                    <span class="text-xs text-gray-400">Admin Dashboard</span>
+                </div>
+            </a>
+        </div>
+        
+        <!-- User Profile Summary -->
+        <div class="p-4 border-b border-gray-800">
+            <div class="flex items-center gap-3 p-3 rounded-xl bg-gray-900/50 hover:bg-gray-900 transition-colors cursor-pointer">
+                <img src="{{ user.profile_image|default:'/static/images/default-avatar.png' }}" alt="{{ user.get_full_name }}" class="w-10 h-10 rounded-full border-2 border-blue-600">
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium text-sm truncate">{{ user.get_full_name|default:user.username }}</p>
+                    <p class="text-xs text-gray-400 truncate">{{ user.email }}</p>
+                </div>
+                <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <nav class="p-4 space-y-1" aria-label="Admin navigation">
+            <!-- Dashboard -->
+            <a href="{% url 'dashboard' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if request.path == '/dashboard/' %}active bg-blue-600/20 text-blue-400 border-l-2 border-blue-600{% endif %}" aria-current="{% if request.path == '/dashboard/' %}page{% endif %}">
+                <i data-lucide="layout-dashboard" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="font-medium">Dashboard</span>
+                <span class="ml-auto text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full">New</span>
+            </a>
+            
+            <!-- Content Section -->
+            <div class="pt-4 pb-2 px-4">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Content Management</span>
+            </div>
+            
+            <a href="{% url 'category-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'category' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="folder-tree" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Categories</span>
+            </a>
+            
+            <a href="{% url 'video-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'video' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="video" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Videos</span>
+                <span class="ml-auto text-xs bg-gray-700 text-gray-300 px-2 py-0.5 rounded-full">24</span>
+            </a>
+            
+            <a href="{% url 'playlist-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'playlist' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="list-video" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Playlists</span>
+            </a>
+            
+            <a href="{% url 'blogpost-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'blog' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="file-text" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Blog Posts</span>
+                <span class="ml-auto text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full">Draft</span>
+            </a>
+            
+            <a href="{% url 'newsitem-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'news' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="newspaper" class="w-5 h-5 flex-shrink-0"></i>
+                <span>News</span>
+            </a>
+            
+            <!-- Users Section -->
+            <div class="pt-4 pb-2 px-4">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">User Management</span>
+            </div>
+            
+            <a href="{% url 'user-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'user' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="users" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Users</span>
+                <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">1.2k</span>
+            </a>
+            
+            <a href="{% url 'donor-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'donor' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="heart-handshake" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Donors</span>
+            </a>
+            
+            <a href="{% url 'sponsor-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'sponsor' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="award" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Sponsors</span>
+            </a>
+            
+            <a href="{% url 'partner-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'partner' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="handshake" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Partners</span>
+            </a>
+            
+            <!-- Marketing Section -->
+            <div class="pt-4 pb-2 px-4">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Marketing</span>
+            </div>
+            
+            <a href="{% url 'subscriber-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'subscriber' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="mail" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Subscribers</span>
+                <span class="ml-auto text-xs bg-blue-600/20 text-blue-400 px-2 py-0.5 rounded-full">+12%</span>
+            </a>
+            
+            <a href="{% url 'campaign-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'campaign' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="megaphone" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Campaigns</span>
+            </a>
+            
+            <!-- Finance Section -->
+            <div class="pt-4 pb-2 px-4">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Finance</span>
+            </div>
+            
+            <a href="{% url 'donation-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'donation' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="banknote" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Donations</span>
+                <span class="ml-auto text-xs bg-green-500/20 text-green-400 px-2 py-0.5 rounded-full">KES 450K</span>
+            </a>
+            
+            <a href="{% url 'deliverable-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'deliverable' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="package-check" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Deliverables</span>
+            </a>
+            
+            <a href="{% url 'asset-list' %}" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all {% if 'asset' in request.path %}active bg-gray-900 text-white{% endif %}">
+                <i data-lucide="box" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Assets</span>
+            </a>
+            
+            <!-- Public Links -->
+            <div class="pt-4 pb-2 px-4">
+                <span class="text-xs font-semibold text-gray-500 uppercase tracking-wider">Public View</span>
+            </div>
+            
+            <a href="{% url 'public-videos' %}" target="_blank" rel="noopener noreferrer" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                <i data-lucide="external-link" class="w-5 h-5 flex-shrink-0"></i>
+                <span>View Videos</span>
+            </a>
+            
+            <a href="{% url 'public-blog' %}" target="_blank" rel="noopener noreferrer" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                <i data-lucide="external-link" class="w-5 h-5 flex-shrink-0"></i>
+                <span>View Blog</span>
+            </a>
+            
+            <a href="{% url 'donate' %}" target="_blank" rel="noopener noreferrer" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-gray-900 hover:text-white transition-all">
+                <i data-lucide="heart" class="w-5 h-5 flex-shrink-0"></i>
+                <span>Donate Page</span>
+            </a>
+        </nav>
+        
+        <!-- Bottom Actions -->
+        <div class="p-4 border-t border-gray-800 mt-auto">
+            <button class="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-300 hover:bg-red-900/20 hover:text-red-400 transition-all group">
+                <i data-lucide="log-out" class="w-5 h-5 group-hover:rotate-180 transition-transform"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main id="main-content" class="lg:ml-72 min-h-screen pt-16 lg:pt-0 transition-all duration-300">
+        <!-- Top Bar -->
+        <header class="sticky top-0 z-30 bg-black/80 backdrop-blur-md border-b border-gray-800 px-4 sm:px-8 py-4 hidden lg:flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <h1 class="text-xl font-bold text-white">{% block page_title %}Dashboard{% endblock %}</h1>
+                <nav class="flex items-center gap-2 text-sm text-gray-400" aria-label="Breadcrumb">
+                    <span>Home</span>
+                    <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    <span class="text-blue-400">{% block breadcrumb %}Dashboard{% endblock %}</span>
+                </nav>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <!-- Search -->
+                <div class="relative hidden md:block">
+                    <i data-lucide="search" class="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400"></i>
+                    <input type="search" placeholder="Search..." class="pl-10 pr-4 py-2 bg-gray-900 border border-gray-700 rounded-lg text-sm focus:outline-none focus:border-blue-600 focus:ring-1 focus:ring-blue-600 w-64 transition-all">
+                </div>
+                
+                <!-- Theme Toggle -->
+                <button id="theme-toggle" class="p-2 hover:bg-gray-900 rounded-lg transition-colors" aria-label="Toggle theme">
+                    <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+                    <i data-lucide="moon" class="w-5 h-5 block dark:hidden"></i>
+                </button>
+                
+                <!-- Notifications -->
+                <div class="relative">
+                    <button id="notif-btn" class="p-2 hover:bg-gray-900 rounded-lg transition-colors relative" aria-label="Notifications" aria-haspopup="true" aria-expanded="false">
+                        <i data-lucide="bell" class="w-5 h-5"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+                    </button>
+                    
+                    <!-- Dropdown -->
+                    <div id="notif-dropdown" class="absolute right-0 mt-2 w-80 bg-gray-900 border border-gray-700 rounded-xl shadow-2xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50">
+                        <div class="p-4 border-b border-gray-700 flex items-center justify-between">
+                            <h3 class="font-semibold">Notifications</h3>
+                            <button class="text-xs text-blue-400 hover:text-blue-300">Mark all read</button>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <div class="p-4 hover:bg-gray-800/50 transition-colors cursor-pointer border-l-2 border-blue-600">
+                                <p class="text-sm font-medium">New donation received</p>
+                                <p class="text-xs text-gray-400 mt-1">KES 5,000 from John Doe</p>
+                                <p class="text-xs text-gray-500 mt-1">2 minutes ago</p>
+                            </div>
+                            <div class="p-4 hover:bg-gray-800/50 transition-colors cursor-pointer">
+                                <p class="text-sm font-medium">New blog post published</p>
+                                <p class="text-xs text-gray-400 mt-1">"10 Budgeting Tips for 2024"</p>
+                                <p class="text-xs text-gray-500 mt-1">1 hour ago</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Profile -->
+                <div class="relative">
+                    <button id="profile-btn" class="flex items-center gap-2 p-1 pr-3 rounded-full hover:bg-dark-700 transition-colors" aria-haspopup="true" aria-expanded="false">
+                        <img src="{{ user.profile_image|default:'/static/images/default-avatar.png' }}" alt="Profile" class="w-8 h-8 rounded-full border-2 border-primary-500">
+                        <span class="text-sm font-medium hidden xl:block">{{ user.first_name|default:"Admin" }}</span>
+                        <i data-lucide="chevron-down" class="w-4 h-4 text-gray-400"></i>
+                    </button>
+                    
+                    <!-- Dropdown -->
+                    <div id="profile-dropdown" class="absolute right-0 mt-2 w-56 bg-dark-800 border border-dark-700 rounded-xl shadow-2xl opacity-0 invisible transform -translate-y-2 transition-all duration-200 z-50">
+                        <div class="p-4 border-b border-dark-700">
+                            <p class="font-medium">{{ user.get_full_name|default:user.username }}</p>
+                            <p class="text-xs text-gray-400">{{ user.email }}</p>
+                        </div>
+                        <div class="p-2">
+                            <a href="{% url 'profile' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-700 transition-colors text-sm">
+                                <i data-lucide="user" class="w-4 h-4"></i>
+                                Profile
+                            </a>
+<a href="{% url 'profile' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-dark-700 transition-colors text-sm">
+    <i data-lucide="settings" class="w-4 h-4"></i>
+    Settings
+</a>
+                            <div class="border-t border-dark-700 my-2"></div>
+<a href="{% url 'admin:logout' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-red-500/10 text-red-400 transition-colors text-sm">
+    <i data-lucide="log-out" class="w-4 h-4"></i>
+    Logout
+</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Messages -->
+        {% if messages %}
+        <div class="px-4 sm:px-8 pt-6 space-y-2" role="alert" aria-live="polite">
+            {% for message in messages %}
+            <div class="flex items-center gap-3 p-4 rounded-xl mb-2 animate-fade-in {% if message.tags == 'success' %}bg-green-500/10 border border-green-500/20 text-green-400{% elif message.tags == 'error' %}bg-red-500/10 border border-red-500/20 text-red-400{% elif message.tags == 'warning' %}bg-yellow-500/10 border border-yellow-500/20 text-yellow-400{% else %}bg-blue-600/10 border border-blue-600/20 text-blue-400{% endif %}">
+                <i data-lucide="{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% elif message.tags == 'warning' %}alert-triangle{% else %}info{% endif %}" class="w-5 h-5 flex-shrink-0"></i>
+                <span class="text-sm font-medium">{{ message }}</span>
+                <button onclick="this.parentElement.remove()" class="ml-auto hover:opacity-70" aria-label="Dismiss">
+                    <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        
+        <!-- Page Content -->
+        <div class="p-4 sm:p-8 animate-fade-in">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    {% else %}
+    <!-- Public Site -->
+    {% block public_content %}{% endblock %}
+    {% endif %}
+    
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    
+    <script>
+        // Initialize Lucide Icons
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Mobile Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            if (mobileMenuBtn && sidebar && overlay) {
+                function openMenu() {
+                    sidebar.classList.remove('-translate-x-full');
+                    overlay.classList.remove('hidden');
+                    setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+                    document.body.style.overflow = 'hidden';
+                }
+                
+                function closeMenu() {
+                    sidebar.classList.add('-translate-x-full');
+                    overlay.classList.add('opacity-0');
+                    setTimeout(() => overlay.classList.add('hidden'), 300);
+                    document.body.style.overflow = '';
+                }
+                
+                mobileMenuBtn.addEventListener('click', openMenu);
+                overlay.addEventListener('click', closeMenu);
+                
+                // Close on escape key
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape' && !sidebar.classList.contains('-translate-x-full')) {
+                        closeMenu();
+                    }
+                });
+            }
+            
+            // Dropdowns
+            function setupDropdown(btnId, dropdownId) {
+                const btn = document.getElementById(btnId);
+                const dropdown = document.getElementById(dropdownId);
+                
+                if (btn && dropdown) {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const isOpen = !dropdown.classList.contains('invisible');
+                        
+                        // Close all other dropdowns
+                        document.querySelectorAll('[id$="-dropdown"]').forEach(d => {
+                            d.classList.add('invisible', 'opacity-0', '-translate-y-2');
+                        });
+                        
+                        if (!isOpen) {
+                            dropdown.classList.remove('invisible', 'opacity-0', '-translate-y-2');
+                            btn.setAttribute('aria-expanded', 'true');
+                        } else {
+                            btn.setAttribute('aria-expanded', 'false');
+                        }
+                    });
+                }
+            }
+            
+            setupDropdown('notif-btn', 'notif-dropdown');
+            setupDropdown('profile-btn', 'profile-dropdown');
+            
+            // Close dropdowns on outside click
+            document.addEventListener('click', () => {
+                document.querySelectorAll('[id$="-dropdown"]').forEach(d => {
+                    d.classList.add('invisible', 'opacity-0', '-translate-y-2');
+                });
+                document.querySelectorAll('[aria-expanded="true"]').forEach(btn => {
+                    btn.setAttribute('aria-expanded', 'false');
+                });
+            });
+            
+            // Dark Mode Toggle
+            const themeToggle = document.getElementById('theme-toggle');
+            if (themeToggle) {
+                themeToggle.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.setItem('theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                });
+            }
+            
+            // Toast Notification Function
+            window.showToast = function(message, type = 'info') {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                const colors = {
+                    success: 'bg-green-500',
+                    error: 'bg-red-500',
+                    warning: 'bg-yellow-500',
+                    info: 'bg-primary-500'
+                };
+                
+                toast.className = `${colors[type]} text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-x-full transition-transform duration-300`;
+                toast.innerHTML = `
+                    <span class="font-medium">${message}</span>
+                    <button onclick="this.parentElement.remove()" class="hover:opacity-70">
+                        <i data-lucide="x" class="w-4 h-4"></i>
+                    </button>
+                `;
+                
+                container.appendChild(toast);
+                lucide.createIcons();
+                
+                setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+                setTimeout(() => {
+                    toast.classList.add('translate-x-full');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            };
+            
+            // Active Link Highlighting
+            const currentPath = window.location.pathname;
+            document.querySelectorAll('.sidebar-link').forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.classList.add('active', 'bg-gradient-to-r', 'from-primary-500/20', 'to-transparent', 'text-primary-400', 'border-l-2', 'border-primary-500');
+                }
+            });
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

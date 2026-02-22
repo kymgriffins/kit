@@ -1,0 +1,201 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Dashboard - Admin Panel{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="mb-8">
+    <h1 class="text-3xl font-bold tracking-tight">Dashboard</h1>
+    <p class="text-muted-foreground mt-1">Welcome back! Here's an overview of your content.</p>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <!-- Total Users -->
+    <div class="stat-card rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between space-x-4">
+            <div class="flex items-center space-x-4">
+                <div class="rounded-lg bg-primary/10 p-2">
+                    <i class="ph ph-users text-primary text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Total Users</p>
+                    <p class="text-2xl font-bold">{{ user_count|default:0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Subscribers -->
+    <div class="stat-card rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between space-x-4">
+            <div class="flex items-center space-x-4">
+                <div class="rounded-lg bg-primary/10 p-2">
+                    <i class="ph ph-envelope-simple text-primary text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Subscribers</p>
+                    <p class="text-2xl font-bold">{{ subscriber_count|default:0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Total Videos -->
+    <div class="stat-card rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between space-x-4">
+            <div class="flex items-center space-x-4">
+                <div class="rounded-lg bg-primary/10 p-2">
+                    <i class="ph ph-video-camera text-primary text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Videos</p>
+                    <p class="text-2xl font-bold">{{ video_count|default:0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Blog Posts -->
+    <div class="stat-card rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between space-x-4">
+            <div class="flex items-center space-x-4">
+                <div class="rounded-lg bg-primary/10 p-2">
+                    <i class="ph ph-article text-primary text-xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-muted-foreground">Blog Posts</p>
+                    <p class="text-2xl font-bold">{{ post_count|default:0 }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="mt-8">
+    <h2 class="text-xl font-semibold tracking-tight mb-4">Quick Actions</h2>
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <a href="{% url 'video-create' %}" class="stat-card flex flex-col items-center justify-center rounded-xl border bg-card p-6 shadow-sm hover:bg-accent transition-colors">
+            <i class="ph ph-plus-circle text-3xl mb-2"></i>
+            <span class="text-sm font-medium">Add Video</span>
+        </a>
+        <a href="{% url 'blogpost-create' %}" class="stat-card flex flex-col items-center justify-center rounded-xl border bg-card p-6 shadow-sm hover:bg-accent transition-colors">
+            <i class="ph ph-pencil-simple text-3xl mb-2"></i>
+            <span class="text-sm font-medium">Write Post</span>
+        </a>
+        <a href="{% url 'campaign-create' %}" class="stat-card flex flex-col items-center justify-center rounded-xl border bg-card p-6 shadow-sm hover:bg-accent transition-colors">
+            <i class="ph ph-megaphone text-3xl mb-2"></i>
+            <span class="text-sm font-medium">New Campaign</span>
+        </a>
+        <a href="{% url 'donation-create' %}" class="stat-card flex flex-col items-center justify-center rounded-xl border bg-card p-6 shadow-sm hover:bg-accent transition-colors">
+            <i class="ph ph-heart text-3xl mb-2"></i>
+            <span class="text-sm font-medium">Record Donation</span>
+        </a>
+    </div>
+</div>
+
+<!-- Recent Activity -->
+<div class="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+    <!-- Recent Videos -->
+    <div class="col-span-4 rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Recent Videos</h3>
+            <a href="{% url 'video-list' %}" class="text-sm text-primary hover:underline">View all</a>
+        </div>
+        <div class="space-y-4">
+            {% if recent_videos %}
+                {% for video in recent_videos %}
+                <div class="flex items-center gap-4">
+                    <div class="rounded-lg bg-muted p-2">
+                        <i class="ph ph-play-circle text-xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ video.title }}</p>
+                        <p class="text-xs text-muted-foreground">{{ video.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-sm text-muted-foreground text-center py-4">No videos yet</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Posts -->
+    <div class="col-span-3 rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Recent Posts</h3>
+            <a href="{% url 'blogpost-list' %}" class="text-sm text-primary hover:underline">View all</a>
+        </div>
+        <div class="space-y-4">
+            {% if recent_posts %}
+                {% for post in recent_posts %}
+                <div class="flex items-center gap-4">
+                    <div class="rounded-lg bg-muted p-2">
+                        <i class="ph ph-article text-xl"></i>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-sm font-medium truncate">{{ post.title }}</p>
+                        <p class="text-xs text-muted-foreground">{{ post.created_at|date:"M d, Y" }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-sm text-muted-foreground text-center py-4">No posts yet</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Analytics Overview -->
+<div class="mt-8 grid gap-4 md:grid-cols-2">
+    <!-- Donations Summary -->
+    <div class="rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Donations</h3>
+            <a href="{% url 'donation-list' %}" class="text-sm text-primary hover:underline">View all</a>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-muted-foreground">Total Donations</span>
+                <span class="font-medium">{{ donation_count|default:0 }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-muted-foreground">Total Amount</span>
+                <span class="font-medium">${{ total_donations|default:"0" }}</span>
+            </div>
+            <a href="{% url 'donation-create' %}" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors w-full">
+                <i class="ph ph-plus mr-2"></i>
+                Add Donation
+            </a>
+        </div>
+    </div>
+
+    <!-- Sponsors & Partners -->
+    <div class="rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-semibold">Sponsors & Partners</h3>
+            <a href="{% url 'sponsor-list' %}" class="text-sm text-primary hover:underline">View all</a>
+        </div>
+        <div class="space-y-4">
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-muted-foreground">Sponsors</span>
+                <span class="font-medium">{{ sponsor_count|default:0 }}</span>
+            </div>
+            <div class="flex items-center justify-between">
+                <span class="text-sm text-muted-foreground">Partners</span>
+                <span class="font-medium">{{ partner_count|default:0 }}</span>
+            </div>
+            <div class="flex gap-2">
+                <a href="{% url 'sponsor-list' %}" class="inline-flex items-center justify-center rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors flex-1">
+                    View Sponsors
+                </a>
+                <a href="{% url 'partner-list' %}" class="inline-flex items-center justify-center rounded-lg border bg-background px-4 py-2 text-sm font-medium hover:bg-accent transition-colors flex-1">
+                    View Partners
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

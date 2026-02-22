@@ -9,9 +9,11 @@ urlpatterns = [
     # Admin - must come first to avoid conflicts
     path('admin/', admin.site.urls),
     
+    # Core app - serves all pages and CRUD operations
+    path('', include('apps.core.urls')),
+    
     # Main pages - serve from templates/
-    path('', home, name='home'),  # Root serves home.html
-    path('home/', home, name='home_alt'),
+    path('home/', home, name='home'),  # Root serves home.html
     path('index/', index, name='index'),  # Main app page
     path('config/', config_page, name='config'),
     

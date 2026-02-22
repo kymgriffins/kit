@@ -239,6 +239,9 @@ class BlogPost(models.Model):
     def __str__(self):
         return self.title
     
+    def get_absolute_url(self):
+        return f'/blog/{self.slug}/'
+    
     def save(self, *args, **kwargs):
         if not self.slug:
             base_slug = slugify(self.title)

@@ -1,0 +1,53 @@
+{% extends 'public_base.html' %}
+
+{% block title %}Videos - Budget Ndio Story{% endblock %}
+
+{% block content %}
+<main class="min-h-screen" style="background-color: var(--bg-primary);">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div class="mb-12 animate-fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4" style="color: var(--text-primary);">Video Library</h1>
+            <p class="text-xl" style="color: var(--text-secondary);">Watch and learn about Kenya's budget</p>
+        </div>
+        
+        <!-- Video Grid -->
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for video in videos %}
+            <div class="card group overflow-hidden">
+                <div class="relative aspect-video" style="background-color: var(--bg-tertiary);">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="w-16 h-16 rounded-full bg-white/20 backdrop-blur flex items-center justify-center group-hover:scale-110 transition-transform">
+                            <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 5v14l11-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    {% if video.duration_seconds %}
+                    <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-sm font-mono">
+                        {{ video.duration_seconds|divisibleby:60|yesno:"yes,no" }}
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="p-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-1 rounded text-xs" style="background: rgba(20, 184, 166, 0.15); color: #14b8a6;">{{ video.get_content_type_display }}</span>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2 group-hover:text-primary-600 transition-colors" style="color: var(--text-primary);">
+                        {{ video.title }}
+                    </h3>
+                    <p class="text-sm mt-2" style="color: var(--text-secondary);">{{ video.description|truncatewords:20 }}</p>
+                    <div class="flex items-center mt-3 text-sm" style="color: var(--text-tertiary);">
+                        <span>{{ video.view_count|default:0 }} views</span>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-span-full text-center py-12">
+                <p style="color: var(--text-secondary);">No videos available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</main>
+{% endblock %}

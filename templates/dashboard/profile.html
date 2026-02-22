@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block page_title %}Profile{% endblock %}
+{% block breadcrumb %}Profile{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Profile Sidebar -->
+    <div class="lg:col-span-1">
+        <div class="bg-dark-800 border border-dark-700 rounded-xl p-6">
+            <div class="text-center mb-6">
+                <img src="{{ user.profile_image|default:'/static/images/default-avatar.png' }}" alt="{{ user.get_full_name }}" class="w-24 h-24 rounded-full mx-auto border-4 border-primary-500">
+                <h2 class="font-bold text-xl mt-4">{{ user.get_full_name|default:user.username }}</h2>
+                <p class="text-gray-400 text-sm">{{ user.email }}</p>
+            </div>
+            
+            <nav class="space-y-1">
+                <a href="{% url 'profile' %}" class="block px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors {% if request.path == '/dashboard/profile/' %}bg-primary-500 text-white{% else %}text-gray-300 hover:text-white{% endif %}">
+                    <i data-lucide="user" class="w-5 h-5 mr-3"></i> Profile Overview
+                </a>
+                <a href="{% url 'user-list' %}" class="block px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors {% if 'user' in request.path %}bg-primary-500 text-white{% else %}text-gray-300 hover:text-white{% endif %}">
+                    <i data-lucide="users" class="w-5 h-5 mr-3"></i> User Management
+                </a>
+                <a href="{% url 'donor-list' %}" class="block px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors {% if 'donor' in request.path %}bg-primary-500 text-white{% else %}text-gray-300 hover:text-white{% endif %}">
+                    <i data-lucide="heart-handshake" class="w-5 h-5 mr-3"></i> Donor Profiles
+                </a>
+                <a href="{% url 'sponsor-list' %}" class="block px-4 py-3 rounded-lg hover:bg-dark-700 transition-colors {% if 'sponsor' in request.path %}bg-primary-500 text-white{% else %}text-gray-300 hover:text-white{% endif %}">
+                    <i data-lucide="award" class="w-5 h-5 mr-3"></i> Sponsor Profiles
+                </a>
+            </nav>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="lg:col-span-2">
+        <div class="bg-dark-800 border border-dark-700 rounded-xl p-6">
+            <h3 class="font-bold text-lg mb-6">Profile Overview</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div class="bg-dark-700 rounded-lg p-4">
+                    <h4 class="font-medium text-primary-400 mb-2">Account Information</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Username:</span>
+                            <span class="font-medium">{{ user.username }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Email:</span>
+                            <span class="font-medium">{{ user.email }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">First Name:</span>
+                            <span class="font-medium">{{ user.first_name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Last Name:</span>
+                            <span class="font-medium">{{ user.last_name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Date Joined:</span>
+                            <span class="font-medium">{{ user.date_joined|date:"F d, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark-700 rounded-lg p-4">
+                    <h4 class="font-medium text-primary-400 mb-2">Profile Status</h4>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Last Login:</span>
+                            <span class="font-medium">{{ user.last_login|date:"F d, Y H:i" }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Staff Status:</span>
+                            <span class="font-medium {% if user.is_staff %}text-green-400{% else %}text-red-400{% endif %}">
+                                {% if user.is_staff %}Yes{% else %}No{% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Superuser:</span>
+                            <span class="font-medium {% if user.is_superuser %}text-green-400{% else %}text-red-400{% endif %}">
+                                {% if user.is_superuser %}Yes{% else %}No{% endif %}
+                            </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-400">Active:</span>
+                            <span class="font-medium {% if user.is_active %}text-green-400{% else %}text-red-400{% endif %}">
+                                {% if user.is_active %}Yes{% else %}No{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-dark-700 rounded-lg p-6">
+                <h4 class="font-medium text-primary-400 mb-4">Recent Activity</h4>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between py-2 border-b border-dark-700">
+                        <span class="text-sm text-gray-400">Last Login</span>
+                        <span class="text-sm font-medium">{{ user.last_login|date:"F d, Y H:i" }}</span>
+                    </div>
+                    <div class="flex items-center justify-between py-2">
+                        <span class="text-sm text-gray-400">Account Created</span>
+                        <span class="text-sm font-medium">{{ user.date_joined|date:"F d, Y H:i" }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

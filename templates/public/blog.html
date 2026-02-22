@@ -1,0 +1,280 @@
+{% extends 'public_base.html' %}
+
+{% block title %}Blog - Budget Ndio Story | Financial Insights & Stories{% endblock %}
+
+{% block content %}
+<main class="min-h-screen" style="background-color: var(--bg-primary);">
+    <!-- Hero Section -->
+    <section class="relative pt-24 pb-16 overflow-hidden">
+        <!-- Background - solid black -->
+        <div class="absolute inset-0" style="background-color: #000000;">
+        </div>
+        
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto">
+                <span class="inline-block px-4 py-1.5 rounded-full text-sm font-medium mb-6 animate-fade-in" style="background: rgba(20, 184, 166, 0.15); color: var(--primary-color);">
+                    Financial Insights
+                </span>
+                <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold mb-6 leading-tight" style="color: var(--text-primary);">
+                    Stories That <span class="gradient-text">Inspire</span> Change
+                </h1>
+                <p class="text-lg sm:text-xl mb-8 leading-relaxed" style="color: var(--text-secondary);">
+                    Discover practical budgeting tips, financial literacy guides, and real stories from our community. Your journey to financial freedom starts with knowledge.
+                </p>
+                
+                <!-- Search Bar -->
+                <div class="relative max-w-2xl mx-auto">
+                    <div class="relative group">
+                        <div class="absolute -inset-1 rounded-2xl blur opacity-20 group-hover:opacity-50 transition duration-1000" style="background: #0066CC;"></div>
+                        <div class="relative flex items-center rounded-2xl p-2" style="background-color: var(--card-bg); border: 1px solid var(--border-color);">
+                            <svg class="w-5 h-5 ml-4" style="color: var(--text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input 
+                                type="search" 
+                                placeholder="Search articles, topics, or tags..." 
+                                class="w-full bg-transparent border-none focus:outline-none focus:ring-0 px-4 py-3"
+                                style="color: var(--text-primary);"
+                                aria-label="Search blog posts"
+                            >
+                            <button class="px-6 py-3 rounded-xl font-medium transition-colors" style="background: #0066CC; color: white;">
+                                Search
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filter Categories -->
+    <section class="py-6 sticky top-16 z-30" style="background-color: var(--bg-primary); border-bottom: 1px solid var(--border-color);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center gap-4 overflow-x-auto pb-2">
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all" style="background: var(--primary-color); color: white;">
+                    All Posts
+                </button>
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    Budgeting Tips
+                </button>
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    Success Stories
+                </button>
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    Financial Literacy
+                </button>
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    Investment
+                </button>
+                <button class="px-5 py-2 rounded-full font-medium whitespace-nowrap transition-all border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    Savings
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Post -->
+    {% if featured_post %}
+    <section class="py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="relative group cursor-pointer">
+                <div class="absolute -inset-1 rounded-3xl blur opacity-20 group-hover:opacity-40 transition duration-1000" style="background: #0066CC;"></div>
+                <article class="relative grid lg:grid-cols-2 gap-8 rounded-3xl overflow-hidden card" style="border: 1px solid var(--border-color);">
+                    <div class="relative aspect-video lg:aspect-auto overflow-hidden">
+                        <img 
+src="{% if featured_post.featured_image %}{{ featured_post.featured_image.url }}{% else %}/static/images/blog-placeholder.jpg{% endif %}"
+                            alt="{{ featured_post.title }}"
+                            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                            loading="lazy"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent lg:bg-gradient-to-r"></div>
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-bold rounded-full uppercase tracking-wide" style="background: rgba(0, 102, 204, 0.9); color: white;">
+                                Featured
+                            </span>
+                        </div>
+                    </div>
+                    <div class="p-8 lg:py-12 lg:pr-12 flex flex-col justify-center">
+                        <div class="flex items-center gap-3 mb-4 text-sm" style="color: var(--text-tertiary);">
+                            <span style="color: #0066CC; font-weight: 500;">{{ featured_post.category.name }}</span>
+                            <span>•</span>
+                            <span>{{ featured_post.read_time_minutes }} min read</span>
+                            <span>•</span>
+                            <span>{{ featured_post.published_at|date:"F d, Y" }}</span>
+                        </div>
+                        <h2 class="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4 group-hover:text-primary-500 transition-colors" style="color: var(--text-primary); leading-tight;">
+                            {{ featured_post.title }}
+                        </h2>
+                        <p class="text-lg mb-6 line-clamp-3" style="color: var(--text-secondary);">
+                            {{ featured_post.excerpt }}
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <img 
+                                    src="{% if featured_post.author.avatar %}{{ featured_post.author.avatar.url }}{% else %}/static/images/default-avatar.png{% endif %}" 
+                                    alt="{{ featured_post.author.get_full_name }}"
+                                    class="w-10 h-10 rounded-full border-2"
+                                    style="border-color: var(--primary-color);"
+                                >
+                                <div>
+                                    <p class="font-medium text-sm" style="color: var(--text-primary);">{{ featured_post.author.get_full_name }}</p>
+                                    <p class="text-xs" style="color: var(--text-tertiary);">Author</p>
+                                </div>
+                            </div>
+                            <a href="{{ featured_post.get_absolute_url }}" class="inline-flex items-center gap-2 font-medium transition-colors" style="color: #0066CC;">
+                                Read Article
+                                <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+    {% endif %}
+
+    <!-- Blog Grid -->
+    <section class="py-12" style="background-color: var(--bg-secondary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-12">
+                <h2 class="text-2xl sm:text-3xl font-bold" style="color: var(--text-primary);">Latest Articles</h2>
+                <div class="hidden sm:flex items-center gap-2 text-sm" style="color: var(--text-secondary);">
+                    <span>Sort by:</span>
+                    <select class="rounded-lg px-3 py-1.5 border" style="background-color: var(--card-bg); border-color: var(--border-color); color: var(--text-primary);">
+                        <option>Most Recent</option>
+                        <option>Most Popular</option>
+                        <option>Most Read</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                {% for post in posts %}
+                <article class="group relative card overflow-hidden hover:-translate-y-1" style="border: 1px solid var(--border-color);">
+                    <!-- Image Container -->
+                    <div class="relative aspect-[16/10] overflow-hidden">
+                        <img 
+src="{% if post.featured_image %}{{ post.featured_image.url }}{% else %}/static/images/blog-placeholder.jpg{% endif %}"
+                            alt="{{ post.title }}"
+                            class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-700"
+                            loading="lazy"
+                        >
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60"></div>
+                        
+                        <!-- Category Badge -->
+                        <div class="absolute top-4 left-4">
+                            <span class="px-3 py-1 text-xs font-semibold rounded-full" style="background: rgba(20, 184, 166, 0.9); color: white;">
+                                {{ post.category.name|default:"General" }}
+                            </span>
+                        </div>
+                        
+                        <!-- Read Time -->
+                        <div class="absolute bottom-4 right-4 flex items-center gap-1 text-xs px-2 py-1 rounded-full" style="background: rgba(0,0,0,0.6); color: white;">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            {{ post.read_time_minutes }} min
+                        </div>
+                    </div>
+                    
+                    <!-- Content -->
+                    <div class="p-6">
+                        <div class="flex items-center gap-3 mb-3 text-xs" style="color: var(--text-tertiary);">
+                            <span class="flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                {{ post.published_at|date:"M d, Y" }}
+                            </span>
+                            <span>•</span>
+                            <span class="flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                {{ post.view_count|default:"1.2k" }} views
+                            </span>
+                        </div>
+                        
+                        <h3 class="text-xl font-bold mb-3 line-clamp-2 group-hover:text-primary-500 transition-colors" style="color: var(--text-primary);">
+                            <a href="{{ post.get_absolute_url }}" class="focus:outline-none">
+                                <span class="absolute inset-0" aria-hidden="true"></span>
+                                {{ post.title }}
+                            </a>
+                        </h3>
+                        
+                        <p class="text-sm mb-4 line-clamp-3 leading-relaxed" style="color: var(--text-secondary);">
+                            {{ post.excerpt|truncatewords:25 }}
+                        </p>
+                        
+                        <!-- Author & Action -->
+                        <div class="flex items-center justify-between pt-4" style="border-top: 1px solid var(--border-color);">
+                            <div class="flex items-center gap-2">
+                                <img 
+                                    src="{% if post.author.avatar %}{{ post.author.avatar.url }}{% else %}/static/images/default-avatar.png{% endif %}" 
+                                    alt="{{ post.author.get_full_name }}"
+                                    class="w-8 h-8 rounded-full border"
+                                    style="border-color: var(--border-color);"
+                                >
+                                <span class="text-sm font-medium truncate max-w-[120px]" style="color: var(--text-primary);">{{ post.author.get_full_name|default:"Team BNS" }}</span>
+                            </div>
+                            <span class="text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1" style="color: var(--primary-color);">
+                                Read More
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                                </svg>
+                            </span>
+                        </div>
+                    </div>
+                </article>
+                {% empty %}
+                <div class="col-span-full py-20 text-center">
+                    <div class="inline-flex items-center justify-center w-20 h-20 rounded-full mb-6" style="background-color: var(--bg-tertiary);">
+                        <svg class="w-10 h-10" style="color: var(--text-tertiary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-semibold mb-2" style="color: var(--text-primary);">No posts yet</h3>
+                    <p class="max-w-md mx-auto" style="color: var(--text-secondary);">We're working on creating valuable content for you. Check back soon for insightful articles on budgeting and financial literacy.</p>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Pagination -->
+            {% if posts.has_other_pages %}
+            <div class="mt-16 flex items-center justify-center gap-2">
+                {% if posts.has_previous %}
+                <a href="?page={{ posts.previous_page_number }}" class="p-2 rounded-lg transition-colors border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a>
+                {% endif %}
+                
+                {% for num in posts.paginator.page_range %}
+                    {% if posts.number == num %}
+                    <span class="w-10 h-10 rounded-lg flex items-center justify-center font-medium" style="background: var(--primary-color); color: white;">
+                        {{ num }}
+                    </span>
+                    {% else %}
+                    <a href="?page={{ num }}" class="w-10 h-10 rounded-lg flex items-center justify-center font-medium transition-colors border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                        {{ num }}
+                    </a>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if posts.has_next %}
+                <a href="?page={{ posts.next_page_number }}" class="p-2 rounded-lg transition-colors border" style="border-color: var(--border-color); color: var(--text-secondary);">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                    </svg>
+                </a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </section>
+</main>
+{% endblock %}

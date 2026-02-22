@@ -1,0 +1,109 @@
+{% extends 'public_base.html' %}
+
+{% block title %}Donate - Budget Ndio Story{% endblock %}
+
+{% block content %}
+<main class="min-h-screen" style="background-color: var(--bg-primary);">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
+        <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" style="background: rgba(249, 115, 22, 0.15); color: #f97316;">
+            💝 Support Our Work
+        </span>
+        <h1 class="text-4xl md:text-5xl font-bold mb-6" style="color: var(--text-primary);">
+            Help Us Keep Budget Education Free
+        </h1>
+        <p class="text-xl mb-10 max-w-2xl mx-auto" style="color: var(--text-secondary);">
+            Your donation helps us create more content, reach more citizens, and build a more informed Kenya.
+        </p>
+        
+        <!-- Donation Form -->
+        <div class="card p-8 max-w-md mx-auto">
+            <form method="post" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Select Amount</label>
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <button type="button" class="amount-btn p-4 rounded-xl border transition-colors" style="border-color: var(--border-color);" data-amount="10">
+                            <div class="text-2xl font-bold" style="color: var(--text-primary);">$10</div>
+                            <div class="text-xs" style="color: var(--text-tertiary);">Powers 1 video</div>
+                        </button>
+                        <button type="button" class="amount-btn p-4 rounded-xl border transition-colors" style="border-color: var(--border-color);" data-amount="25">
+                            <div class="text-2xl font-bold" style="color: var(--text-primary);">$25</div>
+                            <div class="text-xs" style="color: var(--text-tertiary);">Powers 1 article</div>
+                        </button>
+                        <button type="button" class="amount-btn p-4 rounded-xl border transition-colors" style="border-color: var(--border-color);" data-amount="50">
+                            <div class="text-2xl font-bold" style="color: var(--text-primary);">$50</div>
+                            <div class="text-xs" style="color: var(--text-tertiary);">Sponsors a workshop</div>
+                        </button>
+                        <button type="button" class="amount-btn p-4 rounded-xl border transition-colors" style="border-color: var(--border-color);" data-amount="100">
+                            <div class="text-2xl font-bold" style="color: var(--text-primary);">$100</div>
+                            <div class="text-xs" style="color: var(--text-tertiary);">Funds a learning path</div>
+                        </button>
+                    </div>
+                    
+                    <input type="number" name="amount" id="amount" placeholder="Custom amount" 
+                        class="form-input">
+                </div>
+                
+                <div>
+                    <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Payment Method</label>
+                    <select name="payment_method" class="form-input">
+                        <option value="mpesa">M-Pesa</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="paypal">PayPal</option>
+                        <option value="bank">Bank Transfer</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Currency</label>
+                    <select name="currency" class="form-input">
+                        <option value="KES">Kenyan Shilling (KES)</option>
+                        <option value="USD">US Dollar (USD)</option>
+                        <option value="EUR">Euro (EUR)</option>
+                        <option value="GBP">British Pound (GBP)</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn-primary w-full py-4">
+                    Donate Now
+                </button>
+                
+                <p class="text-sm" style="color: var(--text-tertiary);">
+                    🔒 Secure payments via M-Pesa, Credit Card, or PayPal
+                </p>
+            </form>
+        </div>
+        
+        <!-- Impact Stats -->
+        <div class="mt-16 grid grid-cols-3 gap-8">
+            <div class="text-center">
+                <div class="text-3xl font-bold mb-2" style="color: #f97316;">47+</div>
+                <div style="color: var(--text-secondary);">Countries</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold mb-2" style="color: #14b8a6;">15K+</div>
+                <div style="color: var(--text-secondary);">Citizens Engaged</div>
+            </div>
+            <div class="text-center">
+                <div class="text-3xl font-bold mb-2" style="color: #2ecc71;">200+</div>
+                <div style="color: var(--text-secondary);">Partners</div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.querySelectorAll('.amount-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('amount').value = btn.dataset.amount;
+            document.querySelectorAll('.amount-btn').forEach(b => {
+                b.style.borderColor = 'var(--border-color)';
+            });
+            btn.style.borderColor = '#14b8a6';
+        });
+    });
+</script>
+{% endblock %}

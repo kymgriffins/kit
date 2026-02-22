@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin Dashboard{% endblock %}</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts - Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        border: 'hsl(var(--border))',
+                        input: 'hsl(var(--input))',
+                        ring: 'hsl(var(--ring))',
+                        background: 'hsl(var(--background))',
+                        foreground: 'hsl(var(--foreground))',
+                        primary: {
+                            DEFAULT: 'hsl(var(--primary))',
+                            foreground: 'hsl(var(--primary-foreground))',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(var(--secondary))',
+                            foreground: 'hsl(var(--secondary-foreground))',
+                        },
+                        destructive: {
+                            DEFAULT: 'hsl(var(--destructive))',
+                            foreground: 'hsl(var(--destructive-foreground))',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(var(--muted))',
+                            foreground: 'hsl(var(--muted-foreground))',
+                        },
+                        accent: {
+                            DEFAULT: 'hsl(var(--accent))',
+                            foreground: 'hsl(var(--accent-foreground))',
+                        },
+                        popover: {
+                            DEFAULT: 'hsl(var(--popover))',
+                            foreground: 'hsl(var(--popover-foreground))',
+                        },
+                        card: {
+                            DEFAULT: 'hsl(var(--card))',
+                            foreground: 'hsl(var(--card-foreground))',
+                        },
+                    },
+                    borderRadius: {
+                        lg: 'var(--radius)',
+                        md: 'calc(var(--radius) - 2px)',
+                        sm: 'calc(var(--radius) - 4px)',
+                    },
+                },
+            },
+        }
+    </script>
+    
+    <!-- shadcn/ui CSS Variables -->
+    <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 240 10% 3.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 240 10% 3.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 240 10% 3.9%;
+            --primary: 240 5.9% 10%;
+            --primary-foreground: 0 0% 98%;
+            --secondary: 240 4.8% 95.9%;
+            --secondary-foreground: 240 5.9% 10%;
+            --muted: 240 4.8% 95.9%;
+            --muted-foreground: 240 3.8% 46.1%;
+            --accent: 240 4.8% 95.9%;
+            --accent-foreground: 240 5.9% 10%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 5.9% 90%;
+            --input: 240 5.9% 90%;
+            --ring: 240 5.9% 10%;
+            --radius: 0.5rem;
+        }
+
+        .dark {
+            --background: 240 10% 3.9%;
+            --foreground: 0 0% 98%;
+            --card: 240 10% 3.9%;
+            --card-foreground: 0 0% 98%;
+            --popover: 240 10% 3.9%;
+            --popover-foreground: 0 0% 98%;
+            --primary: 0 0% 98%;
+            --primary-foreground: 240 5.9% 10%;
+            --secondary: 240 3.7% 15.9%;
+            --secondary-foreground: 0 0% 98%;
+            --muted: 240 3.7% 15.9%;
+            --muted-foreground: 240 5% 64.9%;
+            --accent: 240 3.7% 15.9%;
+            --accent-foreground: 0 0% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 0 0% 98%;
+            --border: 240 3.7% 15.9%;
+            --input: 240 3.7% 15.9%;
+            --ring: 240 4.9% 83.9%;
+        }
+
+        * {
+            border-color: hsl(var(--border));
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+        }
+
+        /* Scrollbar styling */
+        .sidebar-scroll::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb {
+            background: hsl(var(--muted));
+            border-radius: 4px;
+        }
+
+        .sidebar-scroll::-webkit-scrollbar-thumb:hover {
+            background: hsl(var(--muted-foreground));
+        }
+
+        /* Sidebar transition */
+        .sidebar {
+            transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar.collapsed {
+            width: 72px;
+        }
+
+        .sidebar.expanded {
+            width: 280px;
+        }
+
+        /* Main content transition */
+        .main-content {
+            transition: margin-left 300ms cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Dropdown animation */
+        .dropdown-menu {
+            animation: dropdown 200ms ease-out;
+        }
+
+        @keyframes dropdown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Menu item hover */
+        .menu-item {
+            transition: all 150ms ease;
+        }
+
+        .menu-item:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .menu-item.active {
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
+        }
+
+        .dark .menu-item:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        /* Card hover effect */
+        .stat-card {
+            transition: all 200ms ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .stat-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+    </style>
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="min-h-screen bg-background font-sans antialiased">
+    <!-- Mobile Overlay -->
+    <div id="sidebar-overlay" class="fixed inset-0 z-40 bg-black/50 lg:hidden hidden" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar fixed left-0 top-0 z-50 h-screen bg-card border-r border-border flex flex-col sidebar-expanded">
+        <!-- Logo Section -->
+        <div class="flex items-center justify-between h-16 px-4 border-b border-border">
+            <a href="/" class="flex items-center gap-3 overflow-hidden">
+                <div class="w-9 h-9 rounded-lg bg-primary flex items-center justify-center flex-shrink-0">
+                    <i class="ph ph-squares-four text-primary-foreground text-xl"></i>
+                </div>
+                <span class="sidebar-text font-semibold text-lg whitespace-nowrap">Admin Panel</span>
+            </a>
+            <button onclick="toggleSidebar()" class="lg:hidden p-2 rounded-md hover:bg-accent">
+                <i class="ph ph-x text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 overflow-y-auto sidebar-scroll p-3 space-y-1">
+            <!-- Main Menu -->
+            <div class="menu-section">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Main
+                </p>
+                <a href="{% url 'dashboard' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium {% if request.path == '/dashboard/' %}active{% endif %}">
+                    <i class="ph ph-house text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Dashboard</span>
+                </a>
+            </div>
+
+            <!-- Content Menu -->
+            <div class="menu-section pt-4">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Content
+                </p>
+                <a href="{% url 'category-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-tag text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Categories</span>
+                </a>
+                <a href="{% url 'video-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-video-camera text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Videos</span>
+                </a>
+                <a href="{% url 'playlist-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-list-dashes text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Playlists</span>
+                </a>
+                <a href="{% url 'blogpost-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-article text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Blog Posts</span>
+                </a>
+                <a href="{% url 'newsitem-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-newspaper text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">News</span>
+                </a>
+            </div>
+
+            <!-- Users Menu -->
+            <div class="menu-section pt-4">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Users
+                </p>
+                <a href="{% url 'user-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-users text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Users</span>
+                </a>
+                <a href="{% url 'donor-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-hand-heart text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Donors</span>
+                </a>
+                <a href="{% url 'sponsor-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-handshake text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Sponsors</span>
+                </a>
+                <a href="{% url 'partner-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-users-three text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Partners</span>
+                </a>
+            </div>
+
+            <!-- Marketing Menu -->
+            <div class="menu-section pt-4">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Marketing
+                </p>
+                <a href="{% url 'subscriber-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-envelope-simple text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Subscribers</span>
+                </a>
+                <a href="{% url 'campaign-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-megaphone text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Campaigns</span>
+                </a>
+            </div>
+
+            <!-- Finance Menu -->
+            <div class="menu-section pt-4">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Finance
+                </p>
+                <a href="{% url 'donation-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-currency-dollar text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Donations</span>
+                </a>
+                <a href="{% url 'deliverable-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-check-square-offset text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Deliverables</span>
+                </a>
+                <a href="{% url 'asset-list' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium">
+                    <i class="ph ph-folder-simple text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Assets</span>
+                </a>
+            </div>
+
+            <!-- Public Site -->
+            <div class="menu-section pt-4">
+                <p class="menu-label px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider sidebar-text">
+                    Public Site
+                </p>
+                <a href="{% url 'public-videos' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" target="_blank">
+                    <i class="ph ph-play-circle text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">View Videos</span>
+                </a>
+                <a href="{% url 'public-blog' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" target="_blank">
+                    <i class="ph ph-blog text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">View Blog</span>
+                </a>
+                <a href="{% url 'donate' %}" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium" target="_blank">
+                    <i class="ph ph-heart text-xl flex-shrink-0"></i>
+                    <span class="sidebar-text whitespace-nowrap">Donate Page</span>
+                </a>
+            </div>
+        </nav>
+
+        <!-- User Section -->
+        <div class="border-t border-border p-3">
+            <div class="flex items-center gap-3 px-3 py-2">
+                <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+                    <span class="text-primary-foreground font-medium text-sm">{{ user.username|make_list|first|upper }}</span>
+                </div>
+                <div class="sidebar-text overflow-hidden">
+                    <p class="text-sm font-medium truncate">{{ user.username }}</p>
+                    <p class="text-xs text-muted-foreground truncate">Admin</p>
+                </div>
+            </div>
+            <a href="/admin/logout/" class="menu-item flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium mt-1">
+                <i class="ph ph-sign-out text-xl flex-shrink-0"></i>
+                <span class="sidebar-text whitespace-nowrap">Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div id="main-content" class="main-content lg:ml-[280px]">
+        <!-- Top Header -->
+        <header class="sticky top-0 z-30 h-16 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+            <div class="flex items-center justify-between h-full px-4 lg:px-6">
+                <!-- Left: Menu & Search -->
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleSidebar()" class="p-2 rounded-lg hover:bg-accent lg:hidden">
+                        <i class="ph ph-list text-xl"></i>
+                    </button>
+                    <button onclick="toggleSidebarDesktop()" class="p-2 rounded-lg hover:bg-accent hidden lg:flex">
+                        <i class="ph ph-list text-xl"></i>
+                    </button>
+                    
+                    <!-- Search -->
+                    <div class="relative hidden md:block">
+                        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"></i>
+                        <input 
+                            type="search" 
+                            placeholder="Search..." 
+                            class="w-64 lg:w-80 h-10 pl-10 pr-4 rounded-lg bg-muted border-0 focus:outline-none focus:ring-2 focus:ring-primary text-sm"
+                        >
+                    </div>
+                </div>
+
+                <!-- Right: Theme Toggle & Actions -->
+                <div class="flex items-center gap-2">
+                    <!-- Theme Toggle -->
+                    <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-accent" title="Toggle theme">
+                        <i class="ph ph-moon text-xl dark:hidden"></i>
+                        <i class="ph ph-sun text-xl hidden dark:block"></i>
+                    </button>
+
+                    <!-- Notifications -->
+                    <button class="p-2 rounded-lg hover:bg-accent relative">
+                        <i class="ph ph-bell text-xl"></i>
+                        <span class="absolute top-1 right-1 w-2 h-2 bg-destructive rounded-full"></span>
+                    </button>
+
+                    <!-- Settings -->
+                    <a href="/admin/" class="p-2 rounded-lg hover:bg-accent">
+                        <i class="ph ph-gear text-xl"></i>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <main class="p-4 lg:p-6">
+            {% if messages %}
+            <div class="mb-6 space-y-2">
+                {% for message in messages %}
+                <div class="p-4 rounded-lg {% if message.tags == 'success' %}bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400{% elif message.tags == 'error' %}bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400{% else %}bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400{% endif %}">
+                    {{ message }}
+                </div>
+                {% endfor %}
+            </div>
+            {% endif %}
+            
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // Theme management
+        function getTheme() {
+            return localStorage.getItem('theme') || 'light';
+        }
+
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            document.documentElement.classList.toggle('dark', theme === 'dark');
+        }
+
+        function toggleTheme() {
+            const currentTheme = getTheme();
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            setTheme(newTheme);
+        }
+
+        // Initialize theme on load
+        (function() {
+            const theme = getTheme();
+            setTheme(theme);
+        })();
+
+        // Sidebar management
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
+            overlay.classList.toggle('hidden');
+        }
+
+        function toggleSidebarDesktop() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            const sidebarTexts = document.querySelectorAll('.sidebar-text');
+            const menuLabels = document.querySelectorAll('.menu-label');
+            
+            if (sidebar.classList.contains('collapsed')) {
+                // Expand
+                sidebar.classList.remove('collapsed');
+                sidebar.classList.add('expanded');
+                sidebar.classList.remove('w-[72px]');
+                sidebar.classList.add('w-[280px]');
+                mainContent.classList.remove('ml-[72px]');
+                mainContent.classList.add('ml-[280px]');
+                
+                // Show text
+                sidebarTexts.forEach(el => el.style.display = 'block');
+                menuLabels.forEach(el => el.style.display = 'block');
+            } else {
+                // Collapse
+                sidebar.classList.remove('expanded');
+                sidebar.classList.add('collapsed');
+                sidebar.classList.remove('w-[280px]');
+                sidebar.classList.add('w-[72px]');
+                mainContent.classList.remove('ml-[280px]');
+                mainContent.classList.add('ml-[72px]');
+                
+                // Hide text
+                sidebarTexts.forEach(el => el.style.display = 'none');
+                menuLabels.forEach(el => el.style.display = 'none');
+            }
+        }
+
+        // Initialize sidebar state
+        (function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            // Set initial state based on screen size
+            if (window.innerWidth < 1024) {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                mainContent.classList.remove('ml-[280px]');
+                mainContent.classList.add('ml-0');
+            }
+        })();
+
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            const sidebar = document.getElementById('sidebar');
+            const mainContent = document.getElementById('main-content');
+            
+            if (window.innerWidth >= 1024) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
+                mainContent.classList.remove('ml-0');
+                mainContent.classList.add('ml-[280px]');
+            } else {
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
+                mainContent.classList.remove('ml-[280px]');
+                mainContent.classList.add('ml-0');
+            }
+        });
+    </script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

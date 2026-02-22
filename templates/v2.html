@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Ndio Story - Follow the Budget. Find the Story.</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Fonts - NeueMontreal -->
+    <style>
+        @font-face {
+            font-family: 'NeueMontreal';
+            src: url('NeueMontreal.woff') format('woff');
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'bns': {
+                            DEFAULT: '#0052CC',
+                            light: '#0065FF',
+                            dark: '#0747A6',
+                            bg: '#DEEBFF'
+                        },
+                        'teal': {
+                            DEFAULT: '#008DA6',
+                            light: '#00B8D9',
+                            dark: '#006B7C',
+                            bg: '#E6FCFF'
+                        },
+                        'orange': {
+                            DEFAULT: '#FF5630',
+                            light: '#FF7452',
+                            dark: '#DE350B',
+                            bg: '#FFEBE6'
+                        },
+                        'green': {
+                            DEFAULT: '#36B37E',
+                            light: '#57D9A3',
+                            dark: '#006644',
+                            bg: '#E3FCEF'
+                        },
+                        'dark': {
+                            DEFAULT: '#091E42',
+                            light: '#172B4D',
+                            lighter: '#253858',
+                            bg: '#F4F5F7'
+                        },
+                        'light': {
+                            DEFAULT: '#F4F5F7',
+                            text: '#5E6C84'
+                        }
+                    },
+                    fontFamily: {
+                        'sans': ['Inter', 'sans-serif'],
+                        'display': ['Space Grotesk', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #171717;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --border-color: #262626;
+            --card-bg: #0a0a0a;
+            --nav-bg: rgba(0, 0, 0, 0.95);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #000000;
+            --bg-secondary: #0a0a0a;
+            --bg-tertiary: #171717;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #666666;
+            --border-color: #262626;
+            --card-bg: #0a0a0a;
+            --nav-bg: rgba(0, 0, 0, 0.95);
+            --shadow-color: rgba(0, 0, 0, 0.5);
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        h1, h2, h3, h4, h5, h6, .font-display {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        /* Flat Design Elements */
+        .card-flat {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px -1px var(--shadow-color);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card-flat:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px -4px var(--shadow-color);
+            border-color: var(--bns-light);
+        }
+
+        .btn-flat {
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-flat:active {
+            transform: translateY(1px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-tertiary);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--bns);
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        /* Donation Ticker */
+        .ticker-wrap {
+            width: 100%;
+            overflow: hidden;
+            background-color: var(--bns);
+            color: white;
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+        .ticker {
+            display: inline-block;
+            padding-left: 100%;
+            animation: ticker 30s linear infinite;
+        }
+        .ticker__item {
+            display: inline-block;
+            padding: 0 2rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            background-color: rgba(9, 30, 66, 0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        /* No Gradients Utility */
+        .no-gradient {
+            background-image: none !important;
+        }
+    </style>
+
+    <!-- Video Background Styles -->
+    <style>
+        .hero-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 0;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body class="antialiased overflow-x-hidden">
+
+    <!-- Top Donation Ticker -->
+    <div class="ticker-wrap fixed top-0 z-50 h-8 flex items-center">
+        <div class="ticker">
+            <span class="ticker__item">🎉 John M. donated KES 5,000 to support Budget Literacy</span>
+            <span class="ticker__item">📢 New Video: Understanding the Finance Bill 2024</span>
+            <span class="ticker__item">💡 Workshop Alert: Budget Advocacy in Nairobi - Jan 30th</span>
+            <span class="ticker__item">🌍 15,000+ citizens engaged this month</span>
+            <span class="ticker__item">🔗 Support Transparency: Donate Today</span>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="fixed top-8 left-0 right-0 z-40 border-b transition-colors duration-300" style="background-color: var(--nav-bg); border-color: var(--border-color);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <a href="#" class="flex items-center space-x-3 group">
+                    <div class="w-10 h-10 bg-bns flex items-center justify-center rounded shadow-sm group-hover:bg-bns-light transition-colors">
+                        <img src="logo.svg" alt="Budget Ndio Story" class="w-8 h-8">
+                    </div>
+                        <span class="font-bold text-xl tracking-tight" style="color: var(--text-primary);">Budget Ndio Story</span>
+                </a>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#learning" class="text-sm font-medium hover:text-bns transition-colors" style="color: var(--text-secondary);">Learning Hub</a>
+                    <a href="#videos" class="text-sm font-medium hover:text-bns transition-colors" style="color: var(--text-secondary);">Videos</a>
+                    <a href="#blog" class="text-sm font-medium hover:text-bns transition-colors" style="color: var(--text-secondary);">Blog</a>
+                    <a href="#about" class="text-sm font-medium hover:text-bns transition-colors" style="color: var(--text-secondary);">About</a>
+                    <button onclick="openDonateModal()" class="btn-flat bg-orange text-white px-5 py-2 rounded font-semibold text-sm hover:bg-orange-light shadow-sm">
+                        Donate Now
+                    </button>
+                    
+                    <button id="themeToggle" class="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors" aria-label="Toggle theme">
+                        <svg id="themeIconSun" class="w-5 h-5 hidden text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                        <svg id="themeIconMoon" class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+                    </button>
+                </div>
+                
+                <div class="flex items-center md:hidden space-x-2">
+                    <button onclick="openDonateModal()" class="btn-flat bg-orange text-white px-3 py-1.5 rounded text-xs font-bold">Donate</button>
+                    <button id="mobileMenuBtn" class="p-2" style="color: var(--text-primary);">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden md:hidden border-t" style="background-color: var(--nav-bg); border-color: var(--border-color);">
+            <div class="px-4 py-4 space-y-3">
+                <a href="#learning" class="block py-2 font-medium" style="color: var(--text-secondary);">Learning Hub</a>
+                <a href="#videos" class="block py-2 font-medium" style="color: var(--text-secondary);">Videos</a>
+                <a href="#blog" class="block py-2 font-medium" style="color: var(--text-secondary);">Blog</a>
+                <a href="#about" class="block py-2 font-medium" style="color: var(--text-secondary);">About</a>
+                <div class="pt-2 border-t" style="border-color: var(--border-color);">
+                    <button id="mobileThemeToggle" class="flex items-center space-x-2 py-2 w-full" style="color: var(--text-secondary);">
+                        <span>Toggle Theme</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 lg:pt-40 lg:pb-32 relative overflow-hidden" style="background-color: var(--bg-secondary);">
+        <div class="absolute top-0 right-0 w-1/2 h-full opacity-5 pointer-events-none">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#0052CC" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-5.3C93.5,8.6,82.2,21.5,71.1,32.6C60,43.7,49.1,53,37.2,60.7C25.3,68.4,12.4,74.5,-0.7,75.6C-13.8,76.7,-27.6,72.8,-40.3,65.8C-53,58.8,-64.6,48.7,-73.5,36.3C-82.4,23.9,-88.6,9.2,-86.6,-4.6C-84.6,-18.4,-74.4,-31.3,-63.3,-41.6C-52.2,-51.9,-40.2,-59.6,-28.1,-68.1C-16,-76.6,-3.8,-85.9,9.2,-83.8C22.2,-81.7,44.7,-76.4,44.7,-76.4Z" transform="translate(100 100)" />
+            </svg>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <div class="inline-block px-3 py-1 mb-6 text-xs font-bold tracking-wider uppercase rounded bg-bns-bg text-bns-dark border border-bns">
+                        Civic Education Platform
+                    </div>
+<h1 class="text-5xl lg:text-6xl font-bold leading-tight mb-6 font-display relative" style="color: var(--text-primary);">
+    Follow the <span class="text-bns">Budget</span>.<br>Find the <span class="text-teal">Story</span>.
+    <div class="absolute inset-0 bg-gradient-to-r from-bns/20 to-teal/20 rounded-xl"></div>
+</h1>
+                        Empowering citizens to understand and engage with Kenya's national and county budgets through interactive learning and real-time tracking.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4">
+                        <a href="#learning" class="btn-flat bg-bns text-white px-8 py-4 rounded font-bold text-center hover:bg-bns-light shadow-lg shadow-blue-900/20">
+                            Start Learning
+                        </a>
+                        <button onclick="openVideoModal('intro')" class="btn-flat bg-white border-2 border-gray-200 px-8 py-4 rounded font-bold text-center flex items-center justify-center gap-2 hover:border-bns hover:text-bns transition-colors" style="color: var(--text-primary);">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path></svg>
+                            Watch Intro
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="relative reveal delay-200">
+                    <!-- Abstract Data Visualization -->
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white dark:border-gray-800 bg-white">
+                        <div class="p-6 space-y-4">
+                            <div class="flex justify-between items-center border-b pb-4" style="border-color: var(--border-color);">
+                                <div>
+                                    <div class="text-sm text-gray-500">National Budget</div>
+                                    <div class="text-2xl font-bold text-bns">KES 3.6T</div>
+                                </div>
+                                <div class="px-3 py-1 bg-green-bg text-green-dark text-xs font-bold rounded">+4.2%</div>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600">Education</span>
+                                        <span class="font-bold">28%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2">
+                                        <div class="bg-bns h-2 rounded-full" style="width: 28%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600">Infrastructure</span>
+                                        <span class="font-bold">18%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2">
+                                        <div class="bg-teal h-2 rounded-full" style="width: 18%"></div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm mb-1">
+                                        <span class="text-gray-600">Health</span>
+                                        <span class="font-bold">12%</span>
+                                    </div>
+                                    <div class="w-full bg-gray-100 rounded-full h-2">
+                                        <div class="bg-orange h-2 rounded-full" style="width: 12%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="pt-4 border-t flex justify-between items-center" style="border-color: var(--border-color);">
+                                <div class="flex -space-x-2">
+                                    <div class="w-8 h-8 rounded-full bg-gray-200 border-2 border-white"></div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-300 border-2 border-white"></div>
+                                    <div class="w-8 h-8 rounded-full bg-gray-400 border-2 border-white flex items-center justify-center text-xs text-white font-bold">+2k</div>
+                                </div>
+                                <span class="text-xs text-gray-500">Active Citizens Tracking</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white dark:bg-gray-800 p-4 rounded-lg shadow-xl border border-gray-100 dark:border-gray-700 flex items-center gap-3 animate-bounce" style="animation-duration: 3s;">
+                        <div class="w-10 h-10 bg-green-bg rounded-full flex items-center justify-center text-green-dark">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <div>
+                            <div class="text-xs text-gray-500">Verified Data</div>
+                            <div class="font-bold text-sm">Treasury API</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Learning Hub -->
+    <section id="learning" class="py-20" style="background-color: var(--bg-primary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <span class="text-teal font-bold tracking-wider uppercase text-sm">Learning Hub</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2 mb-4 font-display" style="color: var(--text-primary);">Master the Budget Process</h2>
+                <p class="max-w-2xl mx-auto" style="color: var(--text-secondary);">Structured learning paths designed to take you from novice to expert in public finance.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="card-flat rounded-xl p-8 reveal">
+                    <div class="w-14 h-14 rounded-lg bg-green-bg flex items-center justify-center mb-6 text-green-dark">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 font-display" style="color: var(--text-primary);">Beginner</h3>
+                    <p class="text-sm mb-6" style="color: var(--text-secondary);">Start your journey. Understand what a budget is, where the money comes from, and where it goes.</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            What is a Budget?
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Revenue Sources
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-green mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Understanding Taxes
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 rounded border border-green text-green font-bold text-sm hover:bg-green hover:text-white transition-colors">Start Path</button>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="card-flat rounded-xl p-8 reveal delay-100">
+                    <div class="w-14 h-14 rounded-lg bg-orange-bg flex items-center justify-center mb-6 text-orange-dark">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 font-display" style="color: var(--text-primary);">Intermediate</h3>
+                    <p class="text-sm mb-6" style="color: var(--text-secondary);">Dive deeper into Kenya's specific budget process, fiscal policies, and county allocations.</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-orange mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            The Budget Cycle
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-orange mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            County vs National
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-orange mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Reading Documents
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 rounded border border-orange text-orange font-bold text-sm hover:bg-orange hover:text-white transition-colors">Continue</button>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="card-flat rounded-xl p-8 reveal delay-200">
+                    <div class="w-14 h-14 rounded-lg bg-bns-bg flex items-center justify-center mb-6 text-bns-dark">
+                        <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3 font-display" style="color: var(--text-primary);">Advanced</h3>
+                    <p class="text-sm mb-6" style="color: var(--text-secondary);">Analyze fiscal policies, track spending irregularities, and engage in budget advocacy.</p>
+                    <ul class="space-y-3 mb-8">
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-bns mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Policy Analysis
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-bns mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Public Finance Mgmt
+                        </li>
+                        <li class="flex items-center text-sm" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4 text-bns mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                            Advocacy Tools
+                        </li>
+                    </ul>
+                    <button class="w-full py-3 rounded border border-bns text-bns font-bold text-sm hover:bg-bns hover:text-white transition-colors">Go Advanced</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section id="videos" class="py-20" style="background-color: var(--bg-secondary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12 reveal">
+                <div>
+                    <span class="text-orange font-bold tracking-wider uppercase text-sm">Video Library</span>
+                    <h2 class="text-3xl md:text-4xl font-bold mt-2 font-display" style="color: var(--text-primary);">Watch & Learn</h2>
+                </div>
+                <a href="#" class="mt-4 md:mt-0 text-bns font-bold hover:underline flex items-center">
+                    View All Videos 
+                    <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                </a>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Video 1 -->
+                <div class="group cursor-pointer reveal" onclick="openVideoModal('video1')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">5:32</div>
+                        <!-- Thumbnail Placeholder -->
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">📊</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-bg text-green-dark text-xs font-bold rounded">Budget Basics</span>
+                        <span class="text-xs text-gray-500">12K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">What is a National Budget?</h3>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="group cursor-pointer reveal delay-100" onclick="openVideoModal('video2')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">8:15</div>
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">🏛️</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-orange-bg text-orange-dark text-xs font-bold rounded">Finance Bill</span>
+                        <span class="text-xs text-gray-500">8.5K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">Understanding the Finance Bill 2024</h3>
+                </div>
+
+                <!-- Video 3 -->
+                <div class="group cursor-pointer reveal delay-200" onclick="openVideoModal('video3')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">12:45</div>
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">🏙️</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-bns-bg text-bns-dark text-xs font-bold rounded">County Budget</span>
+                        <span class="text-xs text-gray-500">6.2K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">Nairobi County Budget Breakdown</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Additional Video Section -->
+    <section id="more-videos" class="py-20" style="background-color: var(--bg-secondary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12 reveal">
+                <span class="text-bns font-bold tracking-wider uppercase text-sm">Visual Stories</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2 font-display" style="color: var(--text-primary);">Explore More Videos</h2>
+                <p class="max-w-2xl mx-auto text-lg" style="color: var(--text-secondary);">Dive deeper into Kenya's budget process with our extended video collection.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Video 1 -->
+                <div class="group cursor-pointer reveal" onclick="openVideoModal('video4')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">7:45</div>
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">📈</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-green-bg text-green-dark text-xs font-bold rounded">Data Analysis</span>
+                        <span class="text-xs text-gray-500">4.2K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">Budget Data Analysis 2024</h3>
+                </div>
+
+                <!-- Video 2 -->
+                <div class="group cursor-pointer reveal delay-100" onclick="openVideoModal('video5')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">9:20</div>
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">🎥</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-orange-bg text-orange-dark text-xs font-bold rounded">Behind the Scenes</span>
+                        <span class="text-xs text-gray-500">3.8K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">Making of Budget Ndio Story</h3>
+                </div>
+
+                <!-- Video 3 -->
+                <div class="group cursor-pointer reveal delay-200" onclick="openVideoModal('video6')">
+                    <div class="relative aspect-video rounded-xl overflow-hidden mb-4 shadow-lg bg-gray-800">
+                        <div class="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center shadow-xl transform group-hover:scale-110 transition-transform">
+                                <svg class="w-6 h-6 text-bns ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                            </div>
+                        </div>
+                        <div class="absolute bottom-3 right-3 px-2 py-1 bg-black/70 rounded text-white text-xs font-mono">6:15</div>
+                        <div class="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500">
+                            <span class="text-4xl">🗣️</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="px-2 py-0.5 bg-bns-bg text-bns-dark text-xs font-bold rounded">Citizen Voices</span>
+                        <span class="text-xs text-gray-500">5.1K views</span>
+                    </div>
+                    <h3 class="text-lg font-bold group-hover:text-bns transition-colors" style="color: var(--text-primary);">Citizen Budget Stories</h3>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-20" style="background-color: var(--bg-primary);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16 reveal">
+                <span class="text-bns font-bold tracking-wider uppercase text-sm">Latest Articles</span>
+                <h2 class="text-3xl md:text-4xl font-bold mt-2 font-display" style="color: var(--text-primary);">In-Depth Analysis</h2>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Article 1 -->
+                <article class="card-flat rounded-xl overflow-hidden reveal">
+                    <div class="h-48 bg-gray-200 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-bns/10"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3 py-1 bg-white text-bns text-xs font-bold rounded-full shadow-sm">Investigation</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 hover:text-bns cursor-pointer transition-colors" style="color: var(--text-primary);">Where Did the Healthcare Budget Go?</h3>
+                        <p class="text-sm mb-4" style="color: var(--text-secondary);">An investigative look into allocation discrepancies in the 2024 budget and the impact on local clinics.</p>
+                        <div class="flex items-center justify-between text-xs font-medium" style="color: var(--text-tertiary);">
+                            <span>5 min read</span>
+                            <span>Jan 15, 2024</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 2 -->
+                <article class="card-flat rounded-xl overflow-hidden reveal delay-100">
+                    <div class="h-48 bg-gray-200 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-teal/10"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3 py-1 bg-white text-teal text-xs font-bold rounded-full shadow-sm">Guide</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 hover:text-teal cursor-pointer transition-colors" style="color: var(--text-primary);">Your Guide to Property Taxes</h3>
+                        <p class="text-sm mb-4" style="color: var(--text-secondary);">Everything you need to know about rates and taxes for property owners in Kenya.</p>
+                        <div class="flex items-center justify-between text-xs font-medium" style="color: var(--text-tertiary);">
+                            <span>8 min read</span>
+                            <span>Jan 12, 2024</span>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Article 3 -->
+                <article class="card-flat rounded-xl overflow-hidden reveal delay-200">
+                    <div class="h-48 bg-gray-200 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-orange/10"></div>
+                        <div class="absolute bottom-4 left-4">
+                            <span class="px-3 py-1 bg-white text-orange text-xs font-bold rounded-full shadow-sm">Opinion</span>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-3 hover:text-orange cursor-pointer transition-colors" style="color: var(--text-primary);">Youth Voices: Budget Priorities</h3>
+                        <p class="text-sm mb-4" style="color: var(--text-secondary);">Young Kenyans share their thoughts on what the budget should focus on for the next decade.</p>
+                        <div class="flex items-center justify-between text-xs font-medium" style="color: var(--text-tertiary);">
+                            <span>6 min read</span>
+                            <span>Jan 10, 2024</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Donate Section -->
+    <section id="donate" class="py-20 relative overflow-hidden">
+        <div class="absolute inset-0 bg-bns"></div>
+        <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 20px 20px;"></div>
+        
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-6 font-display">Support Transparency</h2>
+            <p class="text-blue-100 mb-10 text-lg">Your donation helps us create more content, reach more citizens, and build a more informed Kenya.</p>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                <button onclick="selectDonation(10)" class="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-6 transition-all text-white group">
+                    <div class="text-2xl font-bold mb-1">$10</div>
+                    <div class="text-xs text-blue-200">Power a video</div>
+                </button>
+                <button onclick="selectDonation(25)" class="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-6 transition-all text-white group">
+                    <div class="text-2xl font-bold mb-1">$25</div>
+                    <div class="text-xs text-blue-200">Fund research</div>
+                </button>
+                <button onclick="selectDonation(50)" class="bg-white/10 hover:bg-white/20 border border-white/30 rounded-xl p-6 transition-all text-white group">
+                    <div class="text-2xl font-bold mb-1">$50</div>
+                    <div class="text-xs text-blue-200">Sponsor workshop</div>
+                </button>
+                <button onclick="selectDonation(100)" class="bg-white hover:bg-gray-50 border border-white rounded-xl p-6 transition-all text-bns shadow-lg transform hover:-translate-y-1">
+                    <div class="text-2xl font-bold mb-1">$100</div>
+                    <div class="text-xs text-bns-light">Full Learning Path</div>
+                </button>
+            </div>
+            
+            <button onclick="openDonateModal()" class="bg-white text-bns px-10 py-4 rounded-lg font-bold text-lg shadow-xl hover:bg-gray-50 transition-colors">
+                Donate Now
+            </button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t py-12" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-4 gap-8 mb-12">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center space-x-2 mb-4">
+                        <div class="w-8 h-8 bg-bns flex items-center justify-center rounded">
+                            <span class="text-white font-bold font-display">B</span>
+                        </div>
+                        <span class="font-bold text-lg" style="color: var(--text-primary);">Budget Ndio Story</span>
+                    </div>
+                    <p class="text-sm" style="color: var(--text-secondary);">Empowering citizens through budget literacy and transparency.</p>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 text-sm uppercase tracking-wider" style="color: var(--text-primary);">Platform</h4>
+                    <ul class="space-y-2 text-sm" style="color: var(--text-secondary);">
+                        <li><a href="#" class="hover:text-bns transition-colors">Learning Hub</a></li>
+                        <li><a href="#" class="hover:text-bns transition-colors">Videos</a></li>
+                        <li><a href="#" class="hover:text-bns transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 text-sm uppercase tracking-wider" style="color: var(--text-primary);">Resources</h4>
+                    <ul class="space-y-2 text-sm" style="color: var(--text-secondary);">
+                        <li><a href="#" class="hover:text-bns transition-colors">Budget Documents</a></li>
+                        <li><a href="#" class="hover:text-bns transition-colors">Data Portal</a></li>
+                        <li><a href="#" class="hover:text-bns transition-colors">API</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-bold mb-4 text-sm uppercase tracking-wider" style="color: var(--text-primary);">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center hover:bg-bns hover:text-white transition-colors" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/></svg>
+                        </a>
+                        <a href="#" class="w-8 h-8 rounded bg-gray-200 dark:bg-gray-700 flex items-center justify-center hover:bg-bns hover:text-white transition-colors" style="color: var(--text-secondary);">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t pt-8 flex flex-col md:flex-row justify-between items-center" style="border-color: var(--border-color);">
+                <p class="text-sm" style="color: var(--text-tertiary);">© 2024 Budget Ndio Story. All rights reserved.</p>
+                <div class="flex space-x-6 mt-4 md:mt-0 text-sm" style="color: var(--text-tertiary);">
+                    <a href="#" class="hover:text-bns">Privacy</a>
+                    <a href="#" class="hover:text-bns">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Video Modal -->
+    <div id="videoModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeVideoModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-black w-full max-w-4xl rounded-xl overflow-hidden shadow-2xl relative aspect-video flex items-center justify-center">
+                <button onclick="closeVideoModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 z-10">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                <div class="text-white text-center">
+                    <div class="text-6xl mb-4">▶️</div>
+                    <p class="text-xl">Video Player Placeholder</p>
+                    <p class="text-gray-400 mt-2" id="videoModalTitle">Video Title</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Donation Modal -->
+    <div id="donateModal" class="fixed inset-0 z-50 hidden">
+        <div class="absolute inset-0 modal-backdrop" onclick="closeDonateModal()"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-4">
+            <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl relative p-8 transform transition-all scale-100">
+                <button onclick="closeDonateModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <div class="text-center mb-6">
+                    <div class="w-16 h-16 bg-orange-bg rounded-full flex items-center justify-center mx-auto mb-4 text-orange-dark">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-display">Make a Donation</h3>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Secure payment processed via Stripe</p>
+                </div>
+
+                <form onsubmit="event.preventDefault(); alert('Thank you for your support! (Demo)'); closeDonateModal();" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Amount (USD)</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-3 text-gray-500">$</span>
+                            <input type="number" id="donationAmount" value="50" class="w-full pl-8 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-bns focus:border-transparent">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
+                        <input type="email" placeholder="you@example.com" class="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-bns focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-bns text-white py-3 rounded-lg font-bold hover:bg-bns-light transition-colors shadow-lg">
+                        Donate Now
+                    </button>
+                </form>
+                
+                <div class="mt-4 flex items-center justify-center gap-2 text-xs text-gray-400">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                    Secured by SSL
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Logic
+        const THEME_KEY = 'bns-theme-preference';
+        
+        function getThemePreference() {
+            return localStorage.getItem(THEME_KEY) || 'light';
+        }
+        
+        function applyTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem(THEME_KEY, theme);
+            
+            const sunIcons = document.querySelectorAll('#themeIconSun');
+            const moonIcons = document.querySelectorAll('#themeIconMoon');
+            
+            if (theme === 'dark') {
+                sunIcons.forEach(icon => icon.classList.remove('hidden'));
+                moonIcons.forEach(icon => icon.classList.add('hidden'));
+            } else {
+                sunIcons.forEach(icon => icon.classList.add('hidden'));
+                moonIcons.forEach(icon => icon.classList.remove('hidden'));
+            }
+        }
+        
+        function toggleTheme() {
+            const current = document.documentElement.getAttribute('data-theme');
+            applyTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        // Initialize Theme
+        applyTheme(getThemePreference());
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+        document.getElementById('mobileThemeToggle').addEventListener('click', toggleTheme);
+        
+        // Mobile Menu
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Modal Logic
+        function openVideoModal(videoId) {
+            document.getElementById('videoModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+            // In a real app, load video source here based on videoId
+        }
+        
+        function closeVideoModal() {
+            document.getElementById('videoModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function openDonateModal() {
+            document.getElementById('donateModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeDonateModal() {
+            document.getElementById('donateModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
+        }
+        
+        function selectDonation(amount) {
+            document.getElementById('donationAmount').value = amount;
+            openDonateModal();
+        }
+        
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Reveal Elements on Scroll
+        gsap.utils.toArray('.reveal').forEach(element => {
+            gsap.fromTo(element, 
+                { opacity: 0, y: 50 },
+                {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.8,
+                    ease: "power2.out",
+                    scrollTrigger: {
+                        trigger: element,
+                        start: "top 85%",
+                        toggleActions: "play none none reverse"
+                    }
+                }
+            );
+        });
+        
+        // Smooth Scroll for Anchors
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    // Offset for fixed header
+                    const headerOffset = 100;
+                    const elementPosition = target.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: "smooth"
+                    });
+                    
+                    // Close mobile menu if open
+                    mobileMenu.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

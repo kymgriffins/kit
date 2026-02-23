@@ -215,7 +215,7 @@ class Command(BaseCommand):
             
             blog_post = BlogPost.objects.create(
                 title=title,
-                slug=slugify(title)[:50] + f'-{year}-{week}',
+                slug=slugify(title)[:40] + f'-{year}-{week}',
                 excerpt=f"Analysis and insights on {title.lower()} for {category.name}",
                 content=content,
                 post_type=post_type,
@@ -319,7 +319,7 @@ Citizens can play a key role in ensuring government accountability.</p>
             
             NewsItem.objects.create(
                 title=title,
-                slug=slugify(title)[:50] + f'-{year}-{i}',
+                slug=slugify(title)[:40] + f'-{year}-{i}',
                 content=content,
                 is_breaking=is_breaking or random.random() < 0.1,  # 10% chance of breaking
                 published_at=pub_date
@@ -358,7 +358,7 @@ Citizens can play a key role in ensuring government accountability.</p>
                 
                 video = VideoContent.objects.create(
                     title=title,
-                    slug=slugify(title)[:50] + f'-{year}-{month}-{uuid.uuid4().hex[:8]}',
+                    slug=slugify(title)[:30] + f'-{year}-{month}-{uuid.uuid4().hex[:8]}',
                     description=f"Video content about {content_type.replace('_', ' ')}",
                     platform=platform,
                     external_id=f'{random.randint(100000, 999999)}',

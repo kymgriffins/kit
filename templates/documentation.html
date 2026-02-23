@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Django × Neon × Cloudinary × Next.js</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --surface2: #1a1a24;
+    --border: #2a2a3a;
+    --accent: #7c6fff;
+    --accent2: #00e5c3;
+    --accent3: #ff6b6b;
+    --text: #e8e8f0;
+    --muted: #7070a0;
+    --code-bg: #0d0d16;
+    --green: #00e5c3;
+    --orange: #ffb347;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: .4;
+  }
+
+  /* ─── HERO ─── */
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 80px 40px 60px;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,111,255,.18) 0%, transparent 70%);
+    top: -200px; left: -100px;
+    pointer-events: none;
+  }
+  .hero-glow2 {
+    position: absolute;
+    width: 500px; height: 500px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,229,195,.12) 0%, transparent 70%);
+    bottom: -100px; right: -50px;
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: rgba(124,111,255,.1);
+    border: 1px solid rgba(124,111,255,.3);
+    border-radius: 999px;
+    padding: 6px 16px;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+  .hero-badge span { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    margin-bottom: 24px;
+    letter-spacing: -.03em;
+  }
+  .hero h1 .line1 { color: var(--text); }
+  .hero h1 .line2 {
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-sub {
+    max-width: 560px;
+    color: var(--muted);
+    font-size: 16px;
+    font-weight: 300;
+    margin-bottom: 48px;
+  }
+  .stack-pills {
+    display: flex; flex-wrap: wrap; gap: 10px;
+  }
+  .pill {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .pill-django { background: rgba(9,150,95,.12); border-color: rgba(9,150,95,.35); color: #0adb8a; }
+  .pill-neon { background: rgba(0,229,195,.08); border-color: rgba(0,229,195,.3); color: var(--accent2); }
+  .pill-cloudinary { background: rgba(255,107,107,.08); border-color: rgba(255,107,107,.3); color: #ff8a8a; }
+  .pill-nextjs { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.15); color: #ddd; }
+  .pill-version { font-family: 'Space Mono', monospace; font-size: 10px; opacity: .7; }
+
+  /* ─── LAYOUT ─── */
+  .wrapper { max-width: 920px; margin: 0 auto; padding: 0 32px 120px; position: relative; z-index: 1; }
+
+  /* ─── TOC ─── */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 64px;
+  }
+  .toc h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin-bottom: 16px; font-family: 'Space Mono', monospace; }
+  .toc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 6px; }
+  .toc a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 13px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    transition: all .2s;
+  }
+  .toc a:hover { color: var(--text); background: var(--surface2); }
+  .toc a::before { content: '→'; color: var(--accent); font-size: 11px; }
+
+  /* ─── SECTIONS ─── */
+  .section { margin-bottom: 80px; }
+  .section-header {
+    display: flex; align-items: center; gap: 16px;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    color: white;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+  }
+  .section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--accent2);
+    margin: 32px 0 12px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .section p { color: #c0c0d8; margin-bottom: 14px; }
+  .section ul { margin: 12px 0 16px 0; padding-left: 0; list-style: none; }
+  .section ul li { padding: 4px 0 4px 20px; position: relative; color: #c0c0d8; font-size: 14px; }
+  .section ul li::before { content: '▸'; position: absolute; left: 0; color: var(--accent); }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-wrap { margin: 20px 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); }
+  .code-header {
+    display: flex; align-items: center; justify-content: space-between;
+    background: var(--surface2);
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .code-lang {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: var(--muted);
+  }
+  .code-dots { display: flex; gap: 5px; }
+  .code-dots span { width: 10px; height: 10px; border-radius: 50%; }
+  .code-dots .r { background: #ff5f57; }
+  .code-dots .y { background: #febc2e; }
+  .code-dots .g { background: #28c840; }
+  pre {
+    background: var(--code-bg);
+    padding: 20px 22px;
+    overflow-x: auto;
+    margin: 0;
+    font-family: 'Space Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+  code { font-family: 'Space Mono', monospace; font-size: 12px; }
+  p code, li code {
+    background: rgba(124,111,255,.12);
+    border: 1px solid rgba(124,111,255,.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    color: #b0a0ff;
+  }
+
+  /* ─── SYNTAX COLORS ─── */
+  .kw { color: #c792ea; }   /* keyword */
+  .str { color: #c3e88d; }  /* string */
+  .fn { color: #82aaff; }   /* function */
+  .cm { color: #546e7a; font-style: italic; }  /* comment */
+  .var { color: #f07178; }  /* variable */
+  .num { color: #f78c6c; }  /* number */
+  .op { color: #89ddff; }   /* operator */
+  .cls { color: #ffcb6b; }  /* class */
+  .dec { color: #00e5c3; }  /* decorator */
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    border-radius: 10px;
+    padding: 16px 20px;
+    margin: 20px 0;
+    display: flex; gap: 12px;
+    font-size: 13.5px;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; line-height: 1.6; }
+  .callout-tip { background: rgba(0,229,195,.07); border: 1px solid rgba(0,229,195,.2); }
+  .callout-warn { background: rgba(255,179,71,.07); border: 1px solid rgba(255,179,71,.2); color: #f5c97a; }
+  .callout-info { background: rgba(124,111,255,.07); border: 1px solid rgba(124,111,255,.2); }
+  .callout p { margin: 0; }
+
+  /* ─── STEP BLOCKS ─── */
+  .steps { display: flex; flex-direction: column; gap: 0; margin: 24px 0; }
+  .step {
+    display: flex; gap: 20px;
+    padding: 0 0 28px 0;
+    position: relative;
+  }
+  .step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px; top: 32px; bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--border), transparent);
+  }
+  .step-num {
+    width: 32px; height: 32px; flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    z-index: 1;
+  }
+  .step-content { flex: 1; }
+  .step-title { font-weight: 600; margin-bottom: 8px; font-size: 15px; }
+
+  /* ─── GRID CARDS ─── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; margin: 24px 0; }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: border-color .2s;
+  }
+  .card:hover { border-color: var(--accent); }
+  .card-icon { font-size: 24px; margin-bottom: 10px; }
+  .card-title { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .card-desc { font-size: 12px; color: var(--muted); }
+
+  /* ─── TABLE ─── */
+  .table-wrap { overflow-x: auto; margin: 20px 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { background: var(--surface2); padding: 10px 14px; text-align: left; font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 10px 14px; border-bottom: 1px solid rgba(255,255,255,.05); }
+  tr:last-child td { border-bottom: none; }
+  td code { font-size: 12px; }
+
+  /* ─── DIVIDER ─── */
+  .divider { border: none; height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent); margin: 60px 0; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+    font-size: 12px;
+    font-family: 'Space Mono', monospace;
+    border-top: 1px solid var(--border);
+  }
+  .footer a { color: var(--accent); text-decoration: none; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 60px 20px 40px; }
+    .wrapper { padding: 0 16px 80px; }
+    .toc-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="wrapper" style="padding-top:0; padding-bottom:0;">
+    <div class="hero-badge"><span></span> Full Stack Integration Guide · 2025</div>
+    <h1>
+      <div class="line1">Django × Neon ×</div>
+      <div class="line2">Cloudinary × Next.js</div>
+    </h1>
+    <p class="hero-sub">Build a production-ready REST API with Django 6, serverless Postgres on Neon, and Cloudinary media uploads — wired into your running Next.js frontend.</p>
+    <div class="stack-pills">
+      <div class="pill pill-django">🐍 Django <span class="pill-version">6.0.2</span></div>
+      <div class="pill pill-neon">⚡ Neon <span class="pill-version">serverless pg</span></div>
+      <div class="pill pill-cloudinary">☁️ Cloudinary <span class="pill-version">latest SDK</span></div>
+      <div class="pill pill-nextjs">▲ Next.js <span class="pill-version">15 (you have this)</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrapper">
+
+  <!-- TOC -->
+  <nav class="toc">
+    <h3>Contents</h3>
+    <div class="toc-grid">
+      <a href="#prereqs">Prerequisites</a>
+      <a href="#django-setup">Django Project Setup</a>
+      <a href="#neon-setup">Connect Neon Database</a>
+      <a href="#models">Define Models & Migrations</a>
+      <a href="#drf">Django REST Framework</a>
+      <a href="#cloudinary">Cloudinary Integration</a>
+      <a href="#upload-api">Upload API Endpoint</a>
+      <a href="#cors">CORS & Auth</a>
+      <a href="#nextjs">Next.js Integration</a>
+      <a href="#deploy">Deployment Notes</a>
+    </div>
+  </nav>
+
+  <!-- ─── SECTION 1 ─── -->
+  <section class="section" id="prereqs">
+    <div class="section-header">
+      <div class="section-num">01</div>
+      <h2>Prerequisites & Stack Overview</h2>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div><p>This guide assumes you have <strong>Python 3.12+</strong>, <strong>pip</strong>, and <strong>virtualenv</strong> installed. You already have a running Next.js app — we'll focus on building the Django backend that it will consume.</p></div>
+    </div>
+
+    <div class="cards">
+      <div class="card">
+        <div class="card-icon">🐍</div>
+        <div class="card-title">Django 6.0.2</div>
+        <div class="card-desc">Latest stable release (Dec 2025). Brings Background Tasks, Template Partials, and CSP headers built-in.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">⚡</div>
+        <div class="card-title">Neon</div>
+        <div class="card-desc">Serverless PostgreSQL. Scales to zero, branches for dev/prod, and has a free tier perfect for starting out.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">☁️</div>
+        <div class="card-title">Cloudinary</div>
+        <div class="card-desc">Cloud media platform for images & videos. Handles transforms, CDN delivery, and signed uploads seamlessly.</div>
+      </div>
+      <div class="card">
+        <div class="card-icon">🔗</div>
+        <div class="card-title">Django REST Framework</div>
+        <div class="card-desc">The gold-standard API layer for Django. Serializers, viewsets, authentication, and browsable API — all built in.</div>
+      </div>
+    </div>
+
+    <h3>What we're building</h3>
+    <p>A Django backend that:</p>
+    <ul>
+      <li>Uses Neon's serverless Postgres as its database via <code>psycopg</code> (v3)</li>
+      <li>Exposes a REST API via Django REST Framework</li>
+      <li>Handles file uploads to Cloudinary using <code>django-cloudinary-storage</code></li>
+      <li>Has CORS configured so your Next.js frontend can call it</li>
+    </ul>
+  </section>
+
+  <!-- ─── SECTION 2 ─── -->
+  <section class="section" id="django-setup">
+    <div class="section-header">
+      <div class="section-num">02</div>
+      <h2>Django Project Setup</h2>
+    </div>
+
+    <h3>Create & activate virtual environment</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash</div>
+      </div>
+      <pre><span class="cm"># Create project directory</span>
+mkdir myproject-backend && cd myproject-backend
+
+<span class="cm"># Create and activate virtualenv</span>
+python -m venv .venv
+source .venv/bin/activate          <span class="cm"># Linux / macOS</span>
+<span class="cm"># .venv\Scripts\activate           # Windows</span></pre>
+    </div>
+
+    <h3>Install all dependencies</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash</div>
+      </div>
+      <pre>pip install django==6.0.2 \
+           djangorestframework \
+           django-cors-headers \
+           django-cloudinary-storage \
+           cloudinary \
+           psycopg[binary] \
+           python-dotenv \
+           Pillow \
+           gunicorn
+
+pip freeze > requirements.txt</pre>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><p><strong>psycopg[binary]</strong> is the psycopg v3 adapter (not the older psycopg2). Django 6 officially supports it and it works great with Neon's connection strings. The <code>[binary]</code> extra bundles precompiled C libs so you skip system-level deps.</p></div>
+    </div>
+
+    <h3>Create the Django project & app</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash</div>
+      </div>
+      <pre>django-admin startproject core .
+python manage.py startapp api</pre>
+    </div>
+
+    <h3>Environment variables</h3>
+    <p>Create a <code>.env</code> file in your project root. <strong>Never commit this file.</strong></p>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">.env</div>
+      </div>
+      <pre>SECRET_KEY=your-super-secret-django-key-here
+DEBUG=True
+ALLOWED_HOSTS=localhost,127.0.0.1
+
+<span class="cm"># Neon connection string (from your Neon dashboard)</span>
+DATABASE_URL=postgresql://user:password@ep-xxxx.us-east-1.aws.neon.tech/neondb?sslmode=require
+
+<span class="cm"># Cloudinary credentials (from your Cloudinary dashboard)</span>
+CLOUDINARY_CLOUD_NAME=your_cloud_name
+CLOUDINARY_API_KEY=your_api_key
+CLOUDINARY_API_SECRET=your_api_secret
+
+<span class="cm"># CORS — your Next.js dev URL</span>
+CORS_ALLOWED_ORIGINS=http://localhost:3000</pre>
+    </div>
+
+    <h3>core/settings.py — full configuration</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — core/settings.py</div>
+      </div>
+      <pre><span class="kw">from</span> pathlib <span class="kw">import</span> Path
+<span class="kw">import</span> os
+<span class="kw">from</span> dotenv <span class="kw">import</span> load_dotenv
+
+load_dotenv()
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+SECRET_KEY = os.environ[<span class="str">'SECRET_KEY'</span>]
+DEBUG = os.getenv(<span class="str">'DEBUG'</span>, <span class="str">'False'</span>) == <span class="str">'True'</span>
+ALLOWED_HOSTS = os.getenv(<span class="str">'ALLOWED_HOSTS'</span>, <span class="str">''</span>).split(<span class="str">','</span>)
+
+INSTALLED_APPS = [
+    <span class="str">'django.contrib.admin'</span>,
+    <span class="str">'django.contrib.auth'</span>,
+    <span class="str">'django.contrib.contenttypes'</span>,
+    <span class="str">'django.contrib.sessions'</span>,
+    <span class="str">'django.contrib.messages'</span>,
+    <span class="str">'django.contrib.staticfiles'</span>,
+    <span class="cm"># Third-party</span>
+    <span class="str">'rest_framework'</span>,
+    <span class="str">'corsheaders'</span>,
+    <span class="str">'cloudinary'</span>,
+    <span class="str">'cloudinary_storage'</span>,
+    <span class="cm"># Local</span>
+    <span class="str">'api'</span>,
+]
+
+MIDDLEWARE = [
+    <span class="str">'corsheaders.middleware.CorsMiddleware'</span>,  <span class="cm"># Must be FIRST</span>
+    <span class="str">'django.middleware.security.SecurityMiddleware'</span>,
+    <span class="str">'django.contrib.sessions.middleware.SessionMiddleware'</span>,
+    <span class="str">'django.middleware.common.CommonMiddleware'</span>,
+    <span class="str">'django.middleware.csrf.CsrfViewMiddleware'</span>,
+    <span class="str">'django.contrib.auth.middleware.AuthenticationMiddleware'</span>,
+    <span class="str">'django.contrib.messages.middleware.MessageMiddleware'</span>,
+    <span class="str">'django.middleware.clickjacking.XFrameOptionsMiddleware'</span>,
+]
+
+ROOT_URLCONF = <span class="str">'core.urls'</span>
+
+<span class="cm"># ── DATABASE (Neon) ───────────────────────────────────</span>
+DATABASES = {
+    <span class="str">'default'</span>: {
+        <span class="str">'ENGINE'</span>: <span class="str">'django.db.backends.postgresql'</span>,
+        <span class="str">'OPTIONS'</span>: {
+            <span class="str">'conn_string'</span>: os.environ[<span class="str">'DATABASE_URL'</span>],
+        },
+    }
+}
+
+<span class="cm"># ── CLOUDINARY ────────────────────────────────────────</span>
+CLOUDINARY_STORAGE = {
+    <span class="str">'CLOUD_NAME'</span>: os.environ[<span class="str">'CLOUDINARY_CLOUD_NAME'</span>],
+    <span class="str">'API_KEY'</span>:    os.environ[<span class="str">'CLOUDINARY_API_KEY'</span>],
+    <span class="str">'API_SECRET'</span>: os.environ[<span class="str">'CLOUDINARY_API_SECRET'</span>],
+}
+DEFAULT_FILE_STORAGE = <span class="str">'cloudinary_storage.storage.MediaCloudinaryStorage'</span>
+MEDIA_URL = <span class="str">'/media/'</span>
+
+<span class="cm"># ── CORS ──────────────────────────────────────────────</span>
+CORS_ALLOWED_ORIGINS = os.getenv(<span class="str">'CORS_ALLOWED_ORIGINS'</span>, <span class="str">''</span>).split(<span class="str">','</span>)
+CORS_ALLOW_CREDENTIALS = <span class="kw">True</span>
+
+<span class="cm"># ── DRF ───────────────────────────────────────────────</span>
+REST_FRAMEWORK = {
+    <span class="str">'DEFAULT_AUTHENTICATION_CLASSES'</span>: [
+        <span class="str">'rest_framework.authentication.SessionAuthentication'</span>,
+    ],
+    <span class="str">'DEFAULT_PERMISSION_CLASSES'</span>: [
+        <span class="str">'rest_framework.permissions.IsAuthenticatedOrReadOnly'</span>,
+    ],
+    <span class="str">'DEFAULT_PAGINATION_CLASS'</span>: <span class="str">'rest_framework.pagination.PageNumberPagination'</span>,
+    <span class="str">'PAGE_SIZE'</span>: <span class="num">20</span>,
+}
+
+<span class="cm"># ── MISC ──────────────────────────────────────────────</span>
+LANGUAGE_CODE = <span class="str">'en-us'</span>
+TIME_ZONE = <span class="str">'UTC'</span>
+USE_TZ = <span class="kw">True</span>
+STATIC_URL = <span class="str">'static/'</span>
+DEFAULT_AUTO_FIELD = <span class="str">'django.db.models.BigAutoField'</span>
+
+TEMPLATES = [{
+    <span class="str">'BACKEND'</span>: <span class="str">'django.template.backends.django.DjangoTemplates'</span>,
+    <span class="str">'DIRS'</span>: [],
+    <span class="str">'APP_DIRS'</span>: <span class="kw">True</span>,
+    <span class="str">'OPTIONS'</span>: {<span class="str">'context_processors'</span>: [
+        <span class="str">'django.template.context_processors.request'</span>,
+        <span class="str">'django.contrib.auth.context_processors.auth'</span>,
+        <span class="str">'django.contrib.messages.context_processors.messages'</span>,
+    ]},
+}]</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 3 ─── -->
+  <section class="section" id="neon-setup">
+    <div class="section-header">
+      <div class="section-num">03</div>
+      <h2>Setting Up Neon</h2>
+    </div>
+
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Create a Neon project</div>
+          <p>Go to <strong>console.neon.tech</strong> → New Project. Pick a region close to your users. Neon creates a <code>neondb</code> database automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Get your connection string</div>
+          <p>In the dashboard, click <strong>Connect</strong> → choose <strong>psycopg / Django</strong>. Copy the connection string — it looks like:</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="code-lang">connection string</div>
+            </div>
+            <pre>postgresql://alex:AbC123dEf@ep-cool-darkness-123456.us-east-2.aws.neon.tech/neondb?sslmode=require</pre>
+          </div>
+          <p>Paste this into your <code>.env</code> as <code>DATABASE_URL</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Use database branching for dev vs prod</div>
+          <p>Neon's killer feature — create a <strong>dev branch</strong> so migrations don't touch production data:</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="code-lang">neon cli</div>
+            </div>
+            <pre><span class="cm"># Install the Neon CLI</span>
+npm install -g neonctl
+
+<span class="cm"># Authenticate and create a dev branch</span>
+neonctl auth
+neonctl branches create --name dev --project-id your-project-id
+
+<span class="cm"># List branches to get the dev connection string</span>
+neonctl connection-string dev</pre>
+          </div>
+          <p>Use the <code>dev</code> branch connection string in your local <code>.env</code>. Keep the <code>main</code> branch for production.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Test the connection</div>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="code-lang">bash</div>
+            </div>
+            <pre>python manage.py dbshell
+<span class="cm"># Should drop you into a Postgres prompt connected to Neon</span>
+\l    <span class="cm"># list databases</span>
+\q    <span class="cm"># quit</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div><p>Neon's free tier connections have a brief <strong>cold start</strong> (~500ms) after inactivity. For production, enable the <strong>connection pooler</strong> in your Neon project settings and use the pooler connection string (port 5432 → 6543). This is especially important for serverless deploys.</p></div>
+    </div>
+
+    <h3>Connection pooler (production-ready)</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — settings.py (production tweak)</div>
+      </div>
+      <pre>DATABASES = {
+    <span class="str">'default'</span>: {
+        <span class="str">'ENGINE'</span>: <span class="str">'django.db.backends.postgresql'</span>,
+        <span class="str">'OPTIONS'</span>: {
+            <span class="str">'conn_string'</span>: os.environ[<span class="str">'DATABASE_URL'</span>],
+            <span class="cm"># Enable persistent connections (great for gunicorn workers)</span>
+            <span class="str">'connect_timeout'</span>: <span class="num">10</span>,
+        },
+        <span class="cm"># Keep connections alive for 60s (avoids cold-start overhead)</span>
+        <span class="str">'CONN_MAX_AGE'</span>: <span class="num">60</span>,
+    }
+}</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 4 ─── -->
+  <section class="section" id="models">
+    <div class="section-header">
+      <div class="section-num">04</div>
+      <h2>Define Models & Run Migrations</h2>
+    </div>
+
+    <p>Here's an example with a <code>Post</code> model that has a Cloudinary-backed image field — a common pattern.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/models.py</div>
+      </div>
+      <pre><span class="kw">from</span> django.db <span class="kw">import</span> models
+<span class="kw">from</span> django.contrib.auth <span class="kw">import</span> get_user_model
+<span class="kw">from</span> cloudinary.models <span class="kw">import</span> CloudinaryField
+
+<span class="cls">User</span> = get_user_model()
+
+
+<span class="kw">class</span> <span class="cls">Post</span>(models.Model):
+    <span class="str">"""A blog/content post with a Cloudinary image."""</span>
+
+    author   = models.ForeignKey(<span class="cls">User</span>, on_delete=models.CASCADE, related_name=<span class="str">'posts'</span>)
+    title    = models.CharField(max_length=<span class="num">255</span>)
+    body     = models.TextField()
+    <span class="cm"># CloudinaryField handles upload, storage, and URL generation automatically</span>
+    image    = <span class="cls">CloudinaryField</span>(<span class="str">'image'</span>, blank=<span class="kw">True</span>, null=<span class="kw">True</span>)
+    created  = models.DateTimeField(auto_now_add=<span class="kw">True</span>)
+    updated  = models.DateTimeField(auto_now=<span class="kw">True</span>)
+    published = models.BooleanField(default=<span class="kw">False</span>)
+
+    <span class="kw">class</span> <span class="cls">Meta</span>:
+        ordering = [<span class="str">'-created'</span>]
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> self.title
+
+    <span class="dec">@property</span>
+    <span class="kw">def</span> <span class="fn">image_url</span>(self):
+        <span class="str">"""Return the full Cloudinary URL or None."""</span>
+        <span class="kw">if</span> self.image:
+            <span class="kw">return</span> self.image.url
+        <span class="kw">return</span> <span class="kw">None</span>
+
+
+<span class="kw">class</span> <span class="cls">Profile</span>(models.Model):
+    <span class="str">"""Extended user profile with an avatar."""</span>
+    user   = models.OneToOneField(<span class="cls">User</span>, on_delete=models.CASCADE)
+    avatar = <span class="cls">CloudinaryField</span>(<span class="str">'avatar'</span>, blank=<span class="kw">True</span>, null=<span class="kw">True</span>,
+                              transformation={<span class="str">'width'</span>: <span class="num">400</span>, <span class="str">'height'</span>: <span class="num">400</span>, <span class="str">'crop'</span>: <span class="str">'fill'</span>})
+    bio    = models.TextField(blank=<span class="kw">True</span>)
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> f<span class="str">'Profile of {self.user.username}'</span></pre>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">💡</div>
+      <div><p>The <code>transformation</code> parameter on <code>CloudinaryField</code> automatically applies Cloudinary transformations <em>at upload time</em>. The profile avatar example above will always generate a 400×400 cropped square — no separate resize step needed.</p></div>
+    </div>
+
+    <h3>Create & run migrations against Neon</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash</div>
+      </div>
+      <pre>python manage.py makemigrations api
+python manage.py migrate
+
+<span class="cm"># Create a superuser for the admin panel</span>
+python manage.py createsuperuser</pre>
+    </div>
+
+    <h3>Register models in admin</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/admin.py</div>
+      </div>
+      <pre><span class="kw">from</span> django.contrib <span class="kw">import</span> admin
+<span class="kw">from</span> .models <span class="kw">import</span> Post, Profile
+
+<span class="dec">@admin.register(Post)</span>
+<span class="kw">class</span> <span class="cls">PostAdmin</span>(admin.ModelAdmin):
+    list_display  = [<span class="str">'title'</span>, <span class="str">'author'</span>, <span class="str">'published'</span>, <span class="str">'created'</span>]
+    list_filter   = [<span class="str">'published'</span>]
+    search_fields = [<span class="str">'title'</span>, <span class="str">'body'</span>]
+
+admin.site.register(Profile)</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 5 ─── -->
+  <section class="section" id="drf">
+    <div class="section-header">
+      <div class="section-num">05</div>
+      <h2>Django REST Framework — Serializers & Views</h2>
+    </div>
+
+    <h3>Serializers</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/serializers.py</div>
+      </div>
+      <pre><span class="kw">from</span> rest_framework <span class="kw">import</span> serializers
+<span class="kw">from</span> django.contrib.auth <span class="kw">import</span> get_user_model
+<span class="kw">from</span> .models <span class="kw">import</span> Post, Profile
+<span class="kw">import</span> cloudinary
+
+<span class="cls">User</span> = get_user_model()
+
+
+<span class="kw">class</span> <span class="cls">ProfileSerializer</span>(serializers.ModelSerializer):
+    avatar_url = serializers.SerializerMethodField()
+
+    <span class="kw">class</span> <span class="cls">Meta</span>:
+        model = Profile
+        fields = [<span class="str">'bio'</span>, <span class="str">'avatar_url'</span>]
+
+    <span class="kw">def</span> <span class="fn">get_avatar_url</span>(self, obj):
+        <span class="kw">if</span> obj.avatar:
+            <span class="kw">return</span> cloudinary.CloudinaryImage(<span class="fn">str</span>(obj.avatar)).build_url(
+                width=<span class="num">200</span>, height=<span class="num">200</span>, crop=<span class="str">'fill'</span>, quality=<span class="str">'auto'</span>, fetch_format=<span class="str">'auto'</span>
+            )
+        <span class="kw">return</span> <span class="kw">None</span>
+
+
+<span class="kw">class</span> <span class="cls">UserSerializer</span>(serializers.ModelSerializer):
+    profile = <span class="cls">ProfileSerializer</span>(read_only=<span class="kw">True</span>)
+
+    <span class="kw">class</span> <span class="cls">Meta</span>:
+        model = <span class="cls">User</span>
+        fields = [<span class="str">'id'</span>, <span class="str">'username'</span>, <span class="str">'email'</span>, <span class="str">'profile'</span>]
+
+
+<span class="kw">class</span> <span class="cls">PostSerializer</span>(serializers.ModelSerializer):
+    author      = <span class="cls">UserSerializer</span>(read_only=<span class="kw">True</span>)
+    image_url   = serializers.SerializerMethodField()
+    image       = serializers.ImageField(write_only=<span class="kw">True</span>, required=<span class="kw">False</span>)
+
+    <span class="kw">class</span> <span class="cls">Meta</span>:
+        model  = Post
+        fields = [<span class="str">'id'</span>, <span class="str">'author'</span>, <span class="str">'title'</span>, <span class="str">'body'</span>,
+                  <span class="str">'image'</span>, <span class="str">'image_url'</span>, <span class="str">'published'</span>, <span class="str">'created'</span>]
+        read_only_fields = [<span class="str">'id'</span>, <span class="str">'author'</span>, <span class="str">'created'</span>]
+
+    <span class="kw">def</span> <span class="fn">get_image_url</span>(self, obj):
+        <span class="kw">if</span> obj.image:
+            <span class="cm"># Build a Cloudinary URL with auto format + quality for best performance</span>
+            <span class="kw">return</span> cloudinary.CloudinaryImage(<span class="fn">str</span>(obj.image)).build_url(
+                fetch_format=<span class="str">'auto'</span>, quality=<span class="str">'auto'</span>
+            )
+        <span class="kw">return</span> <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">create</span>(self, validated_data):
+        validated_data[<span class="str">'author'</span>] = self.context[<span class="str">'request'</span>].user
+        <span class="kw">return</span> <span class="fn">super</span>().create(validated_data)</pre>
+    </div>
+
+    <h3>Views (ViewSets)</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/views.py</div>
+      </div>
+      <pre><span class="kw">from</span> rest_framework <span class="kw">import</span> viewsets, permissions, status
+<span class="kw">from</span> rest_framework.decorators <span class="kw">import</span> action
+<span class="kw">from</span> rest_framework.response <span class="kw">import</span> Response
+<span class="kw">from</span> .models <span class="kw">import</span> Post
+<span class="kw">from</span> .serializers <span class="kw">import</span> PostSerializer
+
+
+<span class="kw">class</span> <span class="cls">PostViewSet</span>(viewsets.ModelViewSet):
+    queryset           = Post.objects.select_related(<span class="str">'author'</span>).all()
+    serializer_class   = <span class="cls">PostSerializer</span>
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    <span class="kw">def</span> <span class="fn">get_queryset</span>(self):
+        qs = <span class="fn">super</span>().get_queryset()
+        <span class="cm"># Public: only published posts; owners see all of their own</span>
+        <span class="kw">if</span> self.request.user.is_authenticated:
+            <span class="kw">return</span> qs.filter(published=<span class="kw">True</span>) | qs.filter(author=self.request.user)
+        <span class="kw">return</span> qs.filter(published=<span class="kw">True</span>)
+
+    <span class="kw">def</span> <span class="fn">perform_create</span>(self, serializer):
+        serializer.save(author=self.request.user)
+
+    <span class="dec">@action(detail=False, methods=['get'], permission_classes=[permissions.IsAuthenticated])</span>
+    <span class="kw">def</span> <span class="fn">my_posts</span>(self, request):
+        <span class="str">"""GET /api/posts/my_posts/ — returns only the user's posts."""</span>
+        posts = Post.objects.filter(author=request.user)
+        serializer = self.get_serializer(posts, many=<span class="kw">True</span>)
+        <span class="kw">return</span> Response(serializer.data)</pre>
+    </div>
+
+    <h3>URLs</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/urls.py</div>
+      </div>
+      <pre><span class="kw">from</span> rest_framework.routers <span class="kw">import</span> DefaultRouter
+<span class="kw">from</span> .views <span class="kw">import</span> PostViewSet
+
+router = DefaultRouter()
+router.register(<span class="str">r'posts'</span>, PostViewSet)
+
+urlpatterns = router.urls</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — core/urls.py</div>
+      </div>
+      <pre><span class="kw">from</span> django.contrib <span class="kw">import</span> admin
+<span class="kw">from</span> django.urls <span class="kw">import</span> path, include
+
+urlpatterns = [
+    path(<span class="str">'admin/'</span>, admin.site.urls),
+    path(<span class="str">'api/'</span>, include(<span class="str">'api.urls'</span>)),
+    path(<span class="str">'api-auth/'</span>, include(<span class="str">'rest_framework.urls'</span>)),  <span class="cm"># browsable API login</span>
+]</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 6 ─── -->
+  <section class="section" id="cloudinary">
+    <div class="section-header">
+      <div class="section-num">06</div>
+      <h2>Cloudinary — Deep Dive</h2>
+    </div>
+
+    <h3>Dashboard setup</h3>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Create a free Cloudinary account</div>
+          <p>Go to <strong>cloudinary.com</strong> → Sign Up. Your cloud name, API key, and API secret are on the dashboard homepage.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Configure an upload preset (for direct uploads)</div>
+          <p>Settings → Upload → Upload presets → Add upload preset. Set mode to <strong>Unsigned</strong> for client-side uploads, or keep <strong>Signed</strong> for server-side. Name it something like <code>my_app_preset</code>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Configure cloudinary in Python</div>
+          <p>Add the one-time config call. Because we're using <code>django-cloudinary-storage</code> with settings, this is handled automatically — but you can also call it manually for custom uploads:</p>
+          <div class="code-wrap">
+            <div class="code-header">
+              <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+              <div class="code-lang">python</div>
+            </div>
+            <pre><span class="kw">import</span> cloudinary
+
+cloudinary.config(
+    cloud_name=<span class="str">'your_cloud_name'</span>,
+    api_key=<span class="str">'your_api_key'</span>,
+    api_secret=<span class="str">'your_api_secret'</span>,
+    secure=<span class="kw">True</span>  <span class="cm"># always use https</span>
+)</pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Cloudinary URL transformations cheatsheet</h3>
+    <p>When building URLs in your serializers, you can chain transformations:</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Transformation</th><th>Code</th><th>Effect</th></tr></thead>
+        <tbody>
+          <tr><td>Auto format</td><td><code>fetch_format='auto'</code></td><td>Serves WebP/AVIF to browsers that support it</td></tr>
+          <tr><td>Auto quality</td><td><code>quality='auto'</code></td><td>Intelligent compression without visible loss</td></tr>
+          <tr><td>Resize & crop</td><td><code>width=800, height=600, crop='fill'</code></td><td>Smart crop to exact dimensions</td></tr>
+          <tr><td>Face crop</td><td><code>crop='thumb', gravity='face'</code></td><td>Auto-detects and centers on faces</td></tr>
+          <tr><td>Blur</td><td><code>effect='blur:300'</code></td><td>Gaussian blur — great for blurred placeholders</td></tr>
+          <tr><td>Watermark</td><td><code>overlay='your_logo', gravity='south_east'</code></td><td>Overlay a stored image</td></tr>
+          <tr><td>Responsive</td><td><code>width='auto', dpr='auto'</code></td><td>Serves correct size per device DPR</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Direct upload utility (bypasses server)</h3>
+    <p>For large files, upload directly from the browser to Cloudinary and only save the <code>public_id</code> to your database:</p>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/utils.py</div>
+      </div>
+      <pre><span class="kw">import</span> cloudinary
+<span class="kw">import</span> cloudinary.uploader
+
+
+<span class="kw">def</span> <span class="fn">upload_to_cloudinary</span>(file, folder: str = <span class="str">'uploads'</span>) -> dict:
+    <span class="str">"""
+    Upload a file object to Cloudinary.
+    Returns the full upload response dict.
+    """</span>
+    result = cloudinary.uploader.upload(
+        file,
+        folder=folder,
+        resource_type=<span class="str">'auto'</span>,           <span class="cm"># auto-detect image/video/raw</span>
+        overwrite=<span class="kw">True</span>,
+        quality=<span class="str">'auto'</span>,
+        fetch_format=<span class="str">'auto'</span>,
+    )
+    <span class="kw">return</span> result
+
+
+<span class="kw">def</span> <span class="fn">delete_from_cloudinary</span>(public_id: str) -> dict:
+    <span class="str">"""Delete an asset from Cloudinary by its public_id."""</span>
+    <span class="kw">return</span> cloudinary.uploader.destroy(public_id)
+
+
+<span class="kw">def</span> <span class="fn">generate_signed_url</span>(public_id: str, transformation: dict = <span class="kw">None</span>) -> str:
+    <span class="str">"""Generate a signed, time-limited URL (e.g. for private assets)."""</span>
+    <span class="kw">return</span> cloudinary.utils.cloudinary_url(
+        public_id,
+        sign_url=<span class="kw">True</span>,
+        expires_at=<span class="num">3600</span>,  <span class="cm"># 1 hour</span>
+        **(transformation <span class="kw">or</span> {}),
+    )[<span class="num">0</span>]</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 7 ─── -->
+  <section class="section" id="upload-api">
+    <div class="section-header">
+      <div class="section-num">07</div>
+      <h2>Upload API Endpoint</h2>
+    </div>
+
+    <p>Here's a dedicated upload endpoint your Next.js frontend can POST files to. It uploads to Cloudinary and returns the public URL.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/views.py (add this)</div>
+      </div>
+      <pre><span class="kw">from</span> rest_framework.views <span class="kw">import</span> APIView
+<span class="kw">from</span> rest_framework.parsers <span class="kw">import</span> MultiPartParser, FormParser
+<span class="kw">import</span> cloudinary.uploader
+
+
+<span class="kw">class</span> <span class="cls">MediaUploadView</span>(APIView):
+    <span class="str">"""
+    POST /api/upload/
+    Accepts multipart/form-data with a 'file' field.
+    Returns: { url, public_id, format, width, height }
+    """</span>
+    parser_classes     = [MultiPartParser, FormParser]
+    permission_classes = [permissions.IsAuthenticated]
+
+    <span class="kw">def</span> <span class="fn">post</span>(self, request):
+        file = request.FILES.get(<span class="str">'file'</span>)
+        <span class="kw">if not</span> file:
+            <span class="kw">return</span> Response(
+                {<span class="str">'error'</span>: <span class="str">'No file provided'</span>},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        <span class="cm"># Validate size (e.g. 10MB max)</span>
+        <span class="kw">if</span> file.size > <span class="num">10</span> * <span class="num">1024</span> * <span class="num">1024</span>:
+            <span class="kw">return</span> Response(
+                {<span class="str">'error'</span>: <span class="str">'File exceeds 10MB limit'</span>},
+                status=status.HTTP_413_REQUEST_ENTITY_TOO_LARGE
+            )
+
+        result = cloudinary.uploader.upload(
+            file,
+            folder=<span class="str">f'users/{request.user.id}'</span>,
+            resource_type=<span class="str">'auto'</span>,
+            quality=<span class="str">'auto'</span>,
+            fetch_format=<span class="str">'auto'</span>,
+        )
+
+        <span class="kw">return</span> Response({
+            <span class="str">'url'</span>:       result[<span class="str">'secure_url'</span>],
+            <span class="str">'public_id'</span>: result[<span class="str">'public_id'</span>],
+            <span class="str">'format'</span>:    result[<span class="str">'format'</span>],
+            <span class="str">'width'</span>:     result.get(<span class="str">'width'</span>),
+            <span class="str">'height'</span>:    result.get(<span class="str">'height'</span>),
+        }, status=status.HTTP_201_CREATED)</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — api/urls.py (updated)</div>
+      </div>
+      <pre><span class="kw">from</span> django.urls <span class="kw">import</span> path
+<span class="kw">from</span> rest_framework.routers <span class="kw">import</span> DefaultRouter
+<span class="kw">from</span> .views <span class="kw">import</span> PostViewSet, MediaUploadView
+
+router = DefaultRouter()
+router.register(<span class="str">r'posts'</span>, PostViewSet)
+
+urlpatterns = router.urls + [
+    path(<span class="str">'upload/'</span>, MediaUploadView.as_view(), name=<span class="str">'media-upload'</span>),
+]</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 8 ─── -->
+  <section class="section" id="cors">
+    <div class="section-header">
+      <div class="section-num">08</div>
+      <h2>CORS & Authentication</h2>
+    </div>
+
+    <p>Since Next.js runs on a different origin (port 3000), Django needs to allow cross-origin requests. We already installed <code>django-cors-headers</code> — here's the complete config.</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — settings.py (CORS section)</div>
+      </div>
+      <pre><span class="cm"># Exact list of origins allowed to make cross-site requests</span>
+CORS_ALLOWED_ORIGINS = os.getenv(<span class="str">'CORS_ALLOWED_ORIGINS'</span>, <span class="str">''</span>).split(<span class="str">','</span>)
+
+<span class="cm"># Allow cookies / credentials (needed for session auth)</span>
+CORS_ALLOW_CREDENTIALS = <span class="kw">True</span>
+
+<span class="cm"># Allow these headers in requests</span>
+CORS_ALLOW_HEADERS = [
+    <span class="str">'accept'</span>, <span class="str">'accept-encoding'</span>, <span class="str">'authorization'</span>,
+    <span class="str">'content-type'</span>, <span class="str">'dnt'</span>, <span class="str">'origin'</span>, <span class="str">'user-agent'</span>,
+    <span class="str">'x-csrftoken'</span>, <span class="str">'x-requested-with'</span>,
+]
+
+<span class="cm"># For development you can whitelist all origins (NEVER in production)</span>
+<span class="cm"># CORS_ALLOW_ALL_ORIGINS = True</span></pre>
+    </div>
+
+    <h3>Token Authentication (recommended for SPA)</h3>
+    <p>Session auth works but requires cookies. For a pure API + SPA architecture, <strong>JWT tokens</strong> are cleaner. Install <code>djangorestframework-simplejwt</code>:</p>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash</div>
+      </div>
+      <pre>pip install djangorestframework-simplejwt</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — settings.py (DRF update)</div>
+      </div>
+      <pre>REST_FRAMEWORK = {
+    <span class="str">'DEFAULT_AUTHENTICATION_CLASSES'</span>: [
+        <span class="str">'rest_framework_simplejwt.authentication.JWTAuthentication'</span>,
+    ],
+    <span class="str">'DEFAULT_PERMISSION_CLASSES'</span>: [
+        <span class="str">'rest_framework.permissions.IsAuthenticatedOrReadOnly'</span>,
+    ],
+}
+
+<span class="kw">from</span> datetime <span class="kw">import</span> timedelta
+SIMPLE_JWT = {
+    <span class="str">'ACCESS_TOKEN_LIFETIME'</span>:  timedelta(minutes=<span class="num">60</span>),
+    <span class="str">'REFRESH_TOKEN_LIFETIME'</span>: timedelta(days=<span class="num">7'</span>),
+    <span class="str">'ROTATE_REFRESH_TOKENS'</span>: <span class="kw">True</span>,
+}</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — core/urls.py (add JWT endpoints)</div>
+      </div>
+      <pre><span class="kw">from</span> rest_framework_simplejwt.views <span class="kw">import</span> (
+    TokenObtainPairView, TokenRefreshView, TokenVerifyView
+)
+
+urlpatterns += [
+    path(<span class="str">'api/token/'</span>,         TokenObtainPairView.as_view(),  name=<span class="str">'token_obtain'</span>),
+    path(<span class="str">'api/token/refresh/'</span>,  TokenRefreshView.as_view(),    name=<span class="str">'token_refresh'</span>),
+    path(<span class="str">'api/token/verify/'</span>,   TokenVerifyView.as_view(),     name=<span class="str">'token_verify'</span>),
+]</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 9 ─── -->
+  <section class="section" id="nextjs">
+    <div class="section-header">
+      <div class="section-num">09</div>
+      <h2>Connecting from Next.js</h2>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">▲</div>
+      <div><p>Since you already have Next.js running, here are the integration patterns. Add your Django API base URL to <code>.env.local</code> as <code>NEXT_PUBLIC_API_URL=http://localhost:8000</code>.</p></div>
+    </div>
+
+    <h3>API utility (lib/api.ts)</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">typescript — lib/api.ts</div>
+      </div>
+      <pre><span class="kw">const</span> BASE = process.env.NEXT_PUBLIC_API_URL;
+
+<span class="kw">async function</span> <span class="fn">apiFetch</span>(path: string, options: RequestInit = {}) {
+  <span class="kw">const</span> token = <span class="kw">typeof</span> window !== <span class="str">'undefined'</span>
+    ? localStorage.getItem(<span class="str">'access_token'</span>)
+    : <span class="kw">null</span>;
+
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(`${BASE}${path}`, {
+    ...options,
+    headers: {
+      <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+      ...(token ? { <span class="str">'Authorization'</span>: `Bearer ${token}` } : {}),
+      ...options.headers,
+    },
+  });
+
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="kw">await</span> res.text());
+  <span class="kw">return</span> res.json();
+}
+
+<span class="cm">// Auth</span>
+<span class="kw">export const</span> login = (credentials: { username: string; password: string }) =>
+  apiFetch(<span class="str">'/api/token/'</span>, { method: <span class="str">'POST'</span>, body: JSON.stringify(credentials) });
+
+<span class="cm">// Posts</span>
+<span class="kw">export const</span> getPosts    = ()     => apiFetch(<span class="str">'/api/posts/'</span>);
+<span class="kw">export const</span> getPost     = (id)   => apiFetch(<span class="str">`/api/posts/${id}/`</span>);
+<span class="kw">export const</span> createPost  = (data) => apiFetch(<span class="str">'/api/posts/'</span>, { method: <span class="str">'POST'</span>, body: JSON.stringify(data) });
+
+<span class="cm">// File upload — uses multipart, NOT JSON</span>
+<span class="kw">export async function</span> <span class="fn">uploadMedia</span>(file: File) {
+  <span class="kw">const</span> form = <span class="kw">new</span> FormData();
+  form.append(<span class="str">'file'</span>, file);
+  <span class="kw">const</span> token = localStorage.getItem(<span class="str">'access_token'</span>);
+  <span class="kw">const</span> res = <span class="kw">await</span> fetch(`${BASE}/api/upload/`, {
+    method: <span class="str">'POST'</span>,
+    headers: token ? { <span class="str">'Authorization'</span>: `Bearer ${token}` } : {},
+    body: form,
+  });
+  <span class="kw">if</span> (!res.ok) <span class="kw">throw new</span> Error(<span class="kw">await</span> res.text());
+  <span class="kw">return</span> res.json(); <span class="cm">// { url, public_id, format, width, height }</span>
+}</pre>
+    </div>
+
+    <h3>Example: upload component</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">tsx — components/ImageUploader.tsx</div>
+      </div>
+      <pre><span class="str">'use client'</span>;
+
+<span class="kw">import</span> { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+<span class="kw">import</span> { uploadMedia } <span class="kw">from</span> <span class="str">'@/lib/api'</span>;
+
+<span class="kw">export default function</span> <span class="fn">ImageUploader</span>({ onUpload }: { onUpload: (url: string) => <span class="kw">void</span> }) {
+  <span class="kw">const</span> [uploading, setUploading] = useState(<span class="kw">false</span>);
+  <span class="kw">const</span> [preview, setPreview]   = useState&lt;string | null&gt;(<span class="kw">null</span>);
+
+  <span class="kw">async function</span> <span class="fn">handleChange</span>(e: React.ChangeEvent&lt;HTMLInputElement&gt;) {
+    <span class="kw">const</span> file = e.target.files?.[<span class="num">0</span>];
+    <span class="kw">if</span> (!file) <span class="kw">return</span>;
+
+    <span class="cm">// Show local preview immediately</span>
+    setPreview(URL.createObjectURL(file));
+    setUploading(<span class="kw">true</span>);
+
+    <span class="kw">try</span> {
+      <span class="kw">const</span> data = <span class="kw">await</span> uploadMedia(file);
+      onUpload(data.url);
+    } <span class="kw">finally</span> {
+      setUploading(<span class="kw">false</span>);
+    }
+  }
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;input type=<span class="str">"file"</span> accept=<span class="str">"image/*"</span> onChange={handleChange} /&gt;
+      {uploading && &lt;p&gt;Uploading to Cloudinary…&lt;/p&gt;}
+      {preview   && &lt;img src={preview} alt=<span class="str">"preview"</span> width={200} /&gt;}
+    &lt;/div&gt;
+  );
+}</pre>
+    </div>
+
+    <h3>Using Next.js Image with Cloudinary</h3>
+    <p>Add Cloudinary to your image domains in <code>next.config.js</code> so <code>&lt;Image&gt;</code> works natively:</p>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">javascript — next.config.js</div>
+      </div>
+      <pre>/** <span class="dec">@type</span> {import('next').NextConfig} */
+<span class="kw">const</span> nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol:  <span class="str">'https'</span>,
+        hostname:  <span class="str">'res.cloudinary.com'</span>,
+        port:      <span class="str">''</span>,
+        pathname:  <span class="str">'/your_cloud_name/**'</span>,
+      },
+    ],
+  },
+};
+
+module.exports = nextConfig;</pre>
+    </div>
+  </section>
+
+  <!-- ─── SECTION 10 ─── -->
+  <section class="section" id="deploy">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Deployment Notes</h2>
+    </div>
+
+    <h3>Django on Railway / Render / Fly.io</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">bash — Procfile</div>
+      </div>
+      <pre>web: gunicorn core.wsgi:application --workers 4 --bind 0.0.0.0:$PORT</pre>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">python — settings.py production additions</div>
+      </div>
+      <pre><span class="kw">import</span> os
+
+<span class="kw">if not</span> DEBUG:
+    <span class="cm"># Trust the proxy (Railway/Render set this)</span>
+    SECURE_PROXY_SSL_HEADER = (<span class="str">'HTTP_X_FORWARDED_PROTO'</span>, <span class="str">'https'</span>)
+    SECURE_SSL_REDIRECT = <span class="kw">True</span>
+    SESSION_COOKIE_SECURE = <span class="kw">True</span>
+    CSRF_COOKIE_SECURE = <span class="kw">True</span>
+
+    <span class="cm"># Whitenoise for static files (simpler than S3 for static)</span>
+    INSTALLED_APPS.insert(<span class="num">1</span>, <span class="str">'whitenoise.runserver_nostatic'</span>)
+    MIDDLEWARE.insert(<span class="num">2</span>, <span class="str">'whitenoise.middleware.WhiteNoiseMiddleware'</span>)
+    STATICFILES_STORAGE = <span class="str">'whitenoise.storage.CompressedManifestStaticFilesStorage'</span>
+    STATIC_ROOT = BASE_DIR / <span class="str">'staticfiles'</span>
+
+    <span class="cm"># Switch to Neon's pooler connection string in production</span>
+    DATABASES[<span class="str">'default'</span>][<span class="str">'OPTIONS'</span>][<span class="str">'conn_string'</span>] = os.environ[<span class="str">'DATABASE_POOL_URL'</span>]</pre>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">🚀</div>
+      <div><p>Set your production environment variables on your hosting platform's dashboard rather than using a <code>.env</code> file. In Railway: click your service → Variables. In Render: Environment → Environment Variables. Make sure <code>DATABASE_URL</code> points to Neon's <strong>main</strong> branch and <code>DATABASE_POOL_URL</code> to the pooler connection string.</p></div>
+    </div>
+
+    <h3>Final project structure</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <div class="code-dots"><span class="r"></span><span class="y"></span><span class="g"></span></div>
+        <div class="code-lang">file tree</div>
+      </div>
+      <pre>myproject-backend/
+├── .env                    ← local secrets (gitignored)
+├── .venv/
+├── requirements.txt
+├── Procfile
+├── manage.py
+├── core/
+│   ├── settings.py         ← all configuration
+│   ├── urls.py
+│   └── wsgi.py
+└── api/
+    ├── models.py           ← Post, Profile with CloudinaryField
+    ├── serializers.py      ← DRF serializers + URL generation
+    ├── views.py            ← PostViewSet + MediaUploadView
+    ├── urls.py             ← router + upload endpoint
+    ├── utils.py            ← cloudinary upload helpers
+    └── admin.py</pre>
+    </div>
+  </section>
+
+  <hr class="divider" />
+
+  <div style="background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px 32px; margin-bottom: 40px;">
+    <div style="font-size: 11px; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-family: 'Space Mono', monospace; margin-bottom: 16px;">Quick Reference — versions used in this guide</div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Package</th><th>Version</th><th>Purpose</th></tr></thead>
+        <tbody>
+          <tr><td><code>Django</code></td><td>6.0.2</td><td>Core framework</td></tr>
+          <tr><td><code>djangorestframework</code></td><td>latest</td><td>REST API layer</td></tr>
+          <tr><td><code>django-cors-headers</code></td><td>latest</td><td>Cross-origin requests</td></tr>
+          <tr><td><code>cloudinary</code></td><td>latest</td><td>Python Cloudinary SDK</td></tr>
+          <tr><td><code>django-cloudinary-storage</code></td><td>latest</td><td>Django storage backend for Cloudinary</td></tr>
+          <tr><td><code>psycopg[binary]</code></td><td>3.x</td><td>PostgreSQL adapter (v3, works with Neon)</td></tr>
+          <tr><td><code>python-dotenv</code></td><td>latest</td><td>.env file loading</td></tr>
+          <tr><td><code>djangorestframework-simplejwt</code></td><td>latest</td><td>JWT authentication</td></tr>
+          <tr><td><code>Pillow</code></td><td>latest</td><td>Required by ImageField</td></tr>
+          <tr><td><code>gunicorn</code></td><td>latest</td><td>Production WSGI server</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<footer class="footer">
+  Django 6.0.2 × Neon × Cloudinary × Next.js 15 — Built with ♥<br/>
+  <a href="https://docs.djangoproject.com" target="_blank">Django Docs</a> ·
+  <a href="https://neon.tech/docs" target="_blank">Neon Docs</a> ·
+  <a href="https://cloudinary.com/documentation" target="_blank">Cloudinary Docs</a> ·
+  <a href="https://www.django-rest-framework.org" target="_blank">DRF Docs</a>
+</footer>
+
+</body>
+</html>

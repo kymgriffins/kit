@@ -1,6 +1,7 @@
 """
 Django settings for api project.
 """
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -68,11 +69,18 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'api.wsgi.application'
 
-# Database - Using SQLite for development
+# Database - Using Neon PostgreSQL
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'neondb',
+        'USER': 'neondb_owner',
+        'PASSWORD': 'npg_7lQqDYL2XkUB',
+        'HOST': 'ep-delicate-shadow-aix1bnef-pooler.c-4.us-east-1.aws.neon.tech',
+        'PORT': '5432',
+        'OPTIONS': {
+            'sslmode': 'require',
+        },
     }
 }
 

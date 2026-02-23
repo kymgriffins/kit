@@ -144,4 +144,12 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',
     'http://127.0.0.1:3000',
+    'https://bns.vercel.app',
+    'https://*.vercel.app',
 ]
+
+# Allow credentials for cross-origin requests
+CORS_ALLOW_CREDENTIALS = True
+
+# Cache CORS preflight requests for 1 hour
+CORS_PREFLIGHT_CACHE = 3600

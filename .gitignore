@@ -4,7 +4,8 @@
 __pycache__
 db.sqlite3
 media
-
+/frontend
+# ./frontend
 # Environments 
 .env 
 .venv 

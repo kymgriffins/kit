@@ -5,80 +5,199 @@ This document provides comprehensive API endpoint documentation for consuming th
 ## Base URL
 
 ```
-Production: https://your-domain.com
+Production: https://bns.vercel.app
 Development: http://localhost:8000
 ```
 
-## Authentication
+---
 
-The API uses Django REST Framework's session authentication. For Next.js, you'll need to handle cookies for authenticated requests.
+## ⚠️ IMPORTANT: Authentication System
 
-### Session Authentication
+The backend uses **Django REST Framework Session Authentication** (NOT JWT). The frontend API client was incorrectly configured for JWT which doesn't exist.
+
+### Current Backend Configuration
+
+| Setting | Value |
+|---------|-------|
+| Authentication | SessionAuthentication (cookie-based) |
+| Permission | IsAuthenticatedOrReadOnly |
+| JWT Support | ❌ Not Installed |
+
+### Required Changes for Next.js
+
+1. **Always include `credentials: 'include'`** in all fetch requests
+2. **Use CSRF protection** - Django requires CSRF tokens for POST/PUT/DELETE
+3. **No Bearer tokens** - Authentication is cookie-based
+
+---
+
+## Authentication Guide
+
+### Session Authentication Flow
 
 ```typescript
-// Next.js fetch wrapper with session auth
-async function fetchAPI(endpoint: string, options: RequestInit = {}) {
-  const baseURL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-  
-  return fetch(`${baseURL}${endpoint}`, {
-    ...options,
-    credentials: 'include', // Important for session auth
+// 1. Login - POST to Django admin login or custom endpoint
+// 2. Browser stores session cookie automatically
+// 3. All subsequent requests include the cookie
+```
+
+### Login (Using Django Admin)
+
+```typescript
+// Login via Django admin (creates session)
+export async function login(username: string, password: string) {
+  const response = await fetch(`${API_BASE}/admin/login/`, {
+    method: 'POST',
     headers: {
-      'Content-Type': 'application/json',
-      ...options.headers,
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
+    body: new URLSearchParams({
+      username,
+      password,
+      csrfmiddlewaretoken: await getCsrfToken(),
+    }),
+    credentials: 'include',
+  });
+  
+  if (!response.ok) {
+    throw new Error('Login failed');
+  }
+  return response.json();
+}
+
+// Get CSRF token
+export async function getCsrfToken(): Promise<string> {
+  const response = await fetch(`${API_BASE}/api/csrf/`, {
+    credentials: 'include',
+  });
+  const data = await response.json();
+  return data.csrfToken;
+}
+```
+
+### Logout
+
+```typescript
+export async function logout() {
+  await fetch(`${API_BASE}/admin/logout/`, {
+    method: 'POST',
+    credentials: 'include',
   });
 }
 ```
 
-## API Endpoints
+### Check Authentication Status
+
+```typescript
+export async function getCurrentUser() {
+  const response = await fetch(`${API_BASE}/api/v1/accounts/users/me/`, {
+    credentials: 'include',
+  });
+  
+  if (response.status === 401) {
+    return null; // Not authenticated
+  }
+  return response.json();
+}
+```
+
+---
+
+## Authentication API Endpoints
+
+The following JSON API endpoints are available for authentication:
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/csrf/` | Get CSRF token (required before POST) |
+| POST | `/api/auth/login/` | Login with username/password |
+| POST | `/api/auth/logout/` | Logout current user |
+| GET | `/api/auth/user/` | Get current authenticated user |
+
+### Example: Complete Authentication Flow
+
+```typescript
+import { login, logout, getCurrentUser, fetchCsrfToken, subscribeToNewsletter } from '@/lib/api';
+
+// 1. Initialize - fetch CSRF token first
+await fetchCsrfToken();
+
+// 2. Login
+const result = await login('myusername', 'mypassword');
+if (result.success) {
+  console.log('Logged in as:', result.user);
+}
+
+// 3. Check auth state
+const user = await getCurrentUser();
+if (user) {
+  console.log('Authenticated:', user.email);
+}
+
+// 4. Make authenticated requests
+await subscribeToNewsletter('user@example.com');
+
+// 5. Logout
+await logout();
+```
+
+---
+
+## API Endpoints Reference
 
 ### 1. Accounts API (`/api/v1/accounts/`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/accounts/users/` | List all users |
-| POST | `/api/v1/accounts/users/` | Create new user |
-| GET | `/api/v1/accounts/users/{id}/` | Get user details |
-| PUT | `/api/v1/accounts/users/{id}/` | Update user |
-| PATCH | `/api/v1/accounts/users/{id}/` | Partial update user |
-| DELETE | `/api/v1/accounts/users/{id}/` | Delete user |
-| GET | `/api/v1/accounts/donors/` | List all donors |
-| POST | `/api/v1/accounts/donors/` | Create donor profile |
-| GET | `/api/v1/accounts/donors/{id}/` | Get donor details |
-| PUT | `/api/v1/accounts/donors/{id}/` | Update donor |
-| GET | `/api/v1/accounts/sponsors/` | List all sponsors |
-| POST | `/api/v1/accounts/sponsors/` | Create sponsor profile |
-| GET | `/api/v1/accounts/sponsors/{id}/` | Get sponsor details |
-| GET | `/api/v1/accounts/partners/` | List all partners |
-| POST | `/api/v1/accounts/partners/` | Create partner |
-| GET | `/api/v1/accounts/organization/` | Get organization profile |
-| PUT | `/api/v1/accounts/organization/` | Update organization |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/v1/accounts/users/` | List all users | Yes |
+| POST | `/api/v1/accounts/users/` | Create new user | No (registration) |
+| GET | `/api/v1/accounts/users/me/` | Get current user | Yes |
+| GET | `/api/v1/accounts/users/{id}/` | Get user details | Yes |
+| PUT | `/api/v1/accounts/users/{id}/` | Update user | Yes |
+| PATCH | `/api/v1/accounts/users/{id}/` | Partial update user | Yes |
+| DELETE | `/api/v1/accounts/users/{id}/` | Delete user | Yes |
+| GET | `/api/v1/accounts/donors/` | List all donors | No |
+| POST | `/api/v1/accounts/donors/` | Create donor profile | Yes |
+| GET | `/api/v1/accounts/donors/{id}/` | Get donor details | Yes |
+| PUT | `/api/v1/accounts/donors/{id}/` | Update donor | Yes |
+| GET | `/api/v1/accounts/sponsors/` | List all sponsors | No |
+| POST | `/api/v1/accounts/sponsors/` | Create sponsor profile | Yes |
+| GET | `/api/v1/accounts/sponsors/{id}/` | Get sponsor details | Yes |
+| GET | `/api/v1/accounts/partners/` | List all partners | No |
+| POST | `/api/v1/accounts/partners/` | Create partner | Yes |
+| GET | `/api/v1/accounts/organization/` | Get organization profile | No |
+| GET | `/api/v1/accounts/organization/public/` | Get public org profile | No |
+| GET | `/api/v1/accounts/organization/impact/` | Get impact stats | No |
+| GET | `/api/v1/accounts/organization/brand/` | Get brand identity | No |
+| GET | `/api/v1/accounts/organization/contact/` | Get contact info | No |
 
 ### 2. Content API (`/api/v1/content/`)
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/content/categories/` | List all categories |
-| POST | `/api/v1/content/categories/` | Create category |
-| GET | `/api/v1/content/categories/{id}/` | Get category details |
-| PUT | `/api/v1/content/categories/{id}/` | Update category |
-| DELETE | `/api/v1/content/categories/{id}/` | Delete category |
-| GET | `/api/v1/content/videos/` | List all videos |
-| POST | `/api/v1/content/videos/` | Create video |
-| GET | `/api/v1/content/videos/{id}/` | Get video details |
-| PUT | `/api/v1/content/videos/{id}/` | Update video |
-| DELETE | `/api/v1/content/videos/{id}/` | Delete video |
-| GET | `/api/v1/content/posts/` | List all blog posts |
-| POST | `/api/v1/content/posts/` | Create blog post |
-| GET | `/api/v1/content/posts/{id}/` | Get post details |
-| PUT | `/api/v1/content/posts/{id}/` | Update post |
-| DELETE | `/api/v1/content/posts/{id}/` | Delete post |
-| GET | `/api/v1/content/playlists/` | List all playlists |
-| POST | `/api/v1/content/playlists/` | Create playlist |
-| GET | `/api/v1/content/playlists/{id}/` | Get playlist details |
-| GET | `/api/v1/content/news/` | List all news items |
-| POST | `/api/v1/content/news/` | Create news item |
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| GET | `/api/v1/content/categories/` | List all categories | No |
+| GET | `/api/v1/content/categories/{id}/` | Get category details | No |
+| GET | `/api/v1/content/videos/` | List all videos | No |
+| POST | `/api/v1/content/videos/` | Create video | Yes |
+| GET | `/api/v1/content/videos/{id}/` | Get video details | No |
+| PUT | `/api/v1/content/videos/{id}/` | Update video | Yes |
+| DELETE | `/api/v1/content/videos/{id}/` | Delete video | Yes |
+| GET | `/api/v1/content/videos/featured/` | Get featured videos | No |
+| GET | `/api/v1/content/videos/by_platform/` | Videos grouped by platform | No |
+| GET | `/api/v1/content/posts/` | List all blog posts | No |
+| POST | `/api/v1/content/posts/` | Create blog post | Yes |
+| GET | `/api/v1/content/posts/{slug}/` | Get post by slug | No |
+| PUT | `/api/v1/content/posts/{slug}/` | Update post | Yes |
+| DELETE | `/api/v1/content/posts/{slug}/` | Delete post | Yes |
+| GET | `/api/v1/content/posts/featured/` | Get featured post | No |
+| GET | `/api/v1/content/posts/{slug}/related/` | Get related posts | No |
+| GET | `/api/v1/content/playlists/` | List all playlists | No |
+| POST | `/api/v1/content/playlists/` | Create playlist | Yes |
+| GET | `/api/v1/content/playlists/{slug}/` | Get playlist by slug | No |
+| GET | `/api/v1/content/playlists/{slug}/videos/` | Get playlist videos | No |
+| GET | `/api/v1/content/news/` | List all news items | No |
+| POST | `/api/v1/content/news/` | Create news item | Yes |
+| GET | `/api/v1/content/news/breaking/` | Get breaking news | No |
 
 ### 3. Newsletter API (`/api/v1/newsletter/`)
 

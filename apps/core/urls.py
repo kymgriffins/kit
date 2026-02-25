@@ -2,7 +2,69 @@ from django.urls import path
 from . import views_crud
 from . import views
 from . import views_profile
+from django.views.decorators.csrf import csrf_exempt
+
+# CSRF token view
+def csrf_token_view(request):
+    from django.middleware.csrf import get_token
+    from django.http import JsonResponse
+    return JsonResponse({'csrfToken': get_token(request)})
+
+# Login view (JSON API)
+def api_login_view(request):
+    from django.contrib.auth import authenticate, login
+    from django.http import JsonResponse
+    from django.views.decorators.http import require_POST
+    import json
+    
+    if request.method == 'POST':
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'success': True, 'user': {
+                'id': user.id,
+                'username': user.username,
+                'email': user.email,
+            }})
+        return JsonResponse({'error': 'Invalid credentials'}, status=401)
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# Logout view (JSON API)
+def api_logout_view(request):
+    from django.contrib.auth import logout
+    from django.http import JsonResponse
+    from django.views.decorators.http import require_POST
+    
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'success': True})
+    return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+# Current user view
+def current_user_view(request):
+    from django.http import JsonResponse
+    
+    if request.user.is_authenticated:
+        return JsonResponse({
+            'id': request.user.id,
+            'username': request.user.username,
+            'email': request.user.email,
+            'first_name': request.user.first_name,
+            'last_name': request.user.last_name,
+        })
+    return JsonResponse({'error': 'Not authenticated'}, status=401)
+
 urlpatterns = [
+    # CSRF and Auth API
+    path('api/csrf/', csrf_token_view, name='csrf_token'),
+    path('api/auth/login/', api_login_view, name='api_login'),
+    path('api/auth/logout/', api_logout_view, name='api_logout'),
+    path('api/auth/user/', current_user_view, name='current_user'),
+    
     # Dashboard
     path('dashboard/', views_crud.dashboard, name='dashboard'),
     

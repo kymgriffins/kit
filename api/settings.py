@@ -153,3 +153,13 @@ CORS_ALLOW_CREDENTIALS = True
 
 # Cache CORS preflight requests for 1 hour
 CORS_PREFLIGHT_CACHE = 3600
+
+# CSRF Settings - Use cookie for Next.js compatibility
+CSRF_COOKIE_NAME = 'csrftoken'
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SAMESITE = 'Lax'
+CSRF_USE_SESSIONS = False
+
+# CORS settings - Add SameSite config
+CORS_COOKIE_NAME = 'sessionid'
+CORS_COOKIE_SAMESITE = 'Lax'

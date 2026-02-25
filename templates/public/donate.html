@@ -56,6 +56,38 @@
                 </div>
                 
                 <div>
+                    <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Donation Type</label>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <label class="flex items-center space-x-3 p-4 rounded-xl border cursor-pointer hover:bg-gray-50 transition-colors" style="border-color: var(--border-color);">
+                            <input type="radio" name="donation_type" value="one_time" checked class="form-radio">
+                            <div>
+                                <div class="font-medium" style="color: var(--text-primary);">One-Time Donation</div>
+                                <div class="text-sm" style="color: var(--text-tertiary);">Single payment to support our work</div>
+                            </div>
+                        </label>
+                        <label class="flex items-center space-x-3 p-4 rounded-xl border cursor-pointer hover:bg-gray-50 transition-colors" style="border-color: var(--border-color);">
+                            <input type="radio" name="donation_type" value="monthly" class="form-radio">
+                            <div>
+                                <div class="font-medium" style="color: var(--text-primary);">Monthly Support</div>
+                                <div class="text-sm" style="color: var(--text-tertiary);">Recurring monthly donation</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div id="recurring-options" class="hidden">
+                    <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Recurring Frequency</label>
+                    <select name="recurring_frequency" class="form-input">
+                        <option value="monthly">Monthly (Recommended)</option>
+                        <option value="quarterly">Quarterly</option>
+                        <option value="yearly">Yearly</option>
+                    </select>
+                    <p class="text-xs mt-2" style="color: var(--text-tertiary);">
+                        You can cancel your monthly support at any time
+                    </p>
+                </div>
+
+                <div>
                     <label class="block text-left text-sm font-medium mb-2" style="color: var(--text-secondary);">Currency</label>
                     <select name="currency" class="form-input">
                         <option value="KES">Kenyan Shilling (KES)</option>
@@ -103,6 +135,20 @@
                 b.style.borderColor = 'var(--border-color)';
             });
             btn.style.borderColor = '#14b8a6';
+        });
+    });
+
+    // Toggle recurring options
+    const donationTypeRadios = document.querySelectorAll('input[name="donation_type"]');
+    const recurringOptions = document.getElementById('recurring-options');
+
+    donationTypeRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (radio.value === 'monthly') {
+                recurringOptions.classList.remove('hidden');
+            } else {
+                recurringOptions.classList.add('hidden');
+            }
         });
     });
 </script>

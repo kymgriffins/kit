@@ -82,11 +82,12 @@ class BlogPostViewSet(viewsets.ReadOnlyModelViewSet):
     
     @action(detail=False, methods=['get'])
     def featured(self, request):
-        featured = self.get_queryset().filter(is_featured=True).first()
+        # Get the latest published post as featured
+        featured = self.get_queryset().first()
         if featured:
             serializer = BlogPostDetailSerializer(featured)
             return Response(serializer.data)
-        return Response({'detail': 'No featured post'}, status=404)
+        return Response({'detail': 'No posts available'}, status=404)
     
     @action(detail=True, methods=['get'])
     def related(self, request, slug=None):

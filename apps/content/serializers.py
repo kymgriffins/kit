@@ -150,7 +150,7 @@ class BlogPostListSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'excerpt', 'featured_image',
             'post_type', 'post_type_display', 'status', 'status_display',
             'author_name', 'categories', 'read_time_minutes', 
-            'published_at', 'view_count', 'is_featured'
+            'published_at', 'view_count'
         ]
     
     def get_author_name(self, obj):

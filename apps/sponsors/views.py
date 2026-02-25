@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db.models import Sum, Count
 from django.utils import timezone
 import uuid
+from django.shortcuts import render
 from .models import Donation, SponsorshipDeliverable, SponsorAsset
 from .serializers import (
     DonationSerializer, DonationCreateSerializer,
@@ -84,3 +85,8 @@ class SponsorAssetViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(assets, many=True)
             return Response(serializer.data)
         return Response({'error': 'sponsor_id required'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+def donate_view(request):
+    """Public donation form view"""
+    return render(request, 'public/donate.html')

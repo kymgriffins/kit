@@ -59,6 +59,19 @@ class DonationCreateSerializer(serializers.ModelSerializer):
             'donor', 'amount', 'currency', 'payment_method',
             'is_recurring', 'recurring_frequency', 'campaign_source', 'landing_page'
         ]
+    
+    def validate(self, attrs):
+        # Validate recurring donation fields
+        if attrs.get('is_recurring'):
+            if not attrs.get('recurring_frequency'):
+                raise serializers.ValidationError({
+                    'recurring_frequency': 'This field is required for recurring donations.'
+                })
+        else:
+            # Clear recurring fields for one-time donations
+            attrs['recurring_frequency'] = None
+        
+        return attrs
 
 
 class DonationAnalyticsSerializer(serializers.ModelSerializer):

@@ -163,6 +163,16 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'
 CSRF_USE_SESSIONS = False
 
+# CSRF Trusted Origins - Required for CSRF verification
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+    'https://bns.vercel.app',
+    'https://*.vercel.app',
+    'https://www.budgetndiostory.org',
+    'https://budgetndiostory.org',
+]
+
 # CORS settings - Add SameSite config
 CORS_COOKIE_NAME = 'sessionid'
 CORS_COOKIE_SAMESITE = 'Lax'

@@ -4,6 +4,7 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from apps.core.views import api_docs, home, config_page, index
+from apps.core import views_api
 
 urlpatterns = [
     # Admin - must come first to avoid conflicts
@@ -20,7 +21,12 @@ urlpatterns = [
     # API Documentation
     path('api/docs/', api_docs, name='api_docs'),
     
-    # API endpoints
+    # API Dashboard - Custom HTML Interface
+    path('api/', views_api.APIDashboardView.as_view(), name='api_dashboard'),
+    path('api/browser/', views_api.APIBrowserView.as_view(), name='api_browser'),
+    path('api/v1/<str:app_name>/', views_api.APIEndpointProxyView.as_view(), name='api_endpoint'),
+    
+    # API endpoints (original DRF endpoints)
     path('api/v1/accounts/', include('apps.accounts.urls')),
     path('api/v1/content/', include('apps.content.urls')),
     path('api/v1/newsletter/', include('apps.newsletter.urls')),

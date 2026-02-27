@@ -1,0 +1,360 @@
+{% load static %}
+{% load api_filters %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Browser - Budget Ndio Story</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0066CC',
+                            light: '#1a75ff',
+                            dark: '#004c99',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --bg-tertiary: #171717;
+            --bg-card: #1a1a1a;
+            --border-color: #262626;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-muted: #737373;
+            --accent-blue: #0066CC;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-blue); }
+        
+        * { transition-property: background-color, border-color, color; transition-duration: 150ms; }
+        
+        .browser-input {
+            width: 100%;
+            padding625rem 1rem;
+            background: 0.-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+        
+        .browser-input:focus { outline: none; border-color: var(--accent-blue); }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 150ms;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary { background-color: var(--accent-blue); color: white; }
+        .btn-primary:hover { background-color: #0052a3; }
+        .btn-secondary { background-color: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background-color: var(--border-color); }
+        
+        .method-get { background-color: #22c55e20; color: #22c55e; }
+        .method-post { background-color: #0066CC20; color: #0066CC; }
+        .method-put { background-color: #eab30820; color: #eab308; }
+        .method-patch { background-color: #f9731620; color: #f97316; }
+        .method-delete { background-color: #ef444420; color: #ef4444; }
+        
+        .status-200 { background-color: #22c55e20; color: #22c55e; }
+        .status-201 { background-color: #22c55e20; color: #22c55e; }
+        .status-400 { background-color: #f9731620; color: #f97316; }
+        .status-401 { background-color: #f9731620; color: #f97316; }
+        .status-404 { background-color: #f9731620; color: #f97316; }
+        .status-500 { background-color: #ef444420; color: #ef4444; }
+        
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+        }
+        
+        .code-block {
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.8125rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #569cd6; }
+    </style>
+    
+    <script>
+        function getTheme() {
+            return localStorage.getItem('theme') || 'dark';
+        }
+        
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            document.documentElement.classList.remove('dark', 'light');
+            document.documentElement.classList.add(theme);
+        }
+        
+        function toggleTheme() {
+            setTheme(getTheme() === 'dark' ? 'light' : 'dark');
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            setTheme(getTheme());
+            lucide.createIcons();
+        });
+    </script>
+</head>
+<body class="min-h-screen">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[var(--bg-secondary)] border-r border-[var(--border-color)] flex flex-col fixed h-full">
+            <div class="p-4 border-b border-[var(--border-color)]">
+                <a href="/api/" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-blue)] flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">B</span>
+                    </div>
+                    <div>
+                        <span class="font-bold block leading-tight">API</span>
+                        <span class="text-xs text-[var(--text-muted)]">Browser</span>
+                    </div>
+                </a>
+            </div>
+            
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <div class="pt-2 pb-2 px-4">
+                    <span class="text-xs font-semibold text-[var(--text-muted)] uppercase">Endpoints</span>
+                </div>
+                
+                <a href="/api/v1/accounts/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/accounts' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="text-sm">Accounts</span>
+                </a>
+                
+                <a href="/api/v1/content/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/content' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span class="text-sm">Content</span>
+                </a>
+                
+                <a href="/api/v1/newsletter/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/newsletter' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span class="text-sm">Newsletter</span>
+                </a>
+                
+                <a href="/api/v1/sponsors/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/sponsors' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                    <span class="text-sm">Sponsors</span>
+                </a>
+                
+                <a href="/api/v1/analytics/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/analytics' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span class="text-sm">Analytics</span>
+                </a>
+                
+                <a href="/api/v1/cms/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] {% if '/cms' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="text-sm">CMS</span>
+                </a>
+            </nav>
+            
+            <div class="p-4 border-t border-[var(--border-color)]">
+                <button onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)]">
+                    <i data-lucide="sun" class="w-5 h-5"></i>
+                    <span class="text-sm">Theme</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-8">
+            <!-- Request Bar -->
+            <div class="card p-4 mb-6">
+                <div class="flex items-center gap-4">
+                    <select id="method-select" class="browser-input w-32">
+                        <option value="GET" {% if method == 'GET' %}selected{% endif %}>GET</option>
+                        <option value="POST" {% if method == 'POST' %}selected{% endif %}>POST</option>
+                        <option value="PUT" {% if method == 'PUT' %}selected{% endif %}>PUT</option>
+                        <option value="PATCH" {% if method == 'PATCH' %}selected{% endif %}>PATCH</option>
+                        <option value="DELETE" {% if method == 'DELETE' %}selected{% endif %}>DELETE</option>
+                    </select>
+                    
+                    <input type="text" id="url-input" class="browser-input flex-1" value="{{ endpoint }}" placeholder="/api/v1/endpoint/">
+                    
+                    <button onclick="sendRequest()" class="btn btn-primary">
+                        <i data-lucide="send" class="w-4 h-4"></i>
+                        Send
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Request Info -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-4">
+                    <span class="method-badge method-{{ method|lower }}">{{ method }}</span>
+                    <span class="text-[var(--text-muted)]">{{ endpoint }}</span>
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    {% for m in allowed_methods %}
+                        <span class="method-badge method-{{ m|lower }}">{{ m }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Response -->
+            <div class="card">
+                <div class="p-4 border-b border-[var(--border-color)] flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <span class="font-semibold">Response</span>
+                        <span class="status-badge status-{{ status_code }}">{{ status_code }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="text-sm text-[var(--text-muted)]">{{ response_data|length|default:0 }} bytes</span>
+                    </div>
+                </div>
+                
+                <div class="p-4">
+                    <pre class="code-block" id="response-body">{{ response_data|json_dumps }}</pre>
+                </div>
+            </div>
+            
+            <!-- Available Actions -->
+            {% if allowed_methods %}
+            <div class="mt-6">
+                <h3 class="font-semibold mb-4">Available Actions</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {% if 'GET' in allowed_methods %}
+                    <a href="." class="card p-4 hover:border-[var(--accent-blue)] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="method-badge method-get">GET</span>
+                            <span class="text-sm">List</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                    
+                    {% if 'POST' in allowed_methods %}
+                    <a href="#" onclick="document.getElementById('post-form').classList.toggle('hidden')" class="card p-4 hover:border-[var(--accent-blue)] transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="method-badge method-post">POST</span>
+                            <span class="text-sm">Create</span>
+                        </div>
+                    </a>
+                    {% endif %}
+                    
+                    {% if 'PUT' in allowed_methods %}
+                    <div class="card p-4">
+                        <div class="flex items-center gap-3">
+                            <span class="method-badge method-put">PUT</span>
+                            <span class="text-sm">Update</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    {% if 'DELETE' in allowed_methods %}
+                    <div class="card p-4">
+                        <div class="flex items-center gap-3">
+                            <span class="method-badge method-delete">DELETE</span>
+                            <span class="text-sm">Delete</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </main>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            const responseEl = document.getElementById('response-body');
+            if (responseEl) {
+                const json = responseEl.textContent;
+                responseEl.innerHTML = syntaxHighlight(json);
+            }
+        });
+        
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    cls = /:$/.test(match) ? 'json-key' : 'json-string';
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+        
+        function sendRequest() {
+            const method = document.getElementById('method-select').value;
+            const url = document.getElementById('url-input').value;
+            window.location.href = url + '?format=api';
+        }
+    </script>
+</body>
+</html>

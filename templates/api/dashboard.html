@@ -1,0 +1,717 @@
+{% load static %}
+{% load api_filters %}
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Dashboard - Budget Ndio Story</title>
+    <meta name="description" content="API Dashboard - Manage your Budget Ndio Story data">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            DEFAULT: '#0066CC',
+                            light: '#1a75ff',
+                            dark: '#004c99',
+                            50: '#e6f0ff',
+                            100: '#cce0ff',
+                        },
+                    },
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        /* Theme Variables */
+        :root {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --bg-tertiary: #171717;
+            --bg-card: #1a1a1a;
+            --border-color: #262626;
+            --text-primary: #ffffff;
+            --text-secondary: #a3a3a3;
+            --text-muted: #737373;
+            --accent-blue: #0066CC;
+            --accent-green: #22c55e;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+        }
+        
+        .light {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --bg-tertiary: #f3f4f6;
+            --bg-card: #ffffff;
+            --border-color: #e5e7eb;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+            --text-muted: #9ca3af;
+        }
+        
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-color);
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-blue);
+        }
+        
+        /* Transitions */
+        * {
+            transition-property: background-color, border-color, color;
+            transition-duration: 150ms;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Form Elements */
+        .api-input {
+            width: 100%;
+            padding: 0.625rem 1rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            transition: all 150ms;
+        }
+        
+        .api-input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        
+        .api-input::placeholder {
+            color: var(--text-muted);
+        }
+        
+        /* Button Styles */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.625rem 1.25rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: all 150ms;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0052a3;
+        }
+        
+        .btn-secondary {
+            background-color: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn-secondary:hover {
+            background-color: var(--border-color);
+        }
+        
+        .btn-danger {
+            background-color: var(--accent-red);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-success {
+            background-color: var(--accent-green);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #16a34a;
+        }
+        
+        /* Method badges */
+        .method-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border-radius: 0.25rem;
+            text-transform: uppercase;
+        }
+        
+        .method-get { background-color: #22c55e20; color: #22c55e; }
+        .method-post { background-color: #0066CC20; color: #0066CC; }
+        .method-put { background-color: #eab30820; color: #eab308; }
+        .method-patch { background-color: #f9731620; color: #f97316; }
+        .method-delete { background-color: #ef444420; color: #ef4444; }
+        
+        /* Status badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            border-radius: 9999px;
+        }
+        
+        .status-2xx { background-color: #22c55e20; color: #22c55e; }
+        .status-3xx { background-color: #3b82f620; color: #3b82f6; }
+        .status-4xx { background-color: #f9731620; color: #f97316; }
+        .status-5xx { background-color: #ef444420; color: #ef4444; }
+        
+        /* Card */
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+        
+        /* Table */
+        .api-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .api-table th {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background-color: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .api-table td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .api-table tr:hover td {
+            background-color: var(--bg-tertiary);
+        }
+        
+        /* Code block */
+        .code-block {
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.8125rem;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+            color: var(--text-secondary);
+        }
+        
+        /* JSON syntax highlighting */
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #569cd6; }
+    </style>
+    
+    <script>
+        // Theme persistence
+        function getTheme() {
+            const stored = localStorage.getItem('theme');
+            if (stored) return stored;
+            return 'dark';
+        }
+        
+        function setTheme(theme) {
+            localStorage.setItem('theme', theme);
+            document.documentElement.classList.remove('dark', 'light');
+            document.documentElement.classList.add(theme);
+            updateThemeIcon(theme);
+        }
+        
+        function toggleTheme() {
+            const current = getTheme();
+            setTheme(current === 'dark' ? 'light' : 'dark');
+        }
+        
+        function updateThemeIcon(theme) {
+            const sunIcon = document.getElementById('theme-sun');
+            const moonIcon = document.getElementById('theme-moon');
+            if (sunIcon && moonIcon) {
+                if (theme === 'dark') {
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                } else {
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                }
+            }
+        }
+        
+        // Initialize theme on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const theme = getTheme();
+            setTheme(theme);
+            lucide.createIcons();
+        });
+    </script>
+</head>
+<body class="min-h-screen">
+    <div class="flex min-h-screen">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-[var(--bg-secondary)] border-r border-[var(--border-color)] flex flex-col fixed h-full">
+            <!-- Logo -->
+            <div class="p-4 border-b border-[var(--border-color)]">
+                <a href="/dashboard/" class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-[var(--accent-blue)] flex items-center justify-center">
+                        <span class="text-white font-bold text-xl">B</span>
+                    </div>
+                    <div>
+                        <span class="font-bold block leading-tight">API</span>
+                        <span class="text-xs text-[var(--text-muted)]">Dashboard</span>
+                    </div>
+                </a>
+            </div>
+            
+            <!-- Navigation -->
+            <nav class="flex-1 p-4 space-y-1 overflow-y-auto">
+                <div class="pt-2 pb-2 px-4">
+                    <span class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Endpoints</span>
+                </div>
+                
+                <a href="/api/v1/accounts/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/accounts' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="text-sm">Accounts</span>
+                </a>
+                
+                <a href="/api/v1/content/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/content' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="file-text" class="w-5 h-5"></i>
+                    <span class="text-sm">Content</span>
+                </a>
+                
+                <a href="/api/v1/newsletter/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/newsletter' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="mail" class="w-5 h-5"></i>
+                    <span class="text-sm">Newsletter</span>
+                </a>
+                
+                <a href="/api/v1/sponsors/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/sponsors' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif<i data-lucide="heart-hand %}">
+                    shake" class="w-5 h-5"></i>
+                    <span class="text-sm">Sponsors</span>
+                </a>
+                
+                <a href="/api/v1/analytics/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/analytics' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                    <span class="text-sm">Analytics</span>
+                </a>
+                
+                <a href="/api/v1/cms/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all {% if '/api/v1/cms' in endpoint %}bg-[var(--accent-blue)]/10 text-[var(--accent-blue)] border-l-2 border-[var(--accent-blue)]{% endif %}">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="text-sm">CMS</span>
+                </a>
+                
+                <!-- Divider -->
+                <div class="pt-4 pb-2 px-4">
+                    <span class="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wider">Tools</span>
+                </div>
+                
+                <a href="/api/docs/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all">
+                    <i data-lucide="book-open" class="w-5 h-5"></i>
+                    <span class="text-sm">API Docs</span>
+                </a>
+                
+                <a href="/admin/" class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] hover:text-white transition-all">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
+                    <span class="text-sm">Django Admin</span>
+                </a>
+            </nav>
+            
+            <!-- Theme Toggle -->
+            <div class="p-4 border-t border-[var(--border-color)]">
+                <button onclick="toggleTheme()" class="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg text-[var(--text-secondary)] hover:bg-[var(--bg-tertiary)] transition-all">
+                    <i data-lucide="sun" id="theme-sun" class="w-5 h-5"></i>
+                    <i data-lucide="moon" id="theme-moon" class="w-5 h-5 hidden"></i>
+                    <span class="text-sm">Toggle Theme</span>
+                </button>
+            </div>
+        </aside>
+        
+        <!-- Main Content -->
+        <main class="flex-1 ml-64 p-8">
+            <!-- Header -->
+            <header class="flex items-center justify-between mb-8">
+                <div>
+                    <h1 class="text-2xl font-bold">
+                        {% if model_name %}
+                            {{ model_name|title }} API
+                        {% else %}
+                            API Dashboard
+                        {% endif %}
+                    </h1>
+                    <p class="text-[var(--text-muted)] mt-1">{{ endpoint }}</p>
+                </div>
+                
+                <div class="flex items-center gap-4">
+                    <!-- Method Badge -->
+                    <span class="method-badge method-{{ method|lower }}">{{ method }}</span>
+                    
+                    <!-- Status Badge -->
+                    {% if response.status_code >= 200 and response.status_code < 300 %}
+                        <span class="status-badge status-2xx">
+                            <i data-lucide="check-circle" class="w-4 h-4"></i>
+                            {{ response.status_code }}
+                        </span>
+                    {% elif response.status_code >= 400 and response.status_code < 500 %}
+                        <span class="status-badge status-4xx">
+                            <i data-lucide="alert-circle" class="w-4 h-4"></i>
+                            {{ response.status_code }}
+                        </span>
+                    {% elif response.status_code >= 500 %}
+                        <span class="status-badge status-5xx">
+                            <i data-lucide="x-circle" class="w-4 h-4"></i>
+                            {{ response.status_code }}
+                        </span>
+                    {% endif %}
+                </div>
+            </header>
+            
+            <!-- Action Bar -->
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-2">
+                    {% for m in allowed_methods %}
+                        <a href="?format=api" class="method-badge method-{{ m|lower }}">{{ m }}</a>
+                    {% endfor %}
+                </div>
+                
+                <div class="flex items-center gap-2">
+                    {% if has_create %}
+                        <button class="btn btn-primary" onclick="document.getElementById('create-form').classList.toggle('hidden')">
+                            <i data-lucide="plus" class="w-4 h-4"></i>
+                            Create New
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Create Form (Collapsible) -->
+            {% if has_create %}
+            <div id="create-form" class="card mb-6 hidden">
+                <div class="p-4 border-b border-[var(--border-color)]">
+                    <h3 class="font-semibold">Create New {{ model_name|title|default:"Object" }}</h3>
+                </div>
+                <form method="post" class="p-4 space-y-4">
+                    {% csrf_token %}
+                    <input type="hidden" name="_method" value="POST">
+                    
+                    {% if serializer_fields %}
+                        {% for field in serializer_fields %}
+                        <div>
+                            <label class="block text-sm font-medium text-[var(--text-secondary)] mb-2">
+                                {{ field.label }}
+                                {% if field.required %}<span class="text-[var(--accent-red)]">*</span>{% endif %}
+                            </label>
+                            <input type="text" name="{{ field.name }}" class="api-input" 
+                                   {% if field.required %}required{% endif %}
+                                   placeholder="{{ field.help_text }}">
+                            {% if field.help_text %}
+                                <p class="text-xs text-[var(--text-muted)] mt-1">{{ field.help_text }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--text-secondary)] mb-2">Field 1</label>
+                                <input type="text" class="api-input" placeholder="Enter value">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-[var(--text-secondary)] mb-2">Field 2</label>
+                                <input type="text" class="api-input" placeholder="Enter value">
+                            </div>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="flex justify-end gap-2 pt-4">
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('create-form').classList.add('hidden')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i data-lucide="save" class="w-4 h-4"></i>
+                            Create
+                        </button>
+                    </div>
+                </form>
+            </div>
+            {% endif %}
+            
+            <!-- Error Message -->
+            {% if error %}
+            <div class="card mb-6 border-[var(--accent-red)]">
+                <div class="p-4 bg-[var(--accent-red)]/10 flex items-center gap-3">
+                    <i data-lucide="alert-circle" class="w-5 h-5 text-[var(--accent-red)]"></i>
+                    <span class="text-[var(--accent-red)]">{{ detail }}</span>
+                </div>
+            </div>
+            {% endif %}
+            
+            <!-- Results Table -->
+            {% if results %}
+            <div class="card">
+                <div class="p-4 border-b border-[var(--border-color)] flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="database" class="w-5 h-5 text-[var(--text-muted)]"></i>
+                        <span class="font-medium">Results</span>
+                        <span class="text-sm text-[var(--text-muted)]">({{ count }} items)</span>
+                    </div>
+                    
+                    {% if next_url or previous_url %}
+                    <div class="flex items-center gap-2">
+                        {% if previous_url %}
+                            <a href="{{ previous_url }}" class="btn btn-secondary text-sm py-1.5">
+                                <i data-lucide="chevron-left" class="w-4 h-4"></i>
+                                Previous
+                            </a>
+                        {% endif %}
+                        {% if next_url %}
+                            <a href="{{ next_url }}" class="btn btn-secondary text-sm py-1.5">
+                                Next
+                                <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="api-table">
+                        <thead>
+                            <tr>
+                                {% if results.0 %}
+                                    {% for key, value in results.0.items %}
+                                        <th>{{ key|replace:"_"|title }}</th>
+                                    {% endfor %}
+                                    <th>Actions</th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in results %}
+                            <tr>
+                                {% for key, value in item.items %}
+                                <td>
+                                    {% if value|is_string %}
+                                        <span class="text-[var(--text-primary)]">{{ value|truncatechars:50 }}</span>
+                                    {% elif value|is_number %}
+                                        <span class="text-[var(--accent-blue)]">{{ value }}</span>
+                                    {% elif value|is_bool %}
+                                        {% if value %}
+                                            <span class="status-badge status-2xx">True</span>
+                                        {% else %}
+                                            <span class="status-badge status-4xx">False</span>
+                                        {% endif %}
+                                    {% elif value|is_list %}
+                                        <span class="text-[var(--text-muted)]">[{{ value|length }} items]</span>
+                                    {% elif value|is_dict %}
+                                        <span class="text-[var(--text-muted)]">{...}</span>
+                                    {% else %}
+                                        <span class="text-[var(--text-secondary)]">{{ value|default:"null" }}</span>
+                                    {% endif %}
+                                </td>
+                                {% endfor %}
+                                <td>
+                                    <div class="flex items-center gap-2">
+                                        {% if has_update %}
+                                        <a href="#" class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--accent-blue)] transition-all" title="Edit">
+                                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                                        </a>
+                                        {% endif %}
+                                        {% if has_delete %}
+                                        <a href="#" class="p-1.5 rounded hover:bg-[var(--bg-tertiary)] text-[var(--text-muted)] hover:text-[var(--accent-red)] transition-all" title="Delete">
+                                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                        </a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="100" class="text-center py-8 text-[var(--text-muted)]">
+                                    No results found
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% elif object %}
+            <!-- Single Object View -->
+            <div class="card">
+                <div class="p-4 border-b border-[var(--border-color)]">
+                    <h3 class="font-semibold">Object Details</h3>
+                </div>
+                <div class="divide-y divide-[var(--border-color)]">
+                    {% for field in fields %}
+                    <div class="p-4 flex items-start justify-between">
+                        <div>
+                            <span class="text-sm font-medium text-[var(--text-muted)]">{{ field.name|replace:"_"|title }}</span>
+                            {% if field.is_object or field.is_list %}
+                                <p class="text-xs text-[var(--text-muted)] mt-1">
+                                    {% if field.is_object %}Object{% else %}Array - {{ field.count }} items{% endif %}
+                                </p>
+                            {% endif %}
+                        </div>
+                        <div class="text-right max-w-md">
+                            {% if field.value|is_string %}
+                                <span class="text-[var(--text-primary)] break-all">{{ field.value|default:"null" }}</span>
+                            {% elif field.value|is_number %}
+                                <span class="text-[var(--accent-blue)]">{{ field.value }}</span>
+                            {% elif field.value|is_bool %}
+                                {% if field.value %}
+                                    <span class="status-badge status-2xx">True</span>
+                                {% else %}
+                                    <span class="status-badge status-4xx">False</span>
+                                {% endif %}
+                            {% elif field.is_object %}
+                                <div class="code-block text-xs">
+                                    <pre>{{ field.value|json_dumps }}</pre>
+                                </div>
+                            {% elif field.is_list %}
+                                <div class="code-block text-xs">
+                                    <pre>{{ field.value|json_dumps }}</pre>
+                                </div>
+                            {% else %}
+                                <span class="text-[var(--text-secondary)]">{{ field.value|default:"null" }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% else %}
+            <!-- Empty State -->
+            <div class="card p-12 text-center">
+                <i data-lucide="inbox" class="w-12 h-12 text-[var(--text-muted)] mx-auto mb-4"></i>
+                <h3 class="text-lg font-medium mb-2">No Data</h3>
+                <p class="text-[var(--text-muted)] mb-6">There's no data to display for this endpoint.</p>
+                {% if has_create %}
+                <button class="btn btn-primary" onclick="document.getElementById('create-form').classList.toggle('hidden')">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    Create First Object
+                </button>
+                {% endif %}
+            </div>
+            {% endif %}
+            
+            <!-- Raw JSON Response -->
+            <div class="mt-6">
+                <details class="group">
+                    <summary class="flex items-center gap-2 cursor-pointer text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)]">
+                        <i data-lucide="code" class="w-4 h-4"></i>
+                        Raw JSON Response
+                    </summary>
+                    <div class="mt-4 code-block max-h-96 overflow-auto">
+                        <pre id="json-response">{{ response.data|json_dumps }}</pre>
+                    </div>
+                </details>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Template Filters -->
+    <script>
+        // Simple template filters implemented in JS
+        const filters = {
+            is_string: (value) => typeof value === 'string',
+            is_number: (value) => typeof value === 'number',
+            is_bool: (value) => typeof value === 'boolean',
+            is_list: (value) => Array.isArray(value),
+            is_dict: (value) => typeof value === 'object' && value !== null && !Array.isArray(value),
+            replace: (value, char) => value ? value.replace(/_/g, char || ' ') : value,
+            title: (value) => value ? value.charAt(0).toUpperCase() + value.slice(1) : '',
+            truncatechars: (value, chars) => value && value.length > chars ? value.substring(0, chars) + '...' : value,
+            default: (value, defaultValue) => value || defaultValue,
+            json_dumps: (value) => JSON.stringify(value, null, 2)
+        };
+    </script>
+    
+    <!-- Initialize Lucide Icons -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+            
+            // Syntax highlight JSON
+            const jsonEl = document.getElementById('json-response');
+            if (jsonEl) {
+                const json = jsonEl.textContent;
+                jsonEl.innerHTML = syntaxHighlight(json);
+            }
+        });
+        
+        function syntaxHighlight(json) {
+            json = json.replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>');
+            return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+                let cls = 'json-number';
+                if (/^"/.test(match)) {
+                    if (/:$/.test(match)) {
+                        cls = 'json-key';
+                    } else {
+                        cls = 'json-string';
+                    }
+                } else if (/true|false/.test(match)) {
+                    cls = 'json-boolean';
+                } else if (/null/.test(match)) {
+                    cls = 'json-null';
+                }
+                return '<span class="' + cls + '">' + match + '</span>';
+            });
+        }
+    </script>
+</body>
+</html>

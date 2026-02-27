@@ -11,6 +11,7 @@ def csrf_token_view(request):
     return JsonResponse({'csrfToken': get_token(request)})
 
 # Login view (JSON API)
+@csrf_exempt
 def api_login_view(request):
     from django.contrib.auth import authenticate, login
     from django.http import JsonResponse

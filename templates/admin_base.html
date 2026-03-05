@@ -531,6 +531,64 @@
         });
     </script>
     
+    <!-- Toast Container -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 space-y-2"></div>
+    
+    <script>
+        // Toast Notification Function
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colors = {
+                success: 'bg-green-500 dark:bg-green-600',
+                error: 'bg-red-500 dark:bg-red-600',
+                warning: 'bg-yellow-500 dark:bg-yellow-600',
+                info: 'bg-primary'
+            };
+            
+            const icons = {
+                success: 'ph-check-circle',
+                error: 'ph-x-circle',
+                warning: 'ph-warning',
+                info: 'ph-info'
+            };
+            
+            toast.className = `${colors[type]} text-white px-6 py-3 rounded-xl shadow-2xl flex items-center gap-3 transform translate-x-full transition-transform duration-300`;
+            toast.innerHTML = `
+                <i class="ph ${icons[type]} text-xl"></i>
+                <span class="font-medium">${message}</span>
+                <button onclick="this.parentElement.remove()" class="hover:opacity-70 ml-2">
+                    <i class="ph ph-x text-lg"></i>
+                </button>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.remove('translate-x-full'), 100);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 5000);
+        };
+        
+        // Convert Django messages to toasts on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageElements = document.querySelectorAll('[class*="bg-"][class*="text-"]');
+            messageElements.forEach(function(el) {
+                const text = el.textContent.trim();
+                let type = 'info';
+                if (el.classList.contains('green') || text.includes('success')) type = 'success';
+                else if (el.classList.contains('red') || text.includes('error')) type = 'error';
+                else if (el.classList.contains('yellow') || text.includes('warning')) type = 'warning';
+                
+                if (text && !el.dataset.toastConverted) {
+                    el.dataset.toastConverted = 'true';
+                    setTimeout(() => showToast(text, type), 500);
+                }
+            });
+        });
+    </script>
+    
     {% block extra_js %}{% endblock %}
 </body>
 </html>

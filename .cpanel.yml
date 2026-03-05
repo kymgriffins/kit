@@ -1,0 +1,27 @@
+# cPanel Deployment Configuration for Django Application
+---
+deployment:
+  tasks:
+    - export DEBIAN_FRONTEND=noninteractive
+    
+    # Set Python version (adjust as needed for your cPanel environment)
+    - python3 --version
+    
+    # Install pip if not available
+    - pip install --upgrade pip
+    
+    # Install dependencies
+    - pip install -r requirements.txt
+    
+    # Run database migrations
+    - python manage.py migrate --noinput
+    
+    # Collect static files
+    - python manage.py collectstatic --noinput --settings=api.settings
+    
+    # Create cache directory if needed
+    - mkdir -p /tmp/django_cache
+    
+    # Restart application (if using Passenger)
+    # The following line may vary depending on your cPanel setup
+    # - touch /home/username/repo Passenger_wsgi.py

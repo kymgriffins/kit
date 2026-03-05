@@ -1,4 +1,5 @@
-from django.urls import path
+from django.urls import path, include
+from django.contrib.auth import views as auth_views
 from . import views_crud
 from . import views
 from . import views_profile
@@ -65,6 +66,10 @@ urlpatterns = [
     path('api/auth/login/', api_login_view, name='api_login'),
     path('api/auth/logout/', api_logout_view, name='api_logout'),
     path('api/auth/user/', current_user_view, name='current_user'),
+    
+    # Django Auth URLs
+    path('accounts/login/', auth_views.LoginView.as_view(template_name='admin_base.html'), name='login'),
+    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     
     # Dashboard
     path('dashboard/', views_crud.dashboard, name='dashboard'),

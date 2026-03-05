@@ -1,70 +1,66 @@
 {% extends 'base.html' %}
 
-{% block title %}Blog Posts - Budget Ndio Story{% endblock %}
+{% block title %}Campaigns - Budget Ndio Story{% endblock %}
 
 {% block content %}
 <div class="flex justify-between items-center mb-8">
     <div>
-        <h1 class="text-3xl font-bold text-dark">Blog Posts</h1>
-        <p class="text-gray-500 mt-1">Manage your blog content</p>
+        <h1 class="text-3xl font-bold text-dark">Campaigns</h1>
+        <p class="text-gray-500 mt-1">Manage your newsletter campaigns</p>
     </div>
-    <a href="{% url 'blogpost-create' %}" class="px-6 py-3 bg-bns text-white rounded-lg hover:bg-bns-dark transition-colors flex items-center gap-2">
+    <a href="{% url 'campaign-create' %}" class="px-6 py-3 bg-bns text-white rounded-lg hover:bg-bns-dark transition-colors flex items-center gap-2">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
         </svg>
-        Write Post
+        Create Campaign
     </a>
 </div>
 
-<!-- Blog Posts Table -->
+<!-- Campaigns Table -->
 <div class="bg-white rounded-xl shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
-        <table class="w-full">
+    <table class="w-full">
         <thead class="bg-gray-50">
             <tr>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Title</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Type</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Subject</th>
                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Views</th>
-                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Author</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Sent</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Opens</th>
                 <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-100">
-            {% for post in posts %}
+            {% for campaign in campaigns %}
             <tr class="hover:bg-gray-50">
                 <td class="px-6 py-4">
-                    <div class="font-medium text-dark">{{ post.title }}</div>
-                    <div class="text-sm text-gray-500">{{ post.slug }}</div>
+                    <div class="font-medium text-dark">{{ campaign.subject }}</div>
+                    <div class="text-sm text-gray-500">{{ campaign.preview_text|truncatechars:50 }}</div>
                 </td>
                 <td class="px-6 py-4">
-                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">
-                        {{ post.get_post_type_display }}
-                    </span>
-                </td>
-                <td class="px-6 py-4">
-                    {% if post.status == 'published' %}
-                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Published</span>
-                    {% elif post.status == 'draft' %}
+                    {% if campaign.status == 'sent' %}
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Sent</span>
+                    {% elif campaign.status == 'draft' %}
                     <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">Draft</span>
+                    {% elif campaign.status == 'scheduled' %}
+                    <span class="px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-medium">Scheduled</span>
                     {% else %}
-                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">{{ post.get_status_display }}</span>
+                    <span class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded text-xs font-medium">{{ campaign.get_status_display }}</span>
                     {% endif %}
                 </td>
                 <td class="px-6 py-4 text-gray-600">
-                    {{ post.view_count|default:0 }}
+                    {{ campaign.sent_count|default:"0" }}
                 </td>
                 <td class="px-6 py-4 text-gray-600">
-                    {{ post.author|default:"-" }}
+                    {{ campaign.open_count|default:"0" }}
                 </td>
                 <td class="px-6 py-4">
                     <div class="flex items-center gap-2">
-                        <a href="{% url 'blogpost-update' post.pk %}" class="p-2 text-gray-500 hover:text-bns transition-colors" title="Edit">
+                        <a href="{% url 'campaign-update' campaign.pk %}" class="p-2 text-gray-500 hover:text-bns transition-colors" title="Edit">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
                             </svg>
                         </a>
-                        <a href="{% url 'blogpost-delete' post.pk %}" class="p-2 text-gray-500 hover:text-red-600 transition-colors" title="Delete">
+                        <a href="{% url 'campaign-delete' campaign.pk %}" class="p-2 text-gray-500 hover:text-red-600 transition-colors" title="Delete">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                             </svg>
@@ -74,8 +70,8 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="6" class="px-6 py-12 text-center text-gray-500">
-                    No blog posts found. <a href="{% url 'blogpost-create' %}" class="text-bns hover:underline">Write your first post</a>
+                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                    No campaigns found. <a href="{% url 'campaign-create' %}" class="text-bns hover:underline">Create your first campaign</a>
                 </td>
             </tr>
             {% endfor %}

@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% block title %}Subscribers - Budget Ndio Story{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-8">
+    <div>
+        <h1 class="text-3xl font-bold text-dark">Subscribers</h1>
+        <p class="text-gray-500 mt-1">Manage your newsletter subscribers</p>
+    </div>
+    <a href="{% url 'subscriber-create' %}" class="px-6 py-3 bg-bns text-white rounded-lg hover:bg-bns-dark transition-colors flex items-center gap-2">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Add Subscriber
+    </a>
+</div>
+
+<!-- Subscribers Table -->
+<div class="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+    <table class="w-full">
+        <thead class="bg-gray-50">
+            <tr>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Email</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Name</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Subscribed</th>
+                <th class="px-6 py-4 text-left text-xs font-semibold text-gray-500 uppercase">Actions</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+            {% for subscriber in subscribers %}
+            <tr class="hover:bg-gray-50">
+                <td class="px-6 py-4">
+                    <div class="font-medium text-dark">{{ subscriber.email }}</div>
+                </td>
+                <td class="px-6 py-4 text-gray-600">
+                    {{ subscriber.first_name|default:"-" }} {{ subscriber.last_name|default:"" }}
+                </td>
+                <td class="px-6 py-4">
+                    {% if subscriber.is_active %}
+                    <span class="px-2 py-1 bg-green-100 text-green-800 rounded text-xs font-medium">Active</span>
+                    {% else %}
+                    <span class="px-2 py-1 bg-gray-100 text-gray-800 rounded text-xs font-medium">Inactive</span>
+                    {% endif %}
+                </td>
+                <td class="px-6 py-4 text-gray-600">
+                    {{ subscriber.subscribed_at|date:"M d, Y" }}
+                </td>
+                <td class="px-6 py-4">
+                    <div class="flex items-center gap-2">
+                        <a href="{% url 'subscriber-update' subscriber.pk %}" class="p-2 text-gray-500 hover:text-bns transition-colors" title="Edit">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                            </svg>
+                        </a>
+                        <a href="{% url 'subscriber-delete' subscriber.pk %}" class="p-2 text-gray-500 hover:text-red-600 transition-colors" title="Delete">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="px-6 py-12 text-center text-gray-500">
+                    No subscribers found. <a href="{% url 'subscriber-create' %}" class="text-bns hover:underline">Add your first subscriber</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+{% endblock %}
